@@ -56,6 +56,8 @@ final class ProductListViewController: UIViewController {
         super.viewDidLoad()
         title = "상품리스트"
         view.backgroundColor = .systemBackground
+        print("VC type =", type(of: self))  //DashboardViewControllerTableViewController 나와야 함
+        print("storyboard =", storyboard?.description as Any)
 
         setupLayout()
         setupTable()
