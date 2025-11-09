@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SideMenu
 
 struct RecentProduct {
     let title: String
@@ -22,13 +23,20 @@ class DashboardViewController: UITableViewController {
     override func viewDidLoad() {
        super.viewDidLoad()
        title = "대시보드"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "line.3.horizontal"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapHamburger)
+        )
+        
        print("VC type =", type(of: self))  //DashboardViewControllerTableViewController 나와야 함
        print("storyboard =", storyboard?.description as Any)
        print("headerCardView =", headerCardView as Any) // 여기서 nil이면 아래 1~4 진행
        // 1) tableHeaderView로 ‘승격’
        let header = headerCardView!         // 로그상 nil 아님
        //header.removeFromSuperview()         // 혹시 TableView의 subview로 붙어있던 것 방지
-       //header.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 160)
+       header.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 200)
        tableView.tableHeaderView = header   // ←. 이 줄로 ‘진짜’ 헤더가 됨
        CardView.layer.cornerRadius = 12
        CardView.layer.borderWidth = 1
@@ -51,13 +59,19 @@ class DashboardViewController: UITableViewController {
        ]
 
        // 3) 프로토타입 셀을 아직 안 만들었다면, 임시 기본 셀 등록
+        /*
        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "BasicCell")
-
+        */
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    @objc private func didTapHamburger() {
+        if let menu = SideMenuManager.default.leftMenuNavigationController {
+            present(menu, animated: true, completion: nil)
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -88,19 +102,17 @@ class DashboardViewController: UITableViewController {
         return items.count
     }
 
-    override func tableView(_ tableView: UITableView,
-                               cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       // 임시 기본 셀(프로토타입 셀 대신)
-       let cell = tableView.dequeueReusableCell(withIdentifier: "BasicCell", for: indexPath)
-       let item = items[indexPath.row]
-       var content = UIListContentConfiguration.subtitleCell()
-       content.text = item.title                  // "배추 500kg"
-       content.secondaryText = item.subInfo       // "용인시 처인구 / 6월 5일"
-       cell.contentConfiguration = content
-       cell.accessoryType = .disclosureIndicator
-       cell.selectionStyle = .none
-       return cell
-   }
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: RecentProductCell.reuseID, for: indexPath) as! RecentProductCell
+        let item = items[indexPath.row]
+        cell.configure(title: item.title, subInfo: item.subInfo)
+        cell.onTapButton = { [weak self] in
+            guard let self else { return }
+            print("처리중 탭: \(item.title)")
+            // TODO: 상태변경/상세 화면 진입 등
+        }
+        return cell
+    }
 
     /*
     // Override to support conditional editing of the table view.

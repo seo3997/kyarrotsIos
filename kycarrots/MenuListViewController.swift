@@ -72,12 +72,13 @@ final class MenuListViewController: UITableViewController {
             switch selected.type {
             case .dashboard:
                 // 대시보드는 루트로 복귀
+                /*
                 let vc = UIStoryboard(name: "Main", bundle: nil)
                     .instantiateViewController(withIdentifier: "DashboardVC") as! DashboardViewController
                 //let vc = DashboardViewController()
                 nav.pushViewController(vc, animated: true)
-                
-                //nav.popToRootViewController(animated: true)
+                */
+                nav.popToRootViewController(animated: true)
 
             case .products:
                 // 상품 리스트 화면으로 이동 (예시 VC)

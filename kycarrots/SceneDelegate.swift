@@ -9,7 +9,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-        let mainVC = MainViewController()
+        //let mainVC = MainViewController()
+        let mainVC = UIStoryboard(name: "Main", bundle: nil)
+            .instantiateViewController(withIdentifier: "DashboardVC")
         let nav = UINavigationController(rootViewController: mainVC)
 
         let menuVC = MenuListViewController()
