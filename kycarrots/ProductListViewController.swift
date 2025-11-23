@@ -26,7 +26,20 @@ struct Product {
 }
 
 final class ProductListViewController: UIViewController {
-
+    private let floatingButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = UIColor.systemBlue
+        button.tintColor = .white
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
+        button.layer.cornerRadius = 28  // 버튼 크기 56 → 안드로이드 FAB 동일
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowOffset = CGSize(width: 0, height: 3)
+        button.layer.shadowRadius = 4
+        return button
+    }()
+    
     // 상단 탭(세그먼트)
     private lazy var segmented: UISegmentedControl = {
         let seg = UISegmentedControl(items: SaleStatus.allCases.map { $0.title })
@@ -60,6 +73,7 @@ final class ProductListViewController: UIViewController {
         print("storyboard =", storyboard?.description as Any)
 
         setupLayout()
+        setupFloatingButton()
         setupTable()
         fetchProducts() // 최초 로드(데모 데이터)
         // 기본 탭을 "판매중"으로 하고 싶으면 위 selectedSegmentIndex = 1 유지
@@ -89,8 +103,15 @@ final class ProductListViewController: UIViewController {
     private func setupTable() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 60
+        //tableView.rowHeight = 60
 
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 100
+        
+        tableView.register(
+              UINib(nibName: "ProductTableViewCell", bundle: nil),
+              forCellReuseIdentifier: ProductTableViewCell.reuseIdentifier
+          )
         refresh.addTarget(self, action: #selector(onRefresh), for: .valueChanged)
         tableView.refreshControl = refresh
     }
@@ -129,6 +150,24 @@ final class ProductListViewController: UIViewController {
         ]
         tableView.reloadData()
     }
+    
+    private func setupFloatingButton() {
+        view.addSubview(floatingButton)
+
+        NSLayoutConstraint.activate([
+            floatingButton.widthAnchor.constraint(equalToConstant: 56),
+            floatingButton.heightAnchor.constraint(equalToConstant: 56),
+            floatingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            floatingButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40)
+        ])
+
+        floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func floatingButtonTapped() {
+        print("Floating button tapped!")
+        // 여기에 상품등록 화면 이동 넣으면 됨
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -147,10 +186,18 @@ extension ProductListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = filtered[indexPath.row]
+        /*
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
             ?? UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = item.name
         cell.detailTextLabel?.text = "₩\(item.price.formatted()) • \(item.status.title)"
+        */
+        let cell = tableView.dequeueReusableCell(
+                withIdentifier: ProductTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! ProductTableViewCell
+
+        cell.configure(with: item)
         cell.accessoryType = .disclosureIndicator
         return cell
     }
