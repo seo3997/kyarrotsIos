@@ -191,6 +191,10 @@ final class SettingsViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         alert.addAction(UIAlertAction(title: "로그아웃", style: .destructive, handler: { _ in
             print("로그아웃 처리")
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginVC")
+            self.switchRoot(to: loginVC)
+
             self.navigationController?.popToRootViewController(animated: true)
         }))
         present(alert, animated: true)

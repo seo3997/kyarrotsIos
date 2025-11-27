@@ -3,6 +3,7 @@
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -227,8 +228,230 @@
             </objects>
             <point key="canvasLocation" x="845.03816793893122" y="114.78873239436621"/>
         </scene>
+        <!--Login View Controller-->
+        <scene sceneID="dLn-PM-rE6">
+            <objects>
+                <viewController storyboardIdentifier="LoginVC" id="gwe-Or-c1a" customClass="LoginViewController" customModule="kycarrots" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="WhT-Ak-UTy">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_bg" translatesAutoresizingMaskIntoConstraints="NO" id="DVL-7Z-sW7">
+                                <rect key="frame" x="0.0" y="118" width="393" height="666"/>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="LGD-ZC-ond">
+                                <rect key="frame" x="24" y="168.66666666666669" width="345" height="564.66666666666652"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo3" translatesAutoresizingMaskIntoConstraints="NO" id="WiK-la-uVt">
+                                        <rect key="frame" x="0.0" y="0.0" width="345" height="224"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="224" id="Rqs-sc-LcF"/>
+                                        </constraints>
+                                    </imageView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MXK-03-uUD" userLabel="EmailContainer">
+                                        <rect key="frame" x="0.0" y="240" width="345" height="45"/>
+                                        <subviews>
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="r65-Yg-5Em">
+                                                <rect key="frame" x="0.0" y="0.0" width="345" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="mSX-ng-QNp"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="emailAddress"/>
+                                            </textField>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MPv-QY-mOB" userLabel="dividerViewEmail">
+                                                <rect key="frame" x="0.0" y="44" width="345" height="1"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="j56-9k-kPc"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="r65-Yg-5Em" secondAttribute="trailing" id="0EW-u3-Bmy"/>
+                                            <constraint firstItem="MPv-QY-mOB" firstAttribute="top" secondItem="r65-Yg-5Em" secondAttribute="bottom" constant="4" id="Exu-gg-fzK"/>
+                                            <constraint firstItem="MPv-QY-mOB" firstAttribute="leading" secondItem="MXK-03-uUD" secondAttribute="leading" id="awk-eB-E94"/>
+                                            <constraint firstAttribute="bottom" secondItem="MPv-QY-mOB" secondAttribute="bottom" id="i35-SS-4eb"/>
+                                            <constraint firstItem="r65-Yg-5Em" firstAttribute="top" secondItem="MXK-03-uUD" secondAttribute="top" id="kpD-Dz-HA3"/>
+                                            <constraint firstAttribute="trailing" secondItem="MPv-QY-mOB" secondAttribute="trailing" id="p9F-bb-GHV"/>
+                                            <constraint firstItem="r65-Yg-5Em" firstAttribute="leading" secondItem="MXK-03-uUD" secondAttribute="leading" id="xcV-iO-KC9"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d8M-yJ-cLp" userLabel="PasswordContainer">
+                                        <rect key="frame" x="0.0" y="301" width="345" height="45"/>
+                                        <subviews>
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7g7-xs-E8p">
+                                                <rect key="frame" x="0.0" y="0.0" width="345" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="q2J-3T-Kce"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                            </textField>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NeC-QR-9k8" userLabel="dividerViewPassword">
+                                                <rect key="frame" x="0.0" y="43.999999999999943" width="345" height="1"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="KtW-Cc-SYc"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="7g7-xs-E8p" firstAttribute="leading" secondItem="d8M-yJ-cLp" secondAttribute="leading" id="OL4-Pq-1mX"/>
+                                            <constraint firstItem="NeC-QR-9k8" firstAttribute="leading" secondItem="d8M-yJ-cLp" secondAttribute="leading" id="S1r-xM-bVn"/>
+                                            <constraint firstAttribute="trailing" secondItem="NeC-QR-9k8" secondAttribute="trailing" id="Ttk-tQ-Roo"/>
+                                            <constraint firstItem="NeC-QR-9k8" firstAttribute="top" secondItem="7g7-xs-E8p" secondAttribute="bottom" constant="4" id="UQo-aa-iBz"/>
+                                            <constraint firstAttribute="trailing" secondItem="7g7-xs-E8p" secondAttribute="trailing" id="ZXq-Og-zpJ"/>
+                                            <constraint firstItem="7g7-xs-E8p" firstAttribute="top" secondItem="d8M-yJ-cLp" secondAttribute="top" id="fcq-la-1a6"/>
+                                            <constraint firstAttribute="bottom" secondItem="NeC-QR-9k8" secondAttribute="bottom" id="vwL-iX-hcm"/>
+                                        </constraints>
+                                    </view>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Z5H-0d-OOl">
+                                        <rect key="frame" x="0.0" y="362" width="345" height="202.66666666666663"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oUl-gU-jTO">
+                                                <rect key="frame" x="0.0" y="0.0" width="345" height="38"/>
+                                                <color key="backgroundColor" name="AccentColor"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled">
+                                                    <attributedString key="attributedTitle">
+                                                        <fragment content="Login">
+                                                            <attributes>
+                                                                <font key="NSFont" size="20" name="AppleSDGothicNeo-Bold"/>
+                                                                <font key="NSOriginalFont" size="12" name="Helvetica"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="loginButtonTapped:" destination="gwe-Or-c1a" eventType="touchUpInside" id="V3R-D5-OeS"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cpq-07-WtR">
+                                                <rect key="frame" x="0.0" y="58" width="345" height="38"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled" image="ic_kakao_logo" imagePadding="5">
+                                                    <attributedString key="attributedTitle">
+                                                        <fragment content="카카오로 로그인">
+                                                            <attributes>
+                                                                <font key="NSFont" size="20" name="AppleSDGothicNeo-Bold"/>
+                                                                <font key="NSOriginalFont" size="12" name="Helvetica"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                    <color key="baseBackgroundColor" red="0.99607843137254903" green="0.89803921568627454" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="kakaoLoginButtonTapped:" destination="gwe-Or-c1a" eventType="touchUpInside" id="7Z0-ip-2hd"/>
+                                                </connections>
+                                            </button>
+                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aLW-tt-ffs">
+                                                <rect key="frame" x="0.0" y="106" width="345" height="0.0"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled" title="Google로 로그인"/>
+                                                <connections>
+                                                    <action selector="googleLoginButtonTapped:" destination="gwe-Or-c1a" eventType="touchUpInside" id="aiI-tu-iFx"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="skZ-1Q-Cv9">
+                                                <rect key="frame" x="0.0" y="116" width="345" height="38"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled">
+                                                    <attributedString key="attributedTitle">
+                                                        <fragment content="회원가입">
+                                                            <attributes>
+                                                                <font key="NSFont" size="20" name="AppleSDGothicNeo-Bold"/>
+                                                                <font key="NSOriginalFont" size="12" name="Helvetica"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="membershipButtonTapped:" destination="gwe-Or-c1a" eventType="touchUpInside" id="err-hT-95X"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rHs-e3-Rm0">
+                                                <rect key="frame" x="0.0" y="174" width="345" height="28.666666666666657"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled">
+                                                    <attributedString key="attributedTitle">
+                                                        <fragment content="아이디 / 비밀번호 찾기">
+                                                            <attributes>
+                                                                <font key="NSFont" size="12" name="AppleSDGothicNeo-Bold"/>
+                                                                <font key="NSOriginalFont" size="12" name="Helvetica"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="findIdPwdButtonTapped:" destination="gwe-Or-c1a" eventType="touchUpInside" id="ycr-Wb-fYs"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <view hidden="YES" alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="57Y-On-Vdc">
+                                <rect key="frame" x="0.0" y="118" width="393" height="666"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="B4q-UV-L91">
+                                        <rect key="frame" x="186" y="323" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="B4q-UV-L91" firstAttribute="centerY" secondItem="57Y-On-Vdc" secondAttribute="centerY" id="ugq-6d-5XN"/>
+                                    <constraint firstItem="B4q-UV-L91" firstAttribute="centerX" secondItem="57Y-On-Vdc" secondAttribute="centerX" id="zmT-oq-5SS"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="mcC-J3-bd9"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="mcC-J3-bd9" firstAttribute="trailing" secondItem="LGD-ZC-ond" secondAttribute="trailing" constant="24" id="0Iy-rJ-Itu"/>
+                            <constraint firstItem="LGD-ZC-ond" firstAttribute="centerY" secondItem="mcC-J3-bd9" secondAttribute="centerY" id="Ai5-jc-IgH"/>
+                            <constraint firstItem="DVL-7Z-sW7" firstAttribute="top" secondItem="mcC-J3-bd9" secondAttribute="top" id="CIJ-4n-DT0"/>
+                            <constraint firstItem="mcC-J3-bd9" firstAttribute="bottom" secondItem="DVL-7Z-sW7" secondAttribute="bottom" id="O56-hN-keb"/>
+                            <constraint firstItem="mcC-J3-bd9" firstAttribute="bottom" secondItem="57Y-On-Vdc" secondAttribute="bottom" id="WvN-ps-Zio"/>
+                            <constraint firstItem="LGD-ZC-ond" firstAttribute="centerX" secondItem="mcC-J3-bd9" secondAttribute="centerX" id="dXp-eL-33C"/>
+                            <constraint firstItem="DVL-7Z-sW7" firstAttribute="leading" secondItem="mcC-J3-bd9" secondAttribute="leading" id="fwr-VZ-h5q"/>
+                            <constraint firstItem="LGD-ZC-ond" firstAttribute="leading" secondItem="mcC-J3-bd9" secondAttribute="leading" constant="24" id="gXB-ND-4m8"/>
+                            <constraint firstItem="mcC-J3-bd9" firstAttribute="trailing" secondItem="DVL-7Z-sW7" secondAttribute="trailing" id="lEl-5M-M9l"/>
+                            <constraint firstItem="57Y-On-Vdc" firstAttribute="top" secondItem="mcC-J3-bd9" secondAttribute="top" id="q6s-DP-ZBR"/>
+                            <constraint firstItem="mcC-J3-bd9" firstAttribute="trailing" secondItem="57Y-On-Vdc" secondAttribute="trailing" id="r4h-ab-KkN"/>
+                            <constraint firstItem="57Y-On-Vdc" firstAttribute="leading" secondItem="mcC-J3-bd9" secondAttribute="leading" id="vP9-SV-D2M"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="B4q-UV-L91" id="Mcq-wK-IcC"/>
+                        <outlet property="backgroundImageView" destination="DVL-7Z-sW7" id="6r1-7w-FAV"/>
+                        <outlet property="contentStackView" destination="LGD-ZC-ond" id="3RS-nB-FtN"/>
+                        <outlet property="emailTextField" destination="r65-Yg-5Em" id="8uG-QO-qHg"/>
+                        <outlet property="findIdPwdButton" destination="rHs-e3-Rm0" id="iat-7J-eph"/>
+                        <outlet property="googleLoginButton" destination="aLW-tt-ffs" id="95R-cs-j2J"/>
+                        <outlet property="kakaoLoginButton" destination="Cpq-07-WtR" id="9qc-a9-dFW"/>
+                        <outlet property="loginButton" destination="oUl-gU-jTO" id="LyN-w6-Ap3"/>
+                        <outlet property="logoImageView" destination="WiK-la-uVt" id="TCk-Op-BQy"/>
+                        <outlet property="membershipButton" destination="skZ-1Q-Cv9" id="P5U-6K-aXI"/>
+                        <outlet property="passwordContainerView" destination="d8M-yJ-cLp" id="MVK-J5-tqd"/>
+                        <outlet property="passwordTextField" destination="7g7-xs-E8p" id="56G-A7-Xzd"/>
+                        <outlet property="progressOverlayView" destination="57Y-On-Vdc" id="yX2-ea-dgD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="N61-ik-xt9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-282" y="751"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="ic_kakao_logo" width="24" height="24"/>
+        <image name="login_bg" width="1080" height="1920"/>
+        <image name="logo3" width="1536" height="1024"/>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

@@ -10,8 +10,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
 
         //let mainVC = MainViewController()
+        //let mainVC = UIStoryboard(name: "Main", bundle: nil)
+        //    .instantiateViewController(withIdentifier: "DashboardVC")
+
         let mainVC = UIStoryboard(name: "Main", bundle: nil)
-            .instantiateViewController(withIdentifier: "DashboardVC")
+            .instantiateViewController(withIdentifier: "LoginVC")
+
+        
         let nav = UINavigationController(rootViewController: mainVC)
 
         let menuVC = MenuListViewController()
