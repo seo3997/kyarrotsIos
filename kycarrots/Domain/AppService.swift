@@ -62,6 +62,7 @@ final class AppService {
             appVersion: appVersion,
             providerUserId: providerUserId
         )
+        //print("🔥 temp = \(String(describing: res))")
         if let token = res?.token {
             NetworkConfig.accessToken = token
         }

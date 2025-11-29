@@ -33,7 +33,9 @@ class DashboardViewController: UITableViewController {
        print("VC type =", type(of: self))  //DashboardViewControllerTableViewController 나와야 함
        print("storyboard =", storyboard?.description as Any)
        print("headerCardView =", headerCardView as Any) // 여기서 nil이면 아래 1~4 진행
-       // 1) tableHeaderView로 ‘승격’
+       print("UserId =", LoginInfoUtil.getUserId())  
+
+        // 1) tableHeaderView로 ‘승격’
        let header = headerCardView!         // 로그상 nil 아님
        //header.removeFromSuperview()         // 혹시 TableView의 subview로 붙어있던 것 방지
        header.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 200)

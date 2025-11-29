@@ -19,15 +19,15 @@ struct LoginResponse: Decodable {
     let loginNm: String?
     let memberCode: String?
     let loginId: String?
-    let loginCd: String
-    let loginSocialId: String
-    let loginPwd: String
+    let loginCd: String?
+    let loginSocialId: String?
+    let loginPwd: String?
 
     enum CodingKeys: String, CodingKey {
         case resultCode      = "resultCode"
         case token           = "token"
         case loginIdx        = "login_idx"
-        case loginSi         = "login_si"
+        case loginSi         = "login_sis"
         case loginGu         = "login_gu"
         case loginSex        = "login_sex"
         case loginAge        = "login_age"

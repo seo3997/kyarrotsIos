@@ -27,7 +27,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var progressOverlayView: UIView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
-    
+    var selectedUserType: String = Constants.ROLE_SELL
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,6 +113,12 @@ class LoginViewController: UIViewController {
         findIdPwdButton.setFont(size: 20, weight: .bold)
     }
     
+    private func isValidEmail(_ email: String) -> Bool {
+        let pattern = #"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$"#
+        return email.range(of: pattern,
+                           options: [.regularExpression, .caseInsensitive]) != nil
+    }
+    
     func showLoading(_ show: Bool) {
         progressOverlayView.isHidden = !show
         if show {
@@ -121,13 +127,34 @@ class LoginViewController: UIViewController {
             activityIndicator.stopAnimating()
         }
     }
+    
+    private func startLoading() {
+        progressOverlayView.isHidden = false
+        activityIndicator.startAnimating()
+    }
 
+    private func stopLoading() {
+        activityIndicator.stopAnimating()
+        progressOverlayView.isHidden = true
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: nil,
+                                      message: message,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
+    
     @IBAction func loginButtonTapped(_ sender: UIButton) {
-        showLoading(true)
+        //showLoading(true)
+        chkLoginCondition()
         // 로그인 API 호출 예정
+        /*
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let dashboardVC = storyboard.instantiateViewController(withIdentifier: "DashboardVC")
         switchRoot(to: dashboardVC)
+        */
     }
 
     @IBAction func kakaoLoginButtonTapped(_ sender: UIButton) { }
@@ -137,4 +164,109 @@ class LoginViewController: UIViewController {
     @IBAction func membershipButtonTapped(_ sender: UIButton) { }
 
     @IBAction func findIdPwdButtonTapped(_ sender: UIButton) { }
+    
+    
+    private func chkLoginCondition() {
+        let email = (emailTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let pwd   = (passwordTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let memberCode = selectedUserType      // ROLE_SELL / ROLE_PUB / ROLE_PROJ
+
+        // 1) 이메일 공백 체크
+        if email.isEmpty {
+            showAlert(message: "이메일을 입력해 주세요.")   // str_input_id_err
+            return
+        }
+
+        // 2) 이메일 형식 체크
+        if !isValidEmail(email) {
+            showAlert(message: "이메일 형식이 올바르지 않습니다.")
+            return
+        }
+
+        // 3) 비밀번호 공백 체크
+        if pwd.isEmpty {
+            showAlert(message: "비밀번호를 입력해 주세요.") // str_input_pwd_err
+            return
+        }
+
+        // 4) 직거래앱 + 센터 로그인 방지
+        if memberCode == Constants.ROLE_PROJ && Constants.SYSTEM_TYPE == 1 {
+            showAlert(message: "직거래앱은 센터로 로그인 할 수 없습니다.")
+            return
+        }
+
+        // 5) 서버 로그인 호출
+        startLoading()
+
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+        let appService = AppServiceProvider.shared
+
+        let regId = LoginInfoUtil.getUserNo()
+        Task { [weak self] in
+            guard let self = self else { return }
+            defer { self.stopLoading() }
+
+            //throw 안 하는 async 함수이므로 try X, 그냥 await O
+            guard let response = await appService.login(
+                email: email,
+                password: pwd,
+                loginCd: "PWD",
+                regId: regId,
+                appVersion: appVersion,
+                providerUserId: ""
+            ) else {
+                // repo.login() 이 실패했거나 응답이 nil 이면 여기로
+                self.showAlert(message: "서버 통신 중 오류가 발생했습니다.")
+                return
+            }
+
+            // 여기서부터는 response 가 non-optional
+            let resultCode = response.resultCode   // ← LoginResponse 안에 resultCode(Int) 있다고 가정
+
+            switch resultCode {
+            case StaticDataInfo.RESULT_CODE_200:
+                print("로그인 성공: resultCode=\(resultCode)")
+
+                // 로그인 정보 저장 (필드 이름은 실제 모델에 맞게 수정)
+                LoginInfoUtil.saveLoginInfo(
+                    email: email,
+                    loginNo: response.loginIdx ?? "",
+                    password: pwd,
+                    memberCode: response.memberCode ?? "",
+                    loginNm: response.loginNm ?? "",
+                    loginCd: "PWD",
+                    loginSocialId: ""
+                )
+
+                if let token = response.token {
+                    TokenUtil.saveToken(token)
+                }
+
+               //지금은 화면 전환 안 함 (나중에 Intro 로)
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let dashboardVC = storyboard.instantiateViewController(withIdentifier: "DashboardVC")
+                switchRoot(to: dashboardVC)
+
+            case StaticDataInfo.RESULT_NO_USER,
+                 StaticDataInfo.RESULT_NO_DATA:
+                self.showAlert(message: "가입된 이메일을 찾을 수 없습니다.")
+
+            case StaticDataInfo.RESULT_MEMBER_CODE_ERR:
+                self.showAlert(message: "회원 유형이 올바르지 않습니다.")
+
+            case StaticDataInfo.RESULT_NO_SOCAIL_DATA:
+                self.showAlert(message: "소셜 계정 정보가 없습니다.")
+
+            case StaticDataInfo.RESULT_PWD_ERR:
+                self.showAlert(message: "비밀번호가 일치하지 않습니다.")
+
+            case StaticDataInfo.RESULT_CODE_ERR:
+                fallthrough
+            default:
+                self.showAlert(message: "서버 통신 중 오류가 발생했습니다.")
+            }
+        }
+        
+    }
+
 }

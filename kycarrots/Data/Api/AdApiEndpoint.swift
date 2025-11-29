@@ -3,12 +3,13 @@
 //  kycarrots
 //
 //  Created by soohyun on 11/27/25.
+//  Android AdApi 를 기준으로 iOS용 Endpoint 정의
 //
-
 
 import Foundation
 
 enum AdApiEndpoint: Endpoint {
+
     // 공통 코드
     case getCodeList(groupId: String)
     case getSCodeList(groupId: String, mcode: String)
@@ -196,26 +197,31 @@ enum AdApiEndpoint: Endpoint {
         }
     }
 
+    /// Retrofit의 @Query / @Field 에 해당하는 것들
     var query: [String : String]? {
         switch self {
+        // 공통 코드
         case let .getCodeList(groupId):
             return ["groupId": groupId]
 
         case let .getSCodeList(groupId, mcode):
             return ["groupId": groupId, "mcode": mcode]
 
+        // 상품 상세
         case let .getProductDetail(_, userNo):
             return ["userNo": String(userNo)]
 
         case let .deleteImageById(imageId):
             return ["imageId": imageId]
 
+        // 비밀번호/이메일 찾기
         case let .findPassword(mail):
             return ["mail": mail]
 
         case let .findEmail(name, phone):
             return ["nm": name, "hp": phone]
 
+        // 채팅 관련
         case let .createOrGetChatRoom(productId, buyerId, sellerId):
             return [
                 "productId": productId,
@@ -223,6 +229,18 @@ enum AdApiEndpoint: Endpoint {
                 "sellerId": sellerId
             ]
 
+        // 로그인 (Android @FormUrlEncoded @Field 그대로 매핑)
+        case let .login(email, password, loginCd, regId, appVersion, providerUserId):
+            return [
+                "id": email,
+                "pass": password,
+                "login_cd": loginCd,
+                "reg_id": regId,
+                "appver": appVersion,
+                "providerUserId": providerUserId
+            ]
+
+        // 토큰/페이지 기반 리스트
         case let .getInterestItems(token, pageNo),
              let .getPurchaseItems(token, pageNo):
             return [
@@ -243,6 +261,7 @@ enum AdApiEndpoint: Endpoint {
                 "sellerId": sellerId
             ]
 
+        // 도매상
         case let .getWholesalers(memberCode):
             return ["memberCode": memberCode]
 
@@ -255,39 +274,42 @@ enum AdApiEndpoint: Endpoint {
                 "wholesalerNo": wholesalerNo
             ]
 
+        // @FormUrlEncoded email-check / userinfo → query로 매핑
+        case let .checkEmailDuplicate(email):
+            return ["email": email]
+
+        case let .getUserInfoByToken(token):
+            return ["token": token]
+
         default:
             return nil
         }
     }
 
+    /// Retrofit의 @Body 에 해당하는 JSON Body
     var body: Encodable? {
         switch self {
         case let .getAdItems(req),
              let .getBuyAdItems(req):
             return req
 
+        // Multipart 는 ApiClient 에서 별도 처리
         case .registerAdvertise,
              .updateAdvertise:
-            return nil  // multipart 는 ApiClient에서 따로 처리 예정
+            return nil
 
-        case let .login(email, password, loginCd, regId, appVersion, providerUserId):
-            return LoginRequest(
-                id: email,
-                pass: password,
-                login_cd: loginCd,
-                reg_id: regId,
-                appver: appVersion,
-                providerUserId: providerUserId
-            )
+        // 로그인은 @FormUrlEncoded → query 로만 보내므로 body 없음
+        case .login:
+            return nil
 
-        case let .checkEmailDuplicate(email):
-            return EmailCheckRequest(email: email)
+        // @FormUrlEncoded 로 보내는 애들 → body 없음
+        case .checkEmailDuplicate,
+             .getUserInfoByToken:
+            return nil
 
+        // JSON Body 사용하는 것들
         case let .registerUser(user):
             return user
-
-        case let .getUserInfoByToken(token):
-            return TokenRequest(token: token)
 
         case let .registerPushToken(request):
             return request
@@ -320,22 +342,4 @@ enum AdApiEndpoint: Endpoint {
             return nil
         }
     }
-}
-
-// 요청 바디용 helper
-struct LoginRequest: Encodable {
-    let id: String
-    let pass: String
-    let login_cd: String
-    let reg_id: String
-    let appver: String
-    let providerUserId: String
-}
-
-struct EmailCheckRequest: Encodable {
-    let email: String
-}
-
-struct TokenRequest: Encodable {
-    let token: String
 }

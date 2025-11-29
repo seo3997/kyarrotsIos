@@ -2,9 +2,6 @@
 //  ApiClient.swift
 //  kycarrots
 //
-//  Created by soohyun on 11/27/25.
-//
-
 
 import Foundation
 
@@ -49,12 +46,45 @@ final class ApiClient {
             request.httpBody = try encoder.encode(AnyEncodable(body))
         }
 
+        // =================================================
+        // MARK: 🔥 공통 REQUEST LOG
+        // =================================================
+        #if DEBUG
+        print("\n================================================================")
+        print("➡️ [REQUEST] \(endpoint.method.rawValue) \(url.absoluteString)")
+        if let headers = request.allHTTPHeaderFields {
+            print("📝 Headers: \(headers)")
+        }
+        if let body = request.httpBody,
+           let bodyString = String(data: body, encoding: .utf8) {
+            print("📤 Body: \(bodyString)")
+        } else {
+            print("📤 Body: (none)")
+        }
+        print("================================================================\n")
+        #endif
+
         let (data, response): (Data, URLResponse)
         do {
             (data, response) = try await URLSession.shared.data(for: request)
         } catch {
             throw ApiError.unknown(error)
         }
+
+        // =================================================
+        // MARK: 🔥 공통 RESPONSE LOG
+        // =================================================
+        #if DEBUG
+        if let http = response as? HTTPURLResponse {
+            print("⬅️ [RESPONSE] \(http.statusCode) \(url.absoluteString)")
+        }
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("📦 JSON Response:\n\(jsonString)")
+        } else {
+            print("📦 Raw Data (non-UTF8, length: \(data.count))")
+        }
+        print("================================================================\n")
+        #endif
 
         guard let http = response as? HTTPURLResponse else {
             throw ApiError.requestFailed(statusCode: -1, data: data)
@@ -67,7 +97,7 @@ final class ApiClient {
         do {
             return try decoder.decode(T.self, from: data)
         } catch {
-            print("Decoding error:", error)
+            print("❌ Decoding error:", error)
             throw ApiError.decodingFailed
         }
     }
