@@ -46,7 +46,7 @@ class DashboardViewController: UITableViewController {
     /// "승인대기/처리 화면"으로 가는 버튼 – 안드로이드 btn_approval_product 대응
     @IBOutlet weak var btnApprovalProduct: UIButton!
 
-    /// 새매물 등록하기 버튼 하나만 노출시 spaceView 를 노출 시켜 1/2 버튼으로 보이게 한다.
+    /// 새매물 등록하기 버튼 하나만 노출시 spaceView 를 노출 시켜 1/2 버튼으로 보이게 한ㄷ
     @IBOutlet weak var spaceView: UIView!
 
     private var noDataCardView: UIView!
@@ -155,7 +155,6 @@ class DashboardViewController: UITableViewController {
             btnAddProduct.isHidden = false
             btnApprovalProduct.isHidden = true
         }
-        spaceView.isHidden = !btnApprovalProduct.isHidden
     }
     
     // MARK: - Actions
