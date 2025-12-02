@@ -141,20 +141,20 @@ final class RemoteRepository {
     }
 
     // MARK: - 대시보드 / 최근 본 상품
-    func getProductDashboard(token: String) async throws -> [AdItem] {
+    func getProductDashboard(token: String) async throws -> [String: Int] {
         try await api.request(
             AdApiEndpoint.getProductDashboard(token: token),
-            as: AdResponse.self
-        ).items
+            as: [String: Int].self
+        )
     }
-
-    func getRecentProducts(token: String) async throws -> [AdItem] {
+    
+    func getRecentProducts(token: String) async throws -> [ProductVo] {
         try await api.request(
             AdApiEndpoint.getRecentProducts(token: token),
-            as: AdResponse.self
-        ).items
+            as: [ProductVo].self
+        )
     }
-
+    
     // MARK: - 상품 상태 변경
     func updateProductStatus(token: String, product: ProductItem) async throws -> SimpleResultResponse {
         try await api.request(

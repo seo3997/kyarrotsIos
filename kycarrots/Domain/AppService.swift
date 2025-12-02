@@ -91,11 +91,11 @@ final class AppService {
     }
 
     // 대시보드
-    func getProductDashboard(token: String) async -> [AdItem] {
-        (try? await repo.getProductDashboard(token: token)) ?? []
+    func getProductDashboard(token: String) async throws -> [String: Int] {
+        try await repo.getProductDashboard(token: token)
     }
-
-    func getRecentProducts(token: String) async -> [AdItem] {
+    
+    func getRecentProducts(token: String) async -> [ProductVo] {
         (try? await repo.getRecentProducts(token: token)) ?? []
     }
 

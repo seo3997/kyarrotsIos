@@ -65,6 +65,19 @@ final class RecentProductCell: UITableViewCell {
 
     @objc private func tapButton() { onTapButton?() }
 
+    func configure(title: String, subInfo: String, statusText: String?) {
+            titleLabel.text = title
+            subLabel.text = subInfo
+
+            if let statusText = statusText, !statusText.isEmpty {
+                actionButton.setTitle(statusText, for: .normal)
+                actionButton.isHidden = false
+            } else {
+                actionButton.setTitle("승인요청", for: .normal)
+                actionButton.isHidden = false
+            }
+    }
+
     func configure(title: String, subInfo: String) {
         titleLabel.text = title
         subLabel.text = subInfo

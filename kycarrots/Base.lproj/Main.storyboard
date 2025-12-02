@@ -61,7 +61,7 @@
                                                             <rect key="frame" x="0.0" y="60.333333333333329" width="329" height="35"/>
                                                             <subviews>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S1Q-H4-ZOE">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="218.66666666666666" height="35"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="160.66666666666666" height="35"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="35" id="7TK-6h-ztW"/>
                                                                     </constraints>
@@ -69,8 +69,15 @@
                                                                         <color key="baseBackgroundColor" red="0.37254901960784315" green="0.33725490196078434" blue="0.49411764705882355" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     </buttonConfiguration>
                                                                 </button>
-                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zMB-S2-PXS">
-                                                                    <rect key="frame" x="226.66666666666671" y="0.0" width="102.33333333333334" height="35"/>
+                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bXG-4r-rUz">
+                                                                    <rect key="frame" x="168.66666666666663" y="0.0" width="160.33333333333337" height="35"/>
+                                                                    <state key="normal" title="Button"/>
+                                                                    <buttonConfiguration key="configuration" style="filled" title="승인하기">
+                                                                        <color key="baseBackgroundColor" red="0.37254901959999998" green="0.33725490200000002" blue="0.4941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    </buttonConfiguration>
+                                                                </button>
+                                                                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zMB-S2-PXS">
+                                                                    <rect key="frame" x="329" y="0.0" width="0.0" height="35"/>
                                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 </view>
                                                             </subviews>
@@ -221,7 +228,14 @@
                     </tableView>
                     <connections>
                         <outlet property="CardView" destination="R7U-kW-n4s" id="kZh-wL-0gs"/>
+                        <outlet property="btnAddProduct" destination="S1Q-H4-ZOE" id="jzz-1t-TEV"/>
+                        <outlet property="btnApprovalProduct" destination="bXG-4r-rUz" id="LgX-OH-3ou"/>
+                        <outlet property="cardView" destination="R7U-kW-n4s" id="4or-Io-ju1"/>
                         <outlet property="headerCardView" destination="ZfI-Aw-uLZ" id="MIa-VP-nwt"/>
+                        <outlet property="lblMore" destination="9g3-eJ-LIn" id="Lbb-zt-Tkm"/>
+                        <outlet property="lblStats" destination="g1G-U8-uTV" id="5cP-7B-Zz0"/>
+                        <outlet property="lblTotalProducts" destination="AKG-ft-lrV" id="0QJ-tm-Rsj"/>
+                        <outlet property="spaceView" destination="zMB-S2-PXS" id="UtD-4c-5O5"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="no5-3X-V6d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
