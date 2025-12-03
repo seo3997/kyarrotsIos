@@ -458,6 +458,51 @@
             </objects>
             <point key="canvasLocation" x="-282" y="751"/>
         </scene>
+        <!--게시판-->
+        <scene sceneID="HEV-ku-bk3">
+            <objects>
+                <viewController storyboardIdentifier="WebVC" title="게시판" id="ZqK-wG-TZS" customClass="WebViewController" customModule="kycarrots" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="LgS-yS-697">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="YXd-uz-N2N">
+                                <rect key="frame" x="0.0" y="118" width="393" height="2"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="2" id="32R-3w-xCm"/>
+                                </constraints>
+                            </progressView>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A7Z-Da-WVy">
+                                <rect key="frame" x="0.0" y="120" width="393" height="664"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="3wE-sA-SZU"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="A7Z-Da-WVy" firstAttribute="top" secondItem="YXd-uz-N2N" secondAttribute="bottom" id="1a3-Eu-nko"/>
+                            <constraint firstItem="A7Z-Da-WVy" firstAttribute="leading" secondItem="3wE-sA-SZU" secondAttribute="leading" id="GVS-hO-duH"/>
+                            <constraint firstItem="3wE-sA-SZU" firstAttribute="bottom" secondItem="A7Z-Da-WVy" secondAttribute="bottom" id="Qc3-q3-0yo"/>
+                            <constraint firstItem="3wE-sA-SZU" firstAttribute="trailing" secondItem="A7Z-Da-WVy" secondAttribute="trailing" id="W6C-gB-ICn"/>
+                            <constraint firstItem="YXd-uz-N2N" firstAttribute="leading" secondItem="3wE-sA-SZU" secondAttribute="leading" id="p6p-3h-uhK"/>
+                            <constraint firstItem="3wE-sA-SZU" firstAttribute="trailing" secondItem="YXd-uz-N2N" secondAttribute="trailing" id="tfF-27-fwm"/>
+                            <constraint firstItem="YXd-uz-N2N" firstAttribute="top" secondItem="3wE-sA-SZU" secondAttribute="top" id="uvr-OL-1yr"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="4gK-Er-d0V"/>
+                    <connections>
+                        <outlet property="progressView" destination="YXd-uz-N2N" id="KLe-Bk-ycr"/>
+                        <outlet property="webView" destination="A7Z-Da-WVy" id="qZQ-95-hXN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="t7L-1I-X5g" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1556.4885496183206" y="761.97183098591552"/>
+        </scene>
     </scenes>
     <resources>
         <image name="ic_kakao_logo" width="24" height="24"/>

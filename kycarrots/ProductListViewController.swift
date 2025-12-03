@@ -67,6 +67,7 @@ final class ProductListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        addLeftMenuButton() 
         title = "상품리스트"
         view.backgroundColor = .systemBackground
         print("VC type =", type(of: self))  //DashboardViewControllerTableViewController 나와야 함

@@ -75,6 +75,7 @@ final class SettingsViewController: UIViewController {
     // MARK: - Life
     override func viewDidLoad() {
         super.viewDidLoad()
+        addLeftMenuButton()
         title = "프로필 / 설정"
         view.backgroundColor = .systemBackground
         setupLayout()

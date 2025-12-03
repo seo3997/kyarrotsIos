@@ -1,4 +1,5 @@
 import UIKit
+import SideMenu
 
 extension UIViewController {
 
@@ -25,4 +26,25 @@ extension UIViewController {
                               completion: nil)
         }
     }
+    
+    /// 모든 화면에서 '뒤로가기 제거 + 햄버거 버튼' 표시
+      func addLeftMenuButton() {
+
+          // 자동 뒤로가기 버튼 숨김
+          navigationItem.hidesBackButton = true
+
+          // 햄버거 버튼 추가
+          let button = UIBarButtonItem(
+              image: UIImage(systemName: "line.3.horizontal"),
+              style: .plain,
+              target: self,
+              action: #selector(openSideMenu)
+          )
+          navigationItem.leftBarButtonItem = button
+      }
+
+      @objc private func openSideMenu() {
+          guard let menuNav = SideMenuManager.default.leftMenuNavigationController else { return }
+          present(menuNav, animated: true)
+      }
 }

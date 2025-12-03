@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SideMenu
 
 // 안드로이드에서 RecentProductAdapter가 화면에 보여주는 문자열만 따로 빼놓은 뷰모델 역할
 // (title: "배추 500kg …", subInfo: "지역 / 희망 발송일", statusName: "처리중" 등)
@@ -65,14 +64,17 @@ class DashboardViewController: UITableViewController {
         super.viewDidLoad()
         
         title = "대시보드"
+        addLeftMenuButton()
         
         // 햄버거 메뉴 버튼 (SideMenu)
+        /*
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "line.3.horizontal"),
             style: .plain,
             target: self,
             action: #selector(didTapHamburger)
         )
+        */
         
         print("VC type =", type(of: self))
         print("storyboard =", storyboard?.description as Any)
@@ -158,12 +160,13 @@ class DashboardViewController: UITableViewController {
     }
     
     // MARK: - Actions
-    
+    /*
     @objc private func didTapHamburger() {
         if let menu = SideMenuManager.default.leftMenuNavigationController {
             present(menu, animated: true, completion: nil)
         }
     }
+    */
     
     @objc private func didTapMore() {
         // 안드로이드: startActivity(Intent(this, MainActivity::class.java))
