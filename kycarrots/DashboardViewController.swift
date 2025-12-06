@@ -334,7 +334,7 @@ class DashboardViewController: UITableViewController {
             let name = "\(w.userNm ?? "")(\(w.userNo ?? "0"))"
             alert.addAction(UIAlertAction(title: name, style: .default, handler: { [weak self] _ in
                 guard let self = self else { return }
-                self.setDefaultWholesalerAndMove(userId: userId, wholesalerNo: String(w.userNo!))
+                self.setDefaultWholesalerAndMove(userId: userId, wholesalerNo: w.userNo!)
             }))
         }
         
