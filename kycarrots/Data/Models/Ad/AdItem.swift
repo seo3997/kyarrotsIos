@@ -9,10 +9,10 @@
 import Foundation
 
 struct AdItem: Decodable {
-    let productId: String
-    let title: String
-    let description: String
-    let price: String
-    let imageUrl: String
-    let userId: String
+    let productId: String?
+    let title: String?
+    let description: String?
+    let price: String?
+    let imageUrl: String?
+    let userId: String?
 }

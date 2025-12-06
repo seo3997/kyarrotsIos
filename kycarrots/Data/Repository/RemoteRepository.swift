@@ -31,16 +31,16 @@ final class RemoteRepository {
     }
 
     // MARK: - 광고 리스트
-    func getAdItems(req: AdListRequest) async throws -> AdResponse {
+    func getAdvertiseList(req: AdListRequest) async throws -> AdResponse {
         try await api.request(
-            AdApiEndpoint.getAdItems(req: req),
+            AdApiEndpoint.getAdvertiseList(req: req),
             as: AdResponse.self
         )
     }
 
-    func getBuyAdItems(req: AdListRequest) async throws -> AdResponse {
+    func getBuyAdvertiseList(req: AdListRequest) async throws -> AdResponse {
         try await api.request(
-            AdApiEndpoint.getBuyAdItems(req: req),
+            AdApiEndpoint.getBuyAdvertiseList(req: req),
             as: AdResponse.self
         )
     }

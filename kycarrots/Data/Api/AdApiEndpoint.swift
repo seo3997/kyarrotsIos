@@ -15,8 +15,8 @@ enum AdApiEndpoint: Endpoint {
     case getSCodeList(groupId: String, mcode: String)
 
     // 광고 리스트
-    case getAdItems(req: AdListRequest)
-    case getBuyAdItems(req: AdListRequest)
+    case getAdvertiseList(req: AdListRequest)
+    case getBuyAdvertiseList(req: AdListRequest)
 
     // 광고 등록 / 수정 (Multipart → 나중에 별도 처리)
     case registerAdvertise(
@@ -96,9 +96,9 @@ enum AdApiEndpoint: Endpoint {
         case .getSCodeList:
             return "api/common/sCodeList"
 
-        case .getAdItems:
+        case .getAdvertiseList:
             return "api/product"
-        case .getBuyAdItems:
+        case .getBuyAdvertiseList:
             return "api/product/buyListAdvertise"
 
         case .registerAdvertise:
@@ -289,8 +289,8 @@ enum AdApiEndpoint: Endpoint {
     /// Retrofit의 @Body 에 해당하는 JSON Body
     var body: Encodable? {
         switch self {
-        case let .getAdItems(req),
-             let .getBuyAdItems(req):
+        case let .getAdvertiseList(req),
+             let .getBuyAdvertiseList(req):
             return req
 
         // Multipart 는 ApiClient 에서 별도 처리

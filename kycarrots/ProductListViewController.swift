@@ -1,8 +1,9 @@
 import UIKit
 
-// 판매 상태 정의 (네 프로젝트 코드값 반영)
+// 안드로이드 코드의 상태코드 기준으로 UI 라벨만 담당
+// (실제 API에는 saleStatus "1","10","99","98" 같은 코드가 넘어감)
 enum SaleStatus: Int, CaseIterable {
-    case rejected = 98      // 승인반려(반려)
+    case rejected = 98      // 승인반려(또는 반려)
     case onSale  = 1        // 판매중
     case reserved = 10      // 예약중
     case soldOut = 99       // 판매완료
@@ -15,78 +16,87 @@ enum SaleStatus: Int, CaseIterable {
         case .soldOut:  return "판매완료"
         }
     }
-}
 
-// 간단한 상품 모델 (필요에 맞춰 확장)
-struct Product {
-    let id: String
-    let name: String
-    let price: Int
-    let status: SaleStatus
+    /// 서버에 넘길 saleStatus 코드
+    var apiCode: String {
+        switch self {
+        case .rejected: return "0"   // 필요시 "0" 으로 바꾸면 됨
+        case .onSale:   return "1"
+        case .reserved: return "10"
+        case .soldOut:  return "99"
+        }
+    }
 }
 
 final class ProductListViewController: UIViewController {
+
+    // MARK: - Dependencies
+    private let appService = AppServiceProvider.shared   // 안드로이드 AppService와 동일 역할
+
+    // MARK: - UI
+    private lazy var segmented: UISegmentedControl = {
+        // 필요하면 SYSTEM_TYPE에 따라 탭 개수 조절할 수 있음
+        let seg = UISegmentedControl(items: SaleStatus.allCases.map { $0.title })
+        seg.selectedSegmentIndex = 0   // 기본: 판매중
+        seg.addTarget(self, action: #selector(segChanged), for: .valueChanged)
+        return seg
+    }()
+
+    private let tableView = UITableView(frame: .zero, style: .plain)
+    private var refresh = UIRefreshControl()
     private let floatingButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = UIColor.systemBlue
         button.tintColor = .white
         button.setImage(UIImage(systemName: "plus"), for: .normal)
-        button.layer.cornerRadius = 28  // 버튼 크기 56 → 안드로이드 FAB 동일
+        button.layer.cornerRadius = 28
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOpacity = 0.3
         button.layer.shadowOffset = CGSize(width: 0, height: 3)
         button.layer.shadowRadius = 4
         return button
     }()
-    
-    // 상단 탭(세그먼트)
-    private lazy var segmented: UISegmentedControl = {
-        let seg = UISegmentedControl(items: SaleStatus.allCases.map { $0.title })
-        seg.selectedSegmentIndex = 1 // 기본: 판매중
-        seg.addTarget(self, action: #selector(segChanged), for: .valueChanged)
-        return seg
-    }()
 
-    // 목록 테이블
-    private let tableView = UITableView(frame: .zero, style: .plain)
-    private var refresh = UIRefreshControl()
+    // 로딩 인디케이터 (상단 스피너)
+    private let loadingView = UIActivityIndicatorView(style: .medium)
 
-    // 전체 상품 (보통은 API 응답으로 채움)
-    private var allProducts: [Product] = []
+    // MARK: - Paging & Data
+    private var items: [AdItem] = []          // 실제 API 응답 리스트
+    private var pageNo: Int = 1
+    private var isLoading: Bool = false
+    private var isLastPage: Bool = false
 
-    // 현재 선택된 상태
     private var currentStatus: SaleStatus {
         SaleStatus.allCases[segmented.selectedSegmentIndex]
     }
 
-    // 현재 상태의 필터링 결과
-    private var filtered: [Product] {
-        allProducts.filter { $0.status == currentStatus }
+    private var currentSaleStatusCode: String {
+        currentStatus.apiCode
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        addLeftMenuButton() 
-        title = "상품리스트"
+        addLeftMenuButton()
+        title = "내 등록 매물"
         view.backgroundColor = .systemBackground
-        print("VC type =", type(of: self))  //DashboardViewControllerTableViewController 나와야 함
-        print("storyboard =", storyboard?.description as Any)
 
         setupLayout()
-        setupFloatingButton()
         setupTable()
-        fetchProducts() // 최초 로드(데모 데이터)
-        // 기본 탭을 "판매중"으로 하고 싶으면 위 selectedSegmentIndex = 1 유지
+        setupFloatingButton()
+        setupLoadingView()
+
+        // 첫 로드
+        fetchProducts(isRefresh: true)
     }
 
-    private func setupLayout() {
-        // 상단 탭
-        view.addSubview(segmented)
-        segmented.translatesAutoresizingMaskIntoConstraints = false
+    // MARK: - Layout
 
-        // 테이블
+    private func setupLayout() {
+        view.addSubview(segmented)
         view.addSubview(tableView)
+
+        segmented.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
@@ -104,54 +114,19 @@ final class ProductListViewController: UIViewController {
     private func setupTable() {
         tableView.dataSource = self
         tableView.delegate = self
-        //tableView.rowHeight = 60
 
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 100
-        
+
         tableView.register(
-              UINib(nibName: "ProductTableViewCell", bundle: nil),
-              forCellReuseIdentifier: ProductTableViewCell.reuseIdentifier
-          )
+            UINib(nibName: "ProductTableViewCell", bundle: nil),
+            forCellReuseIdentifier: ProductTableViewCell.reuseIdentifier
+        )
+
         refresh.addTarget(self, action: #selector(onRefresh), for: .valueChanged)
         tableView.refreshControl = refresh
     }
 
-    // 탭 변경 시 리스트 갱신
-    @objc private func segChanged() {
-        tableView.reloadData()
-        scrollToTopIfNeeded()
-    }
-
-    @objc private func onRefresh() {
-        // TODO: 실제 API 재호출
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            self.refresh.endRefreshing()
-            self.tableView.reloadData()
-        }
-    }
-
-    private func scrollToTopIfNeeded() {
-        guard tableView.numberOfRows(inSection: 0) > 0 else { return }
-        tableView.setContentOffset(.zero, animated: true)
-    }
-
-    // MARK: - 데모용 데이터 로딩 (실제에선 API 연동)
-    private func fetchProducts() {
-        // 예시 데이터(상태 골고루)
-        allProducts = [
-            .init(id: "P001", name: "꿀사과 5kg",   price: 25000, status: .onSale),
-            .init(id: "P002", name: "청포도 2kg",   price: 18000, status: .reserved),
-            .init(id: "P003", name: "한우 1+ 등심", price: 98000, status: .soldOut),
-            .init(id: "P004", name: "유기농 상추",   price: 3500,  status: .rejected),
-            .init(id: "P005", name: "방울토마토",    price: 7900,  status: .onSale),
-            .init(id: "P006", name: "감자 10kg",     price: 19000, status: .reserved),
-            .init(id: "P007", name: "고구마 5kg",    price: 17000, status: .onSale),
-            .init(id: "P008", name: "표고버섯 1kg",  price: 22000, status: .rejected),
-        ]
-        tableView.reloadData()
-    }
-    
     private func setupFloatingButton() {
         view.addSubview(floatingButton)
 
@@ -164,19 +139,103 @@ final class ProductListViewController: UIViewController {
 
         floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
     }
-    
+
+    private func setupLoadingView() {
+        loadingView.hidesWhenStopped = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: loadingView)
+    }
+
+    // MARK: - Actions
+
+    @objc private func segChanged() {
+        // 탭 변경 시 현재 상태 기준으로 처음부터 다시 로드
+        fetchProducts(isRefresh: true)
+    }
+
+    @objc private func onRefresh() {
+        fetchProducts(isRefresh: true)
+    }
+
     @objc private func floatingButtonTapped() {
-        print("Floating button tapped!")
-        // 여기에 상품등록 화면 이동 넣으면 됨
+        print("Floating button tapped - 상품 등록 화면으로 이동 예정")
+        // TODO: 안드로이드 MakeADMainActivity 대응 iOS 화면으로 push/present
+    }
+
+    // MARK: - API 연동 (안드로이드 AdListFragment.fetchAdvertiseList 대응)
+
+    private func fetchProducts(isRefresh: Bool = false) {
+        if isLoading { return }
+        if !isRefresh && isLastPage { return }
+
+        isLoading = true
+        loadingView.startAnimating()
+
+        if isRefresh {
+            pageNo = 1
+            isLastPage = false
+            items.removeAll()
+            tableView.reloadData()
+            tableView.setContentOffset(.zero, animated: false)
+        }
+
+        let token = TokenUtil.getToken()
+        let memberCode = LoginInfoUtil.getMemberCode()
+
+        guard !token.isEmpty else {
+            print("토큰 없음 → 로그인 필요")
+            isLoading = false
+            loadingView.stopAnimating()
+            return
+        }
+
+        let req = AdListRequest(
+            token: token,
+            adCode: 1,
+            pageno: pageNo,
+            saleStatus: currentSaleStatusCode,
+            memberCode: memberCode
+        )
+
+        Task {
+            do {
+                let ads = try await appService.getAdvertiseList(req: req)   // [AdItem] 반환 가정
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+
+                    if ads.isEmpty {
+                        self.isLastPage = true
+                        if self.pageNo == 1 {
+                            self.tableView.setEmptyMessage("해당 상태의 상품이 없습니다.")
+                        } else {
+                            self.tableView.restore()
+                        }
+                    } else {
+                        self.tableView.restore()
+                        self.items.append(contentsOf: ads)
+                        self.pageNo += 1
+                    }
+                    self.tableView.reloadData()
+                }
+            } catch {
+                print("getAdvertiseList 실패: \(error)")
+            }
+
+            await MainActor.run { [weak self] in
+                self?.isLoading = false
+                self?.loadingView.stopAnimating()
+                self?.refresh.endRefreshing()
+            }
+        }
     }
 }
 
 // MARK: - UITableViewDataSource
+
 extension ProductListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let count = filtered.count
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        let count = items.count
         if count == 0 {
-            // 빈 상태 표시 (간단)
             tableView.setEmptyMessage("해당 상태의 상품이 없습니다.")
         } else {
             tableView.restore()
@@ -186,18 +245,13 @@ extension ProductListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = filtered[indexPath.row]
-        /*
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
-            ?? UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
-        cell.textLabel?.text = item.name
-        cell.detailTextLabel?.text = "₩\(item.price.formatted()) • \(item.status.title)"
-        */
-        let cell = tableView.dequeueReusableCell(
-                withIdentifier: ProductTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! ProductTableViewCell
 
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: ProductTableViewCell.reuseIdentifier,
+            for: indexPath
+        ) as! ProductTableViewCell
+
+        let item = items[indexPath.row]
         cell.configure(with: item)
         cell.accessoryType = .disclosureIndicator
         return cell
@@ -205,24 +259,45 @@ extension ProductListViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
+
 extension ProductListViewController: UITableViewDelegate {
+
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let item = filtered[indexPath.row]
+        let item = items[indexPath.row]
+
+        // TODO: 안드로이드 AdDetailActivity 대응 상세화면으로 이동
+        // 예시:
+        /*
+        let vc = ProductDetailViewController(
+            productId: item.productId,
+            userId: item.userId,
+            imageUrl: item.imageUrl
+        )
+        navigationController?.pushViewController(vc, animated: true)
+        */
+
         let vc = UIViewController()
         vc.view.backgroundColor = .systemBackground
-        vc.title = item.name
-
-        // TODO: 실제 상세 VC로 교체
-        // let vc = ProductDetailViewController(productId: item.id)
-
+        vc.title = item.title ?? "상품 상세"
         navigationController?.pushViewController(vc, animated: true)
+    }
+
+    // 페이징: 마지막 근처 셀 표시될 때 다음 페이지 로드
+    func tableView(_ tableView: UITableView,
+                   willDisplay cell: UITableViewCell,
+                   forRowAt indexPath: IndexPath) {
+        let threshold = items.count - 5
+        if indexPath.row >= threshold {
+            fetchProducts()
+        }
     }
 }
 
-// MARK: - 테이블 Empty State 유틸
+// MARK: - 테이블 Empty State 유틸 (기존 코드 재사용)
+
 private extension UITableView {
     func setEmptyMessage(_ message: String) {
         let label = UILabel()

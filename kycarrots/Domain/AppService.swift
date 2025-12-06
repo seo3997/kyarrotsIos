@@ -16,13 +16,13 @@ final class AppService {
     }
 
     // 광고 리스트
-    func getAdItems(req: AdListRequest) async -> [AdItem] {
-        do { return try await repo.getAdItems(req: req).items }
+    func getAdvertiseList(req: AdListRequest) async -> [AdItem] {
+        do { return try await repo.getAdvertiseList(req: req).items }
         catch { return [] }
     }
 
-    func getBuyAdItems(req: AdListRequest) async -> [AdItem] {
-        do { return try await repo.getBuyAdItems(req: req).items }
+    func getBuyAdvertiseList(req: AdListRequest) async -> [AdItem] {
+        do { return try await repo.getBuyAdvertiseList(req: req).items }
         catch { return [] }
     }
 
