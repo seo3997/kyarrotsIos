@@ -1,6 +1,13 @@
 import UIKit
 
+
+// MARK: - Settings 화면
+
 final class SettingsViewController: UIViewController {
+
+    // MARK: - Dependencies
+    // Android: AppServiceProvider.getService() 와 동일한 역할
+    private let appService = AppServiceProvider.shared
 
     // MARK: - UI
     private let scrollView = UIScrollView()
@@ -75,20 +82,18 @@ final class SettingsViewController: UIViewController {
     // MARK: - Life
     override func viewDidLoad() {
         super.viewDidLoad()
-        addLeftMenuButton()
+        addLeftMenuButton()              // 기존 햄버거 버튼 사용
         title = "프로필 / 설정"
         view.backgroundColor = .systemBackground
         setupLayout()
         setupActions()
-        loadDemoData()
+
+        // 안드로이드 loadUserInfo() 와 같은 역할
+        loadUserInfo()
     }
 
     // MARK: - Layout
     private func setupLayout() {
-        // 네비게이션 바 뒤로가기 버튼은 상위 VC에서 자동 제공(혹은 아래 라인으로 수동 아이템)
-        // navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(tapBack))
-
-        // Scroll + content
         view.addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -169,12 +174,40 @@ final class SettingsViewController: UIViewController {
         logoutButton.addTarget(self, action: #selector(tapLogout), for: .touchUpInside)
     }
 
-    private func loadDemoData() {
-        // 데모 데이터 (실제 데이터 바인딩 지점)
-        userIdLabel.text   = "아이디: soohyoun"
-        userNameLabel.text = "이름: 서수현"
-        userTelLabel.text  = "연락처: 010-1234-5678"
-        userAddrLabel.text = "주소: 경기도 수원시 팔달구 …"
+    // MARK: - Android loadUserInfo 대응
+
+    private func loadUserInfo() {
+        // ✅ TokenUtil 사용 (Android: SharedPreferences("TokenInfo").getString("token", ""))
+        let token = TokenUtil.getToken()
+        guard !token.isEmpty else {
+            print("토큰 없음 - 로그인 화면으로 보낼지 확인 필요")
+            return
+        }
+
+        Task {
+            do {
+                if let userInfo = try await appService.getUserInfoByToken(token: token) {
+                    await MainActor.run { [weak self] in
+                        self?.bindUserInfo(userInfo)
+                    }
+                } else {
+                    print("userInfo nil → 로그아웃 처리 or 로그인 화면 이동 필요")
+                }
+            } catch {
+                print("getUserInfo 실패:", error)
+            }
+        }
+    }
+
+    private func bindUserInfo(_ info: OpUserVO) {
+        userIdLabel.text   = "아이디: \(info.userId ?? "")"
+        userNameLabel.text = "이름: \(info.userNm ?? "")"
+        userTelLabel.text  = "연락처: \(info.cttpc ?? "")"
+
+        let addr1 = info.areaCodeNm ?? ""
+        let addr2 = info.areaSeCodeSNm ?? ""
+        let addrJoined = [addr1, addr2].filter { !$0.isEmpty }.joined(separator: " ")
+        userAddrLabel.text = "주소: \(addrJoined)"
     }
 
     // MARK: - Actions
@@ -187,17 +220,29 @@ final class SettingsViewController: UIViewController {
     }
 
     @objc private func tapLogout() {
-        // TODO: 실제 로그아웃 로직(토큰 삭제, 초기화면 이동 등)
-        let alert = UIAlertController(title: "로그아웃", message: "정말 로그아웃 하시겠어요?", preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: "로그아웃",
+            message: "정말 로그아웃 하시겠어요?",
+            preferredStyle: .alert
+        )
+
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+
         alert.addAction(UIAlertAction(title: "로그아웃", style: .destructive, handler: { _ in
-            print("로그아웃 처리")
+            // ✅ 안드로이드의 AuthManager.logout(this) 에 해당
+            //    - 로그인 정보 클리어
+            LoginInfoUtil.clearLoginInfo()
+            //    - 토큰 클리어
+            TokenUtil.clearToken()
+
+            // 필요하면 여기서 소켓 종료, 캐시 삭제 등 추가 작업
+
+            // ✅ 로그인 화면으로 루트 전환
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginVC")
             self.switchRoot(to: loginVC)
-
-            self.navigationController?.popToRootViewController(animated: true)
         }))
+
         present(alert, animated: true)
     }
 
