@@ -270,6 +270,16 @@ extension ProductListViewController: UITableViewDelegate {
 
         // TODO: 안드로이드 AdDetailActivity 대응 상세화면으로 이동
         // 예시:
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "ProductDetailVC") as! ProductDetailViewController
+        vc.title = item.title ?? "상품 상세"
+        vc.productTitle = "맛있는 딸기 5kg"
+        vc.productPriceText = "₩ 25,000"
+        vc.productAreaText = "경기도 수원시"
+        vc.productStatusText = "판매중"
+
+        navigationController?.pushViewController(vc, animated: true)
+        
         /*
         let vc = ProductDetailViewController(
             productId: item.productId,
@@ -278,11 +288,12 @@ extension ProductListViewController: UITableViewDelegate {
         )
         navigationController?.pushViewController(vc, animated: true)
         */
-
+        /*
         let vc = UIViewController()
         vc.view.backgroundColor = .systemBackground
         vc.title = item.title ?? "상품 상세"
         navigationController?.pushViewController(vc, animated: true)
+        */
     }
 
     // 페이징: 마지막 근처 셀 표시될 때 다음 페이지 로드
