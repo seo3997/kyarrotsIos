@@ -25,6 +25,16 @@ final class AppService {
         do { return try await repo.getBuyAdvertiseList(req: req).items }
         catch { return [] }
     }
+    
+    // 코드 리스트 조회
+    func getCodeList(groupId: String) async -> [TxtListDataInfo] {
+        (try? await repo.getCodeList(groupId: groupId)) ?? []
+    }
+
+    // 코드(서브) 리스트 조회
+    func getSCodeList(groupId: String, mcode: String) async -> [TxtListDataInfo] {
+        (try? await repo.getSCodeList(groupId: groupId, mcode: mcode)) ?? []
+    }
 
     // 상품 상세
     func getProductDetail(productId: Int64, userNo: Int64) async -> ProductDetailResponse? {

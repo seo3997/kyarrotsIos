@@ -46,8 +46,8 @@
             filePath = "kycarrots/Domain/AppService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
             landmarkName = "login(email:password:loginCd:regId:appVersion:providerUserId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -172,22 +172,6 @@
                   endingLineNumber = "189">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "17B30D22-FDA5-4458-8B4C-EDFD984896E9"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "kycarrots/Ui/ProductDetailViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
-            landmarkName = "ProductDetailViewController"
-            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

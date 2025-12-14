@@ -16,17 +16,17 @@ final class RemoteRepository {
     }
 
     // MARK: - 코드 리스트
-    func getCodeList(groupId: String) async throws -> [StringResponse] {
+    func getCodeList(groupId: String) async throws -> [TxtListDataInfo] {
         try await api.request(
             AdApiEndpoint.getCodeList(groupId: groupId),
-            as: [StringResponse].self
+            as: [TxtListDataInfo].self
         )
     }
 
-    func getSCodeList(groupId: String, mcode: String) async throws -> [StringResponse] {
+    func getSCodeList(groupId: String, mcode: String) async throws -> [TxtListDataInfo] {
         try await api.request(
             AdApiEndpoint.getSCodeList(groupId: groupId, mcode: mcode),
-            as: [StringResponse].self
+            as: [TxtListDataInfo].self
         )
     }
 
