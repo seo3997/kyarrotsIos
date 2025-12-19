@@ -276,6 +276,7 @@ final class ProductDetailViewController: UIViewController {
             target: self,
             action: #selector(onTapFavorite)
         )
+        navigationItem.rightBarButtonItem?.isHidden = true
     }
 
     private func setupStatusPicker() {
