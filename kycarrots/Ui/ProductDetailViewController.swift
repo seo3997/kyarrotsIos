@@ -1,5 +1,6 @@
 import UIKit
 import Kingfisher
+import Foundation
 
 final class ProductDetailViewController: UIViewController {
 
@@ -10,12 +11,15 @@ final class ProductDetailViewController: UIViewController {
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
 
     @IBOutlet weak var expandedTitleLabel: UILabel!   // 헤더 위 큰 타이틀
-
-    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var section1CardView: UIView!
+    @IBOutlet weak var section2CardView: UIView!
+    @IBOutlet weak var section1DescLabel: UILabel!
+    
     @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet weak var shipDateLabel: UILabel!
+    @IBOutlet weak var quantityLabel: UILabel!
+    @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var areaLabel: UILabel!
-    @IBOutlet weak var statusLabel: UILabel!
-
     // 서브 이미지 3개 + 컨테이너 (없으면 숨김)
     @IBOutlet weak var subImageContainerView: UIView!
     @IBOutlet weak var subImage1: UIImageView!
@@ -73,7 +77,36 @@ final class ProductDetailViewController: UIViewController {
 
     // Picker
     private let statusPicker = UIPickerView()
+    
+    func styleCard(_ view: UIView) {
+        view.layer.cornerRadius = 12
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.1
+        view.layer.shadowOffset = CGSize(width: 0, height: 2)
+        view.layer.shadowRadius = 6
 
+        view.layer.masksToBounds = false
+        view.backgroundColor = .white
+    }
+    func styleRejectReasonCard(_ view: UIView) {
+        view.layer.cornerRadius = 8
+        view.layer.masksToBounds = false
+
+        // 배경색 (Android: cardBackgroundColor="#FFF7F7")
+        view.backgroundColor = UIColor(red: 1.0, green: 0.97, blue: 0.97, alpha: 1.0)
+
+        // strokeWidth + strokeColor 대응
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.systemRed.cgColor
+
+        // elevation 대응 (그림자)
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.08
+        view.layer.shadowOffset = CGSize(width: 0, height: 1)
+        view.layer.shadowRadius = 2
+    }
+
+    
     private let chatButton: UIButton = {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -126,13 +159,20 @@ final class ProductDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupChatButton()
-        rejectReasonCardView.layer.cornerRadius = 8
-        rejectReasonCardView.clipsToBounds = true
+        styleCard(section1CardView)
+        styleCard(section2CardView)
+        styleRejectReasonCard(rejectReasonCardView)
         // ✅ 프로젝트 유틸/상수로 값 주입(여기만 너 프로젝트에 맞게)
         systemType = Constants.SYSTEM_TYPE
         memberCode = LoginInfoUtil.getMemberCode()
         navigationItem.title = productTitle.isEmpty ? "상품 상세" : productTitle
         expandedTitleLabel.text = navigationItem.title
+        
+        section1DescLabel.numberOfLines = 0
+        section1DescLabel.lineBreakMode = .byWordWrapping
+
+        rejectReasonLabel.numberOfLines = 0
+        rejectReasonLabel.lineBreakMode = .byWordWrapping
 
         setupScrollView()
         setupHeaderView()
@@ -256,10 +296,11 @@ final class ProductDetailViewController: UIViewController {
     }
 
     private func bindPlaceholders() {
-        titleLabel.text = "-"
         priceLabel.text = "-"
         areaLabel.text = "-"
-        statusLabel.text = "-"
+        shipDateLabel.text = "-"
+        quantityLabel.text = "-"
+        categoryLabel.text = "-"
         //expandedTitleLabel.text = ""
         productImageView.image = UIImage(named: "placeholder")
         subImageContainerView.isHidden = true
@@ -316,26 +357,33 @@ final class ProductDetailViewController: UIViewController {
         let title = detail.product.title ?? "상품 상세"
 
         expandedTitleLabel.text = title
-        titleLabel.text = title
-
+      
         // collapsing toolbar title (스크롤 후에만 표시)
         navigationItem.title = title
+        let shipDate = detail.product.desiredShippingDate ?? "-"   // 예: "2025-11-01"
+            shipDateLabel.text = "희망출하일: \(shipDate)"
+        // 수량
+        let qtyText = formatCommaNoDecimal(detail.product.quantity)
+        let unit = detail.product.unitCodeNm ?? ""
+        quantityLabel.text = "수량: \(qtyText)\(unit)"
 
+        // ✅ 카테고리 (서버 필드명에 맞게 바꿔)
+        let cm = detail.product.categoryMidNm ?? ""
+        let cs = detail.product.categorySclsNm ?? ""
+        let cat = [cm, cs].filter { !$0.isEmpty }.joined(separator: " > ")
+        categoryLabel.text = "카테고리: \(cat.isEmpty ? "-" : cat)"
         wholesalerId = detail.product.wholesalerId ?? ""
         isFav = (detail.product.fav == "1")
 
-        // description/price/area/status 등
-        let priceLong = Int64(detail.product.price ?? "") ?? 0
-        let formattedPrice = String(format: "%,d원", priceLong)
-        priceLabel.text = "가격: \(formattedPrice)"
-
+        section1DescLabel.text = detail.product.description ?? ""
+        let priceText = formatCommaNoDecimal(detail.product.price)
+        priceLabel.text = "가격:\(priceText)원"
+        
         let areaMid = detail.product.areaMidNm ?? ""
         let areaScls = detail.product.areaSclsNm ?? ""
         areaLabel.text = "지역: \(areaMid) \(areaScls)"
 
-        currentStatus = detail.product.saleStatus
-        statusLabel.text = "상태: \(currentStatus ?? "-")"
-
+   
         // 대표/서브 이미지
         applyImageMetas(detail.imageMetas)
 
@@ -351,7 +399,21 @@ final class ProductDetailViewController: UIViewController {
         // 상태 옵션 로딩
         loadProductStatusOptions(systemType: systemType, currentStatus: currentStatus)
     }
+    private func formatCommaNoDecimal(_ raw: String?) -> String {
+        let s = (raw ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        if s.isEmpty { return "-" }
 
+        // "100000.00" 대응
+        let d = Double(s) ?? 0
+        let n = Int64(d.rounded(.towardZero))   // 소수점 버림
+
+        let f = NumberFormatter()
+        f.numberStyle = NumberFormatter.Style.decimal
+        f.maximumFractionDigits = 0
+        f.minimumFractionDigits = 0
+
+        return f.string(from: NSNumber(value: n)) ?? "\(n)"
+    }
     // MARK: - Images (Glide -> Kingfisher)
     private func applyImageMetas(_ metas: [ProductImageVo]) {
         let main = metas.first(where: { $0.represent == 1 })?.imageUrl
