@@ -285,6 +285,14 @@ final class ProductDetailViewController: UIViewController {
         statusField.inputView = statusPicker
         statusField.tintColor = .clear
 
+        // ✅ 터치/편집 가능하게
+        statusField.isUserInteractionEnabled = true
+        statusField.isEnabled = true
+        applyDropdownStyle(to: statusField)
+        // ✅ 탭하면 picker 뜨게 (편집 시작을 강제로)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(openStatusPicker))
+        statusField.addGestureRecognizer(tap)
+
         let bar = UIToolbar()
         bar.sizeToFit()
         bar.items = [
@@ -294,7 +302,38 @@ final class ProductDetailViewController: UIViewController {
         ]
         statusField.inputAccessoryView = bar
     }
+    private func applyDropdownStyle(to textField: UITextField) {
+        textField.backgroundColor = .systemBackground
+        textField.layer.cornerRadius = 10
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor.systemGray4.cgColor
 
+        // 왼쪽 패딩
+        let leftPad = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 1))
+        textField.leftView = leftPad
+        textField.leftViewMode = .always
+
+        // 오른쪽 ▼ 아이콘
+        let chevron = UIImageView(image: UIImage(systemName: "chevron.down"))
+        chevron.tintColor = .systemGray2
+        chevron.contentMode = .scaleAspectFit
+        chevron.frame = CGRect(x: 0, y: 0, width: 22, height: 22)
+
+        let rightWrap = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 22))
+        chevron.center = CGPoint(x: rightWrap.bounds.midX, y: rightWrap.bounds.midY)
+        rightWrap.addSubview(chevron)
+
+        textField.rightView = rightWrap
+        textField.rightViewMode = .always
+
+        // 드롭다운 느낌(편집 불가처럼 보이게)
+        textField.clearButtonMode = .never
+        textField.autocorrectionType = .no
+        textField.spellCheckingType = .no
+    }
+    @objc private func openStatusPicker() {
+        statusField.becomeFirstResponder()
+    }
     private func bindPlaceholders() {
         priceLabel.text = "-"
         areaLabel.text = "-"
@@ -397,6 +436,7 @@ final class ProductDetailViewController: UIViewController {
         editButton.isHidden = (memberCode != Constants.ROLE_SELL)
 
         // 상태 옵션 로딩
+        currentStatus = detail.product.saleStatus
         loadProductStatusOptions(systemType: systemType, currentStatus: currentStatus)
     }
     private func formatCommaNoDecimal(_ raw: String?) -> String {

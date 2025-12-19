@@ -114,6 +114,64 @@
             endingLineNumber = "189"
             landmarkName = "loadUserInfo()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BF6C1750-8F9F-4A40-80DF-21819C90E0F3 - 47382040c0b2cd79"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 () async -&gt; () in kycarrots.SettingsViewController.loadUserInfo() -&gt; ()"
+                  moduleName = "kycarrots.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/SettingsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189">
+               </Location>
+               <Location
+                  uuid = "BF6C1750-8F9F-4A40-80DF-21819C90E0F3 - 8a7cbd80fb75d165"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 () async -&gt; () in kycarrots.SettingsViewController.loadUserInfo() -&gt; ()"
+                  moduleName = "kycarrots.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/SettingsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189">
+               </Location>
+               <Location
+                  uuid = "BF6C1750-8F9F-4A40-80DF-21819C90E0F3 - 3169b8b46254097b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 () async -&gt; () in kycarrots.SettingsViewController.loadUserInfo() -&gt; ()"
+                  moduleName = "kycarrots.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/SettingsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189">
+               </Location>
+               <Location
+                  uuid = "BF6C1750-8F9F-4A40-80DF-21819C90E0F3 - 3169b8b46254097b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 () async -&gt; () in kycarrots.SettingsViewController.loadUserInfo() -&gt; ()"
+                  moduleName = "kycarrots.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/SettingsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -126,9 +184,25 @@
             filePath = "kycarrots/Ui/ProductDetailViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "362"
-            endingLineNumber = "362"
+            startingLineNumber = "401"
+            endingLineNumber = "401"
             landmarkName = "showProductDetail(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FE0B3C90-0C59-477E-BEBF-29D6E7BF07EE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kycarrots/Ui/ProductDetailViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "580"
+            endingLineNumber = "580"
+            landmarkName = "loadProductStatusOptions(systemType:currentStatus:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
