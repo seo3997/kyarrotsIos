@@ -20,7 +20,7 @@ enum SaleStatus: Int, CaseIterable {
     /// 서버에 넘길 saleStatus 코드
     var apiCode: String {
         switch self {
-        case .rejected: return "0"   // 필요시 "0" 으로 바꾸면 됨
+        case .rejected: return "0"   // 서버에서 반려가 98이면 "98"로 바꾸면 됨
         case .onSale:   return "1"
         case .reserved: return "10"
         case .soldOut:  return "99"
@@ -35,15 +35,15 @@ final class ProductListViewController: UIViewController {
 
     // MARK: - UI
     private lazy var segmented: UISegmentedControl = {
-        // 필요하면 SYSTEM_TYPE에 따라 탭 개수 조절할 수 있음
         let seg = UISegmentedControl(items: SaleStatus.allCases.map { $0.title })
-        seg.selectedSegmentIndex = 0   // 기본: 판매중
+        seg.selectedSegmentIndex = 0   // 기본 탭(현재는 첫 탭)
         seg.addTarget(self, action: #selector(segChanged), for: .valueChanged)
         return seg
     }()
 
     private let tableView = UITableView(frame: .zero, style: .plain)
     private var refresh = UIRefreshControl()
+
     private let floatingButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -58,11 +58,16 @@ final class ProductListViewController: UIViewController {
         return button
     }()
 
-    // 로딩 인디케이터 (상단 스피너)
-    private let loadingView = UIActivityIndicatorView(style: .medium)
+    // ✅ 전체 화면 로딩 오버레이
+    private var loadingOverlay: UIView?
+    private let overlaySpinner = UIActivityIndicatorView(style: .large)
+
+    // ✅ 오른쪽 상단 알림 버튼 + 뱃지
+    private var notifButton: UIButton!
+    private var badgeLabel: UILabel!
 
     // MARK: - Paging & Data
-    private var items: [AdItem] = []          // 실제 API 응답 리스트
+    private var items: [AdItem] = []
     private var pageNo: Int = 1
     private var isLoading: Bool = false
     private var isLastPage: Bool = false
@@ -84,9 +89,12 @@ final class ProductListViewController: UIViewController {
         setupLayout()
         setupTable()
         setupFloatingButton()
-        setupLoadingView()
 
-        // 첫 로드
+        // ✅ 오른쪽 상단: 알림 아이콘 + 뱃지
+        setupNotificationButton()
+        setNotificationBadge(0) // 초기값 (나중에 unreadCount API 연동하면 여기 갱신)
+
+        // 첫 로드 (전체 로딩)
         fetchProducts(isRefresh: true)
     }
 
@@ -140,25 +148,103 @@ final class ProductListViewController: UIViewController {
         floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
     }
 
-    private func setupLoadingView() {
-        loadingView.hidesWhenStopped = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: loadingView)
+    // MARK: - ✅ Fullscreen Loading
+
+    private func showFullScreenLoading() {
+        if loadingOverlay != nil { return }
+
+        let overlay = UIView()
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.25)
+        overlay.isUserInteractionEnabled = true // 터치 막기
+
+        overlaySpinner.translatesAutoresizingMaskIntoConstraints = false
+        overlaySpinner.startAnimating()
+
+        overlay.addSubview(overlaySpinner)
+        view.addSubview(overlay)
+
+        NSLayoutConstraint.activate([
+            overlay.topAnchor.constraint(equalTo: view.topAnchor),
+            overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            overlaySpinner.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
+            overlaySpinner.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)
+        ])
+
+        loadingOverlay = overlay
+    }
+
+    private func hideFullScreenLoading() {
+        overlaySpinner.stopAnimating()
+        loadingOverlay?.removeFromSuperview()
+        loadingOverlay = nil
+    }
+
+    // MARK: - ✅ Notification Button (Right Bar)
+
+    private func setupNotificationButton() {
+        notifButton = UIButton(type: .system)
+        notifButton.tintColor = .label
+        notifButton.setImage(UIImage(systemName: "bell"), for: .normal)
+        notifButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        notifButton.addTarget(self, action: #selector(tapNotifications), for: .touchUpInside)
+
+        badgeLabel = UILabel()
+        badgeLabel.translatesAutoresizingMaskIntoConstraints = false
+        badgeLabel.backgroundColor = .systemRed
+        badgeLabel.textColor = .white
+        badgeLabel.font = .systemFont(ofSize: 11, weight: .bold)
+        badgeLabel.textAlignment = .center
+        badgeLabel.layer.cornerRadius = 9
+        badgeLabel.clipsToBounds = true
+        badgeLabel.isHidden = true
+
+        notifButton.addSubview(badgeLabel)
+
+        NSLayoutConstraint.activate([
+            badgeLabel.heightAnchor.constraint(equalToConstant: 18),
+            badgeLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 18),
+            badgeLabel.centerXAnchor.constraint(equalTo: notifButton.trailingAnchor, constant: -2),
+            badgeLabel.centerYAnchor.constraint(equalTo: notifButton.topAnchor, constant: 4)
+        ])
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: notifButton)
+    }
+
+    private func setNotificationBadge(_ count: Int) {
+        if count <= 0 {
+            badgeLabel.isHidden = true
+            badgeLabel.text = nil
+        } else {
+            badgeLabel.isHidden = false
+            badgeLabel.text = count > 99 ? "99+" : "\(count)"
+        }
     }
 
     // MARK: - Actions
 
     @objc private func segChanged() {
-        // 탭 변경 시 현재 상태 기준으로 처음부터 다시 로드
-        fetchProducts(isRefresh: true)
+        fetchProducts(isRefresh: true) // 탭 변경 시 전체 로딩 + 처음부터
     }
 
     @objc private func onRefresh() {
-        fetchProducts(isRefresh: true)
+        fetchProducts(isRefresh: true) // pull to refresh 시 전체 로딩 + 처음부터
     }
 
     @objc private func floatingButtonTapped() {
         print("Floating button tapped - 상품 등록 화면으로 이동 예정")
         // TODO: 안드로이드 MakeADMainActivity 대응 iOS 화면으로 push/present
+    }
+
+    @objc private func tapNotifications() {
+        // TODO: 알림/메시지 리스트 화면으로 이동
+        let vc = UIViewController()
+        vc.view.backgroundColor = .systemBackground
+        vc.title = "알림"
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     // MARK: - API 연동 (안드로이드 AdListFragment.fetchAdvertiseList 대응)
@@ -168,7 +254,11 @@ final class ProductListViewController: UIViewController {
         if !isRefresh && isLastPage { return }
 
         isLoading = true
-        loadingView.startAnimating()
+
+        // ✅ 리프레시/첫로드/탭변경이면 전체 로딩 오버레이
+        if isRefresh {
+            showFullScreenLoading()
+        }
 
         if isRefresh {
             pageNo = 1
@@ -184,7 +274,8 @@ final class ProductListViewController: UIViewController {
         guard !token.isEmpty else {
             print("토큰 없음 → 로그인 필요")
             isLoading = false
-            loadingView.stopAnimating()
+            hideFullScreenLoading()
+            refresh.endRefreshing()
             return
         }
 
@@ -198,7 +289,7 @@ final class ProductListViewController: UIViewController {
 
         Task {
             do {
-                let ads = try await appService.getAdvertiseList(req: req)   // [AdItem] 반환 가정
+                let ads = try await appService.getAdvertiseList(req: req)
                 await MainActor.run { [weak self] in
                     guard let self else { return }
 
@@ -221,9 +312,10 @@ final class ProductListViewController: UIViewController {
             }
 
             await MainActor.run { [weak self] in
-                self?.isLoading = false
-                self?.loadingView.stopAnimating()
-                self?.refresh.endRefreshing()
+                guard let self else { return }
+                self.isLoading = false
+                self.refresh.endRefreshing()
+                if isRefresh { self.hideFullScreenLoading() } // ✅ 전체 로딩 OFF
             }
         }
     }
@@ -268,29 +360,13 @@ extension ProductListViewController: UITableViewDelegate {
 
         let item = items[indexPath.row]
 
-        // TODO: 안드로이드 AdDetailActivity 대응 상세화면으로 이동
-        // 예시:
+        // 안드로이드 AdDetailActivity 대응 상세화면으로 이동
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "ProductDetailVC") as! ProductDetailViewController
         vc.productId = Int64(item.productId ?? "") ?? 0
         vc.productUserId = item.userId ?? ""
         vc.productTitle = item.title ?? ""
         navigationController?.pushViewController(vc, animated: true)
-        
-        /*
-        let vc = ProductDetailViewController(
-            productId: item.productId,
-            userId: item.userId,
-            imageUrl: item.imageUrl
-        )
-        navigationController?.pushViewController(vc, animated: true)
-        */
-        /*
-        let vc = UIViewController()
-        vc.view.backgroundColor = .systemBackground
-        vc.title = item.title ?? "상품 상세"
-        navigationController?.pushViewController(vc, animated: true)
-        */
     }
 
     // 페이징: 마지막 근처 셀 표시될 때 다음 페이지 로드
