@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		828039EA2EB05E0300B504B6 /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 828039E92EB05E0300B504B6 /* SideMenu */; };
 		EB766A312EE4C17C00F44D87 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = EB766A302EE4C17C00F44D87 /* Kingfisher */; };
+		EB766A3A2EF5ED1400F44D87 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = EB766A392EF5ED1400F44D87 /* Starscream */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			files = (
 				EB766A312EE4C17C00F44D87 /* Kingfisher in Frameworks */,
 				828039EA2EB05E0300B504B6 /* SideMenu in Frameworks */,
+				EB766A3A2EF5ED1400F44D87 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				828039E92EB05E0300B504B6 /* SideMenu */,
 				EB766A302EE4C17C00F44D87 /* Kingfisher */,
+				EB766A392EF5ED1400F44D87 /* Starscream */,
 			);
 			productName = kycarrots;
 			productReference = 828039C12EB0527C00B504B6 /* kycarrots.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				828039E82EB05E0300B504B6 /* XCRemoteSwiftPackageReference "SideMenu" */,
 				EB766A2F2EE4C17C00F44D87 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				EB766A382EF5ED1400F44D87 /* XCRemoteSwiftPackageReference "Starscream" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 828039C22EB0527C00B504B6 /* Products */;
@@ -372,6 +376,14 @@
 				minimumVersion = 8.6.2;
 			};
 		};
+		EB766A382EF5ED1400F44D87 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.8;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -384,6 +396,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EB766A2F2EE4C17C00F44D87 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		EB766A392EF5ED1400F44D87 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB766A382EF5ED1400F44D87 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

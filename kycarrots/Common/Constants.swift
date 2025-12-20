@@ -48,7 +48,11 @@ struct Constants {
             return "ws://52.231.229.156:9000/chat-ws?userId="
         }
     }
-
+    
+    static func wsURL(userId: String) -> URL {
+          URL(string: WS_URL + userId)!
+    }
+    
     // MARK: - SYSTEM TYPE
     /// Android: const val SYSTEM_TYPE = 2
     static let SYSTEM_TYPE = 2   // 1: 직거래, 2: 중간센터

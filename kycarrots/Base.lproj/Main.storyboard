@@ -458,6 +458,101 @@
             </objects>
             <point key="canvasLocation" x="-282" y="751"/>
         </scene>
+        <!--Chat View Controller-->
+        <scene sceneID="Ht7-hS-vPr">
+            <objects>
+                <viewController restorationIdentifier="ChatVC" storyboardIdentifier="ChatViewController" id="87F-Ku-WTb" customClass="ChatViewController" customModule="kycarrots" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Qvx-Va-Jf6">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="h4s-uE-WEZ">
+                                <rect key="frame" x="0.0" y="118" width="393" height="666"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ChatCell" textLabel="3wl-Ct-D9C" detailTextLabel="ODG-HM-RhH" style="IBUITableViewCellStyleSubtitle" id="OW9-bC-IyB">
+                                        <rect key="frame" x="0.0" y="50.333333969116211" width="393" height="52"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OW9-bC-IyB" id="aN9-sw-cOo">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="52"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3wl-Ct-D9C">
+                                                    <rect key="frame" x="20" y="8" width="25" height="14.333333333333334"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ODG-HM-RhH">
+                                                    <rect key="frame" x="19.999999999999996" y="24.333333333333336" width="52.666666666666664" height="18"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wh9-XA-XZc" userLabel="inputBar">
+                                <rect key="frame" x="0.0" y="704" width="393" height="80"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="yi0-5v-SSV">
+                                        <rect key="frame" x="12" y="8" width="369" height="64"/>
+                                        <subviews>
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0f6-hG-gMW" userLabel="messageTextField">
+                                                <rect key="frame" x="0.0" y="0.0" width="297" height="64"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="64" id="2GE-Oh-gli"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KnP-Ii-ruR" userLabel="sendButton">
+                                                <rect key="frame" x="305" y="0.0" width="64" height="64"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="64" id="qKo-Sy-WWl"/>
+                                                </constraints>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled" title="전송"/>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="yi0-5v-SSV" secondAttribute="bottom" constant="8" id="Hzb-wx-dn6"/>
+                                    <constraint firstItem="yi0-5v-SSV" firstAttribute="top" secondItem="Wh9-XA-XZc" secondAttribute="top" constant="8" id="dKY-Ea-N81"/>
+                                    <constraint firstItem="yi0-5v-SSV" firstAttribute="leading" secondItem="Wh9-XA-XZc" secondAttribute="leading" constant="12" id="kZH-JB-uy2"/>
+                                    <constraint firstAttribute="trailing" secondItem="yi0-5v-SSV" secondAttribute="trailing" constant="12" id="zTf-cx-Kjx"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="lwZ-Qh-gd0"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Wh9-XA-XZc" firstAttribute="bottom" secondItem="lwZ-Qh-gd0" secondAttribute="bottom" id="0V5-di-rPb"/>
+                            <constraint firstAttribute="trailing" secondItem="Wh9-XA-XZc" secondAttribute="trailing" id="0hS-33-fcS"/>
+                            <constraint firstItem="Wh9-XA-XZc" firstAttribute="leading" secondItem="Qvx-Va-Jf6" secondAttribute="leading" id="2jb-x5-9rT"/>
+                            <constraint firstItem="h4s-uE-WEZ" firstAttribute="bottom" secondItem="Wh9-XA-XZc" secondAttribute="bottom" id="Etb-ek-2oh"/>
+                            <constraint firstAttribute="trailing" secondItem="h4s-uE-WEZ" secondAttribute="trailing" id="O8j-39-dXK"/>
+                            <constraint firstItem="h4s-uE-WEZ" firstAttribute="leading" secondItem="Qvx-Va-Jf6" secondAttribute="leading" id="TbE-6T-TF5"/>
+                            <constraint firstItem="h4s-uE-WEZ" firstAttribute="top" secondItem="lwZ-Qh-gd0" secondAttribute="top" id="fNH-le-GPf"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="chatTableView" destination="h4s-uE-WEZ" id="hj2-r2-p0q"/>
+                        <outlet property="inputBarBottom" destination="Hzb-wx-dn6" id="dBn-En-TUI"/>
+                        <outlet property="messageTextField" destination="0f6-hG-gMW" id="emC-Ui-mmO"/>
+                        <outlet property="sendButton" destination="KnP-Ii-ruR" id="tC7-pt-9jX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="clx-YK-MiO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-248" y="1396"/>
+        </scene>
         <!--Product Detail View Controller-->
         <scene sceneID="OjF-vB-U3W">
             <objects>
