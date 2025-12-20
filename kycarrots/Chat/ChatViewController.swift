@@ -102,17 +102,19 @@ final class ChatViewController: UIViewController {
         let overlap = max(0, view.bounds.maxY - endFrameInView.minY)
         let keyboardHeight = max(0, overlap - view.safeAreaInsets.bottom)
 
+        // ✅ 아래에서 위로 올라가게 (부호 반대)
         inputBarBottom.constant = -keyboardHeight
-        print("🔧 inputBarBottom firstItem:", inputBarBottom.firstItem as Any)
-        print("🔧 inputBarBottom secondItem:", inputBarBottom.secondItem as Any)
-        print("🔧 inputBarBottom firstAttr:", inputBarBottom.firstAttribute.rawValue,
-              "secondAttr:", inputBarBottom.secondAttribute.rawValue)
-        
+
         let options = UIView.AnimationOptions(rawValue: curveRaw << 16)
+
         UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.view.layoutIfNeeded()
+
+            // ✅ 마지막 메시지가 입력바/키보드에 가리지 않게
+            let bottomInset = keyboardHeight + self.inputBarView.bounds.height
+            self.chatTableView.contentInset.bottom = bottomInset
+            self.chatTableView.scrollIndicatorInsets.bottom = bottomInset
         } completion: { _ in
-            print("📦 inputBarView frame:", self.inputBarView.frame)
             self.scrollToBottom(animated: false)
         }
     }
@@ -158,7 +160,6 @@ final class ChatViewController: UIViewController {
 
             var msg = received
             msg.isMe = false
-
             DispatchQueue.main.async {
                 self.chatMessages.append(msg)
                 self.chatTableView.reloadData()
@@ -200,6 +201,7 @@ final class ChatViewController: UIViewController {
         chatMessages.append(msg)
         chatTableView.reloadData()
         scrollToBottom(animated: true)
+        //appendAndAutoScroll(msg)
 
         messageTextField.text = ""
         messageTextField.becomeFirstResponder()
@@ -207,11 +209,17 @@ final class ChatViewController: UIViewController {
         StompManager.shared.sendRoomMessage(msg)
     }
 
-    // MARK: - Helpers
     private func scrollToBottom(animated: Bool) {
-        guard !chatMessages.isEmpty else { return }
-        let idx = IndexPath(row: chatMessages.count - 1, section: 0)
-        chatTableView.scrollToRow(at: idx, at: .bottom, animated: animated)
+        chatTableView.layoutIfNeeded()
+
+        let contentHeight = chatTableView.contentSize.height
+        let tableHeight = chatTableView.bounds.height
+        let insetBottom = chatTableView.adjustedContentInset.bottom
+
+        let y = max(-chatTableView.adjustedContentInset.top,
+                    contentHeight - tableHeight + insetBottom)
+
+        chatTableView.setContentOffset(CGPoint(x: 0, y: y), animated: animated)
     }
 
     private static func formatNow() -> String {
@@ -225,7 +233,7 @@ final class ChatViewController: UIViewController {
         Task {
             do {
                 let list: [ChatMessageResponse] =
-                    try await AppServiceProvider.shared.getChatMessages(roomId: roomId)
+                try await AppServiceProvider.shared.getChatMessages(roomId: roomId)
 
                 await MainActor.run {
                     self.chatMessages = list.map { m in
@@ -240,7 +248,11 @@ final class ChatViewController: UIViewController {
                     }
 
                     self.chatTableView.reloadData()
-                    self.scrollToBottom(animated: false)
+                    self.chatTableView.layoutIfNeeded()
+
+                    DispatchQueue.main.async {
+                        self.scrollToBottom(animated: false)
+                    }
                 }
             } catch {
                 print("❌ loadChatMessages error:", error)
