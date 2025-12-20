@@ -32,7 +32,7 @@ final class ChatViewController: UIViewController {
 
         resolveOtherId()
         title = "\(otherId) 님과의 대화"
-
+        loadChatMessages(roomId: roomId)
         bindStompCallbacks()
         connectAndSubscribe()
     }
@@ -199,6 +199,34 @@ final class ChatViewController: UIViewController {
         f.dateFormat = "yyyy-MM-dd HH:mm"
         return f.string(from: Date())
     }
+    
+    private func loadChatMessages(roomId: String) {
+        Task {
+            do {
+                let list: [ChatMessageResponse] =
+                    try await AppServiceProvider.shared.getChatMessages(roomId: roomId)
+
+                await MainActor.run {
+                    self.chatMessages = list.map { m in
+                        ChatMessage(
+                            senderId: m.senderId,
+                            message: m.message,
+                            roomId: m.roomId,
+                            type: "text",
+                            time: m.time,
+                            isMe: m.senderId == self.currentUserId
+                        )
+                    }
+
+                    self.chatTableView.reloadData()
+                    self.scrollToBottom(animated: false)
+                }
+            } catch {
+                print("❌ loadChatMessages error:", error)
+            }
+        }
+    }
+
 }
 
 // MARK: - UITableViewDataSource / Delegate

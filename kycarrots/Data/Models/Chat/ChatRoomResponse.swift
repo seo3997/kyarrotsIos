@@ -13,6 +13,6 @@ struct ChatRoomResponse: Decodable {
     let roomId: String
     let buyerId: String
     let sellerId: String
-    let productId: String
-    let createdAt: String
+    let productId: Int64
+    let createdAt: String?
 }

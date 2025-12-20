@@ -906,7 +906,7 @@ final class ProductDetailViewController: UIViewController {
                         self.showAlert(title: "실패", message: "채팅방 생성 실패")
                         return
                     }
-                    self.openChat(roomId: room.roomId, buyerId: room.buyerId, sellerId: room.sellerId, productId: room.productId)
+                    self.openChat(roomId: room.roomId, buyerId: room.buyerId, sellerId: room.sellerId, productId: String(room.productId))
                 }
             } catch {
                 await MainActor.run { self.showAlert(title: "오류", message: "네트워크 오류") }
@@ -922,7 +922,7 @@ final class ProductDetailViewController: UIViewController {
                     if rooms.isEmpty {
                         self.showAlert(title: "안내", message: "이 상품에 대한 채팅 요청이 없습니다")
                     } else if rooms.count == 1, let r = rooms.first {
-                        self.openChat(roomId: r.roomId, buyerId: r.buyerId, sellerId: r.sellerId, productId: r.productId)
+                        self.openChat(roomId: r.roomId, buyerId: r.buyerId, sellerId: r.sellerId, productId: String(r.productId))
                     } else {
                         self.showBuyerSelectionDialog(rooms: rooms)
                     }
@@ -937,7 +937,7 @@ final class ProductDetailViewController: UIViewController {
         let alert = UIAlertController(title: "구매자를 선택하세요", message: nil, preferredStyle: .actionSheet)
         for (i, r) in rooms.enumerated() {
             alert.addAction(UIAlertAction(title: "구매자 \(i+1): \(r.buyerId)", style: .default) { _ in
-                self.openChat(roomId: r.roomId, buyerId: r.buyerId, sellerId: r.sellerId, productId: r.productId)
+                self.openChat(roomId: r.roomId, buyerId: r.buyerId, sellerId: r.sellerId, productId: String(r.productId))
             })
         }
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
@@ -950,6 +950,20 @@ final class ProductDetailViewController: UIViewController {
         // vc.roomId = roomId ...
         // navigationController?.pushViewController(vc, animated: true)
         print("openChat:", roomId, buyerId, sellerId, productId)
+        
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = sb.instantiateViewController(withIdentifier: "ChatVC") as? ChatViewController else {
+            self.showAlert(title: "오류", message: "ChatVC 화면을 찾을 수 없습니다(Storyboard ID 확인).")
+            return
+        }
+
+        // Android Intent extras 대응
+        vc.roomId = roomId
+        vc.buyerId = buyerId
+        vc.sellerId = sellerId
+        vc.productId = productId
+        vc.currentUserId = LoginInfoUtil.getUserId()   // ✅ sUID 넣기 (너 프로젝트 함수에 맞게)
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     private func resolveSellerId() -> String {
