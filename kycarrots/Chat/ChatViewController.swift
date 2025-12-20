@@ -23,11 +23,14 @@ final class ChatViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupTapToDismissKeyboard()
         validateInputsOrPop()
 
         setupUI()
         setupTable()
+        chatTableView.rowHeight = UITableView.automaticDimension
+        chatTableView.estimatedRowHeight = 60
+        
         setupKeyboardHandling()
 
         resolveOtherId()
@@ -36,7 +39,16 @@ final class ChatViewController: UIViewController {
         bindStompCallbacks()
         connectAndSubscribe()
     }
+    private func setupTapToDismissKeyboard() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false   // ✅ 셀 터치/스크롤 방해하지 않게
+        chatTableView.addGestureRecognizer(tap) // 또는 view.addGestureRecognizer(tap)
+    }
 
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         StompManager.shared.unsubscribe(topicPath: topicPath)
@@ -127,12 +139,14 @@ final class ChatViewController: UIViewController {
 
         stomp.onConnected = { [weak self] in
             guard let self else { return }
+            print("✅ STOMP connected! subscribe => \(self.topicPath)")
             stomp.subscribe(topicPath: self.topicPath)
         }
 
         stomp.onMessage = { [weak self] received in
             guard let self else { return }
-
+            print("📩 STOMP recv: sender=\(received.senderId ?? "nil") room=\(received.roomId ?? "nil") msg=\(received.message)")
+      
             // 내가 보낸 메시지는 서버에서 다시 오면 중복 방지
             if received.senderId == self.currentUserId { return }
 
@@ -152,6 +166,7 @@ final class ChatViewController: UIViewController {
     }
 
     private func connectAndSubscribe() {
+        print("🔌 STOMP connect() try. userId=\(currentUserId ?? "nil") roomId=\(roomId ?? "nil") topic=\(topicPath)")
         StompManager.shared.connect(userId: currentUserId)
     }
 
@@ -226,7 +241,7 @@ final class ChatViewController: UIViewController {
             }
         }
     }
-
+    
 }
 
 // MARK: - UITableViewDataSource / Delegate
@@ -238,20 +253,19 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell")
-            ?? UITableViewCell(style: .subtitle, reuseIdentifier: "ChatCell")
-
         let msg = chatMessages[indexPath.row]
-
-        cell.selectionStyle = .none
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.text = msg.message
-        cell.detailTextLabel?.text = msg.time
-
-        cell.textLabel?.textAlignment = (msg.isMe == true) ? .right : .left
-        cell.detailTextLabel?.textAlignment = (msg.isMe == true) ? .right : .left
-
-        return cell
+        let isMe = (msg.senderId == currentUserId)
+ 
+        if isMe {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatRightCell", for: indexPath) as! ChatRightCell
+            cell.bind(msg)
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatLeftCell", for: indexPath) as! ChatLeftCell
+            cell.bind(msg)
+            return cell
+        }
+        
     }
 }
 
