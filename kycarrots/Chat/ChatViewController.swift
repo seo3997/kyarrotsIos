@@ -7,7 +7,8 @@ final class ChatViewController: UIViewController {
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var inputBarBottom: NSLayoutConstraint! // inputBar.bottom = SafeArea.bottom
-
+    @IBOutlet weak var inputBarView: UIView!
+    
     // MARK: - Inputs
     var roomId: String!
     var buyerId: String!
@@ -101,12 +102,17 @@ final class ChatViewController: UIViewController {
         let overlap = max(0, view.bounds.maxY - endFrameInView.minY)
         let keyboardHeight = max(0, overlap - view.safeAreaInsets.bottom)
 
-        inputBarBottom.constant = keyboardHeight
-
+        inputBarBottom.constant = -keyboardHeight
+        print("🔧 inputBarBottom firstItem:", inputBarBottom.firstItem as Any)
+        print("🔧 inputBarBottom secondItem:", inputBarBottom.secondItem as Any)
+        print("🔧 inputBarBottom firstAttr:", inputBarBottom.firstAttribute.rawValue,
+              "secondAttr:", inputBarBottom.secondAttribute.rawValue)
+        
         let options = UIView.AnimationOptions(rawValue: curveRaw << 16)
         UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.view.layoutIfNeeded()
         } completion: { _ in
+            print("📦 inputBarView frame:", self.inputBarView.frame)
             self.scrollToBottom(animated: false)
         }
     }

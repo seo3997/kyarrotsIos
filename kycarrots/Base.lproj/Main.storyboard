@@ -624,7 +624,8 @@
                     </view>
                     <connections>
                         <outlet property="chatTableView" destination="h4s-uE-WEZ" id="hj2-r2-p0q"/>
-                        <outlet property="inputBarBottom" destination="rmC-ef-mZ5" id="byX-hG-fhp"/>
+                        <outlet property="inputBarBottom" destination="wfS-RD-gah" id="Bny-cS-knB"/>
+                        <outlet property="inputBarView" destination="Wh9-XA-XZc" id="kD8-KP-e9k"/>
                         <outlet property="messageTextField" destination="0f6-hG-gMW" id="emC-Ui-mmO"/>
                         <outlet property="sendButton" destination="KnP-Ii-ruR" id="tC7-pt-9jX"/>
                     </connections>
