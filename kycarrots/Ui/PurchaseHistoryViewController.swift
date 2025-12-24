@@ -12,6 +12,7 @@ class PurchaseHistoryViewController: UIViewController {
 
     // MARK: - IBOutlets
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var loadingOverlay: UIView!
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
 
     // MARK: - Properties
@@ -34,6 +35,24 @@ class PurchaseHistoryViewController: UIViewController {
         // ✅ 부모인 탭바 컨트롤러의 타이틀을 변경해야 상단 바에 반영됩니다.
         self.tabBarController?.title = "구매내역"
     }
+    // 안드로이드의 llProgress.visibility 대응
+    private func finishLoading() {
+        self.isLoading = false
+        
+        // 로딩 인디케이터 정지 및 오버레이 숨김
+        self.loadingIndicator.stopAnimating()
+        self.loadingOverlay.isHidden = true
+        
+        // 오버레이가 사라지면 가려졌던 뒤쪽의 뷰들이 다시 보이게 됩니다.
+    }
+
+    private func startLoading() {
+        self.isLoading = true
+        
+        // 로딩 시작 시 오버레이를 먼저 보여주고 애니메이션 시작
+        self.loadingOverlay.isHidden = false
+        self.loadingIndicator.startAnimating()
+    }
 
     private func setupTableView() {
         tableView.delegate = self
@@ -54,8 +73,7 @@ class PurchaseHistoryViewController: UIViewController {
             isLastPage = false
         }
         
-        isLoading = true
-        loadingIndicator.startAnimating()
+        startLoading()
         
         let token = TokenUtil.getToken() ?? ""
 
@@ -81,8 +99,7 @@ class PurchaseHistoryViewController: UIViewController {
                     self.tableView.reloadData()
                 }
                 
-                self.isLoading = false
-                self.loadingIndicator.stopAnimating()
+                self.finishLoading()
             }
         }
     }
