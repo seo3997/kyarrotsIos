@@ -242,10 +242,18 @@ class LoginViewController: UIViewController {
                     TokenUtil.saveToken(token)
                 }
 
-               //지금은 화면 전환 안 함 (나중에 Intro 로)
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let dashboardVC = storyboard.instantiateViewController(withIdentifier: "DashboardVC")
-                switchRoot(to: dashboardVC)
+                let userRole = LoginInfoUtil.getMemberCode()
+
+                if userRole == "ROLE_SELL" || userRole == "ROLE_PROJ" {
+                    // 판매자 또는 도매업자인 경우: 기존 DashboardVC로 이동
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let dashboardVC = storyboard.instantiateViewController(withIdentifier: "DashboardVC")
+                    switchRoot(to: dashboardVC)
+                } else {
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let mainTabVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarVC")
+                    switchRoot(to: mainTabVC)
+                }
 
             case StaticDataInfo.RESULT_NO_USER,
                  StaticDataInfo.RESULT_NO_DATA:

@@ -50,36 +50,6 @@
             endingLineNumber = "148"
             landmarkName = "bindStompCallbacks()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "7E2C4CDC-07B0-41E0-AADB-2625E68DA581 - 3bdaf02adee231eb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "kycarrots.ChatViewController.bindStompCallbacks() -&gt; ()"
-                  moduleName = "kycarrots.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/Chat/ChatViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "148"
-                  endingLineNumber = "148">
-               </Location>
-               <Location
-                  uuid = "7E2C4CDC-07B0-41E0-AADB-2625E68DA581 - 6641129b2ba76be7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in kycarrots.ChatViewController.bindStompCallbacks() -&gt; ()"
-                  moduleName = "kycarrots.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/Chat/ChatViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "148"
-                  endingLineNumber = "148">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -95,6 +65,22 @@
             startingLineNumber = "154"
             endingLineNumber = "154"
             landmarkName = "bindStompCallbacks()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F7D240D6-F237-4E76-8002-64F012B68FD0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kycarrots/Loginout/LoginViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
+            landmarkName = "chkLoginCondition()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

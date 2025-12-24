@@ -4,7 +4,6 @@ enum MenuItemType {
     case dashboard
     case products
     case settings
-
     case notice
     case inquiry
     case policy
@@ -17,32 +16,48 @@ struct MenuItem {
 }
 
 final class MenuListViewController: UITableViewController {
+    // 권한에 따라 동적으로 변경될 메뉴 데이터
+    private var menuSections: [[MenuItem]] = []
+    private let sectionTitles = ["", "고객지원"]
     
-    // 안드로이드 menu.xml 처럼 섹션 2개
-    private let menuSections: [[MenuItem]] = [
-        // SECTION 0 : 일반 메뉴
-        [
-            .init(icon: "house",             title: "대시보드",    type: .dashboard),
-            .init(icon: "square.grid.2x2",   title: "상품리스트",  type: .products),
-            .init(icon: "gearshape",         title: "설정",        type: .settings),
-        ],
-        
-        // SECTION 1 : 고객지원
-        [
-            .init(icon: "megaphone",         title: "공지사항",    type: .notice),
-            .init(icon: "bubble.left.and.bubble.right", title: "문의하기",  type: .inquiry),
-            .init(icon: "doc.text",          title: "약관 및 정책", type: .policy),
-        ]
-    ]
-    
-    private let sectionTitles = [
-        "",          // 첫 섹션 제목 없음
-        "고객지원"    // 두 번째 섹션 제목
-    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupDynamicMenu() // 권한별 메뉴 설정
+        setupTableView()
+    }
+    // MARK: - 권한별 메뉴 구성 (Android의 applyMenuForRole 대응)
+    private func setupDynamicMenu() {
+        let userRole = LoginInfoUtil.getMemberCode() // 사용자 권한 가져오기
         
+        var section0: [MenuItem] = []
+        
+        // 1. 권한별 메인 메뉴 구성
+        switch userRole {
+        case "ROLE_SELL", "ROLE_PROJ":
+            // 판매자 및 도매업자는 대시보드 포함
+            section0.append(.init(icon: "house", title: "대시보드", type: .dashboard))
+            section0.append(.init(icon: "square.grid.2x2", title: "상품리스트", type: .products))
+            section0.append(.init(icon: "gearshape", title: "설정", type: .settings))
+            
+        default:
+            // 일반 구매자 (ROLE_BUYER 등)
+            section0.append(.init(icon: "square.grid.2x2", title: "상품리스트", type: .products))
+            section0.append(.init(icon: "gearshape", title: "설정", type: .settings))
+        }
+        
+        // 2. 공통 고객지원 메뉴
+        let section1: [MenuItem] = [
+            .init(icon: "megaphone", title: "공지사항", type: .notice),
+            .init(icon: "bubble.left.and.bubble.right", title: "문의하기", type: .inquiry),
+            .init(icon: "doc.text", title: "약관 및 정책", type: .policy)
+        ]
+        
+        self.menuSections = [section0, section1]
+        self.tableView.reloadData()
+    }
+        
+    private func setupTableView() {
         tableView.backgroundColor = .systemGroupedBackground
         tableView.separatorStyle = .none
         tableView.contentInset.top = 40
@@ -163,10 +178,19 @@ final class MenuListViewController: UITableViewController {
                 nav.popToRootViewController(animated: true)
                 
             case .products:
-                let vc = ProductListViewController()
-                vc.title = selected.title
-                nav.pushViewController(vc, animated: true)
-                
+                // 권한에 따른 분기 처리 (Android applyMenuForRole 대응)
+                if LoginInfoUtil.getMemberCode() == "ROLE_SELL" || LoginInfoUtil.getMemberCode() == "ROLE_PROJ" {
+                    // 판매자/도매업자: 기존 상품리스트 뷰
+                    let vc = ProductListViewController()
+                    vc.title = selected.title
+                    nav.pushViewController(vc, animated: true)
+                } else {
+                    // 나머지 (ROLE_BUYER 등): 메인 탭바 컨트롤러
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    if let mainTabVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarVC") as? MainTabBarController {
+                            nav.pushViewController(mainTabVC, animated: true)
+                    }
+                }
             case .settings:
                 let vc = SettingsViewController()
                 vc.title = selected.title

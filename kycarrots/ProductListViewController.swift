@@ -382,7 +382,7 @@ extension ProductListViewController: UITableViewDelegate {
 
 // MARK: - 테이블 Empty State 유틸 (기존 코드 재사용)
 
-private extension UITableView {
+extension UITableView {
     func setEmptyMessage(_ message: String) {
         let label = UILabel()
         label.text = message
