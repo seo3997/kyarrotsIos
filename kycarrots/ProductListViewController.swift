@@ -43,6 +43,10 @@ final class ProductListViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero, style: .plain)
     private var refresh = UIRefreshControl()
+    
+    private var notifBarItem: UIBarButtonItem!
+    private let badgeLabel = UILabel()
+    
 
     private let floatingButton: UIButton = {
         let button = UIButton(type: .system)
@@ -64,7 +68,6 @@ final class ProductListViewController: UIViewController {
 
     // ✅ 오른쪽 상단 알림 버튼 + 뱃지
     private var notifButton: UIButton!
-    private var badgeLabel: UILabel!
 
     // MARK: - Paging & Data
     private var items: [AdItem] = []
@@ -92,12 +95,29 @@ final class ProductListViewController: UIViewController {
 
         // ✅ 오른쪽 상단: 알림 아이콘 + 뱃지
         setupNotificationButton()
-        setNotificationBadge(0) // 초기값 (나중에 unreadCount API 연동하면 여기 갱신)
+        //refreshNotificationBadge()
 
         // 첫 로드 (전체 로딩)
         fetchProducts(isRefresh: true)
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        refreshNotificationBadge()
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //refreshNotificationBadge()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        badgeLabel.isHidden = true
+    }
     // MARK: - Layout
 
     private func setupLayout() {
@@ -186,13 +206,26 @@ final class ProductListViewController: UIViewController {
     // MARK: - ✅ Notification Button (Right Bar)
 
     private func setupNotificationButton() {
-        notifButton = UIButton(type: .system)
-        notifButton.tintColor = .label
-        notifButton.setImage(UIImage(systemName: "bell"), for: .normal)
-        notifButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        notifButton.addTarget(self, action: #selector(tapNotifications), for: .touchUpInside)
+        // ✅ 시스템 bar button (customView 안씀)
+        notifBarItem = UIBarButtonItem(
+            image: UIImage(systemName: "bell"),
+            style: .plain,
+            target: self,
+            action: #selector(tapNotifications)
+        )
+        notifBarItem.tintColor = .label
+        navigationItem.rightBarButtonItem = notifBarItem
 
-        badgeLabel = UILabel()
+        // ✅ badge UI 준비(overlay)
+        setupNavBarBadgeOverlay()
+
+    }
+    private func setupNavBarBadgeOverlay() {
+        guard let navBar = navigationController?.navigationBar else { return }
+
+        // 중복 추가 방지
+        if badgeLabel.superview != nil { return }
+
         badgeLabel.translatesAutoresizingMaskIntoConstraints = false
         badgeLabel.backgroundColor = .systemRed
         badgeLabel.textColor = .white
@@ -200,18 +233,23 @@ final class ProductListViewController: UIViewController {
         badgeLabel.textAlignment = .center
         badgeLabel.layer.cornerRadius = 9
         badgeLabel.clipsToBounds = true
-        badgeLabel.isHidden = true
+        //badgeLabel.isHidden = false
+        //badgeLabel.text = "99+"
 
-        notifButton.addSubview(badgeLabel)
+        navBar.addSubview(badgeLabel)
+        navBar.bringSubviewToFront(badgeLabel)
 
+        // ✅ 위치: navBar의 trailing/top 기준으로 고정 (안 잘림)
         NSLayoutConstraint.activate([
             badgeLabel.heightAnchor.constraint(equalToConstant: 18),
             badgeLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 18),
-            badgeLabel.centerXAnchor.constraint(equalTo: notifButton.trailingAnchor, constant: -2),
-            badgeLabel.centerYAnchor.constraint(equalTo: notifButton.topAnchor, constant: 4)
-        ])
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: notifButton)
+            // 오른쪽 끝에서 약간 안쪽
+            badgeLabel.trailingAnchor.constraint(equalTo: navBar.trailingAnchor, constant: -12),
+
+            // 상단에서 약간 아래
+            badgeLabel.topAnchor.constraint(equalTo: navBar.topAnchor, constant: 6),
+        ])
     }
 
     private func setNotificationBadge(_ count: Int) {
@@ -314,6 +352,19 @@ final class ProductListViewController: UIViewController {
                 self.isLoading = false
                 self.refresh.endRefreshing()
                 if isRefresh { self.hideFullScreenLoading() } // ✅ 전체 로딩 OFF
+            }
+        }
+    }
+    private func refreshNotificationBadge() {
+        let userId = LoginInfoUtil.getUserId()
+
+        Task { [weak self] in
+            guard let self else { return }
+
+            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
+
+            await MainActor.run {
+                self.setNotificationBadge(count)   // ✅ 여기서만 호출
             }
         }
     }
