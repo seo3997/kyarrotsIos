@@ -241,9 +241,7 @@ final class ProductListViewController: UIViewController {
 
     @objc private func tapNotifications() {
         // TODO: 알림/메시지 리스트 화면으로 이동
-        let vc = UIViewController()
-        vc.view.backgroundColor = .systemBackground
-        vc.title = "알림"
+        let vc = NotificationListViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
 

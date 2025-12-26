@@ -265,7 +265,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MXK-03-uUD" userLabel="EmailContainer">
                                         <rect key="frame" x="0.0" y="240" width="345" height="45"/>
                                         <subviews>
-                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="buy1@gmail.com" placeholder="Email" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="r65-Yg-5Em">
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="sel1@gmail.com" placeholder="Email" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="r65-Yg-5Em">
                                                 <rect key="frame" x="0.0" y="0.0" width="345" height="40"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="mSX-ng-QNp"/>
