@@ -62,12 +62,14 @@ final class NotificationListViewController: UIViewController {
         ])
 
         // 우측 상단: 전체 읽음(원하면)
+        /*
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "전체읽음",
             style: .plain,
             target: self,
             action: #selector(onTapMarkAllRead)
         )
+         */
     }
 
     override func viewDidAppear(_ animated: Bool) {

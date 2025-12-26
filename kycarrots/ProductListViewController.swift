@@ -43,11 +43,7 @@ final class ProductListViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero, style: .plain)
     private var refresh = UIRefreshControl()
-    
-    private var notifBarItem: UIBarButtonItem!
-    private let badgeLabel = UILabel()
-    
-
+ 
     private let floatingButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -94,30 +90,44 @@ final class ProductListViewController: UIViewController {
         setupFloatingButton()
 
         // ✅ 오른쪽 상단: 알림 아이콘 + 뱃지
-        setupNotificationButton()
-        //refreshNotificationBadge()
 
         // 첫 로드 (전체 로딩)
         fetchProducts(isRefresh: true)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        refreshNotificationBadge()
-    }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        //refreshNotificationBadge()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        badgeLabel.isHidden = true
+        NotificationBadgeManager.shared.hide()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNotificationBarButton()
+        refreshNotificationBadge()
+    }
+
+    private func setupNotificationBarButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+                image: UIImage(systemName: "bell"),
+                style: .plain,
+                target: self,
+                action: #selector(tapNotifications)
+            )
+
+        if let navBar = navigationController?.navigationBar {
+            NotificationBadgeManager.shared.installIfNeeded(on: navBar)
+        }
+    }
+    private func refreshNotificationBadge() {
+        let userId = LoginInfoUtil.getUserId()
+
+        Task {
+            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
+            await MainActor.run {
+                NotificationBadgeManager.shared.updateCount(count)
+            }
+        }
+    }
+
     // MARK: - Layout
 
     private func setupLayout() {
@@ -201,65 +211,6 @@ final class ProductListViewController: UIViewController {
         overlaySpinner.stopAnimating()
         loadingOverlay?.removeFromSuperview()
         loadingOverlay = nil
-    }
-
-    // MARK: - ✅ Notification Button (Right Bar)
-
-    private func setupNotificationButton() {
-        // ✅ 시스템 bar button (customView 안씀)
-        notifBarItem = UIBarButtonItem(
-            image: UIImage(systemName: "bell"),
-            style: .plain,
-            target: self,
-            action: #selector(tapNotifications)
-        )
-        notifBarItem.tintColor = .label
-        navigationItem.rightBarButtonItem = notifBarItem
-
-        // ✅ badge UI 준비(overlay)
-        setupNavBarBadgeOverlay()
-
-    }
-    private func setupNavBarBadgeOverlay() {
-        guard let navBar = navigationController?.navigationBar else { return }
-
-        // 중복 추가 방지
-        if badgeLabel.superview != nil { return }
-
-        badgeLabel.translatesAutoresizingMaskIntoConstraints = false
-        badgeLabel.backgroundColor = .systemRed
-        badgeLabel.textColor = .white
-        badgeLabel.font = .systemFont(ofSize: 11, weight: .bold)
-        badgeLabel.textAlignment = .center
-        badgeLabel.layer.cornerRadius = 9
-        badgeLabel.clipsToBounds = true
-        //badgeLabel.isHidden = false
-        //badgeLabel.text = "99+"
-
-        navBar.addSubview(badgeLabel)
-        navBar.bringSubviewToFront(badgeLabel)
-
-        // ✅ 위치: navBar의 trailing/top 기준으로 고정 (안 잘림)
-        NSLayoutConstraint.activate([
-            badgeLabel.heightAnchor.constraint(equalToConstant: 18),
-            badgeLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 18),
-
-            // 오른쪽 끝에서 약간 안쪽
-            badgeLabel.trailingAnchor.constraint(equalTo: navBar.trailingAnchor, constant: -12),
-
-            // 상단에서 약간 아래
-            badgeLabel.topAnchor.constraint(equalTo: navBar.topAnchor, constant: 6),
-        ])
-    }
-
-    private func setNotificationBadge(_ count: Int) {
-        if count <= 0 {
-            badgeLabel.isHidden = true
-            badgeLabel.text = nil
-        } else {
-            badgeLabel.isHidden = false
-            badgeLabel.text = count > 99 ? "99+" : "\(count)"
-        }
     }
 
     // MARK: - Actions
@@ -355,19 +306,7 @@ final class ProductListViewController: UIViewController {
             }
         }
     }
-    private func refreshNotificationBadge() {
-        let userId = LoginInfoUtil.getUserId()
-
-        Task { [weak self] in
-            guard let self else { return }
-
-            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
-
-            await MainActor.run {
-                self.setNotificationBadge(count)   // ✅ 여기서만 호출
-            }
-        }
-    }
+    
 }
 
 // MARK: - UITableViewDataSource

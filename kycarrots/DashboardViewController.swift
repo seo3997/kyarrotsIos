@@ -95,8 +95,42 @@ class DashboardViewController: UITableViewController {
         // 안드로이드 onResume에서 initDashboard() + 알림 뱃지 갱신하듯이
         initDashboard()
         // TODO: iOS 쪽 NotificationBadge 구현되면 여기서 갱신
+        setupNotificationBarButton()
+        refreshNotificationBadge()
     }
     
+    private func setupNotificationBarButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+                image: UIImage(systemName: "bell"),
+                style: .plain,
+                target: self,
+                action: #selector(tapNotifications)
+            )
+
+        if let navBar = navigationController?.navigationBar {
+            NotificationBadgeManager.shared.installIfNeeded(on: navBar)
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationBadgeManager.shared.hide()
+    }
+    
+    @objc private func tapNotifications() {
+        let vc = NotificationListViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    private func refreshNotificationBadge() {
+        let userId = LoginInfoUtil.getUserId()
+
+        Task {
+            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
+            await MainActor.run {
+                NotificationBadgeManager.shared.updateCount(count)
+            }
+        }
+    }
     // MARK: - Setup UI
     
     private func setupHeaderCard() {
