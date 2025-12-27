@@ -48,7 +48,6 @@ class DashboardViewController: UITableViewController {
     /// 새매물 등록하기 버튼 하나만 노출시 spaceView 를 노출 시켜 1/2 버튼으로 보이게 한ㄷ
     @IBOutlet weak var spaceView: UIView!
 
-    private var noDataCardView: UIView!
     private var loadingView: UIView!
     
     // MARK: - Properties
@@ -270,20 +269,18 @@ class DashboardViewController: UITableViewController {
     
     private func loadRecentProducts(token: String) {
         showProgress(true)
-        
+
         Task {
             do {
-                // 안드로이드: appService.getRecentProducts(token): List<ProductVo>
                 let recentList = try await appService.getRecentProducts(token: token)
-                
+
                 let viewModels: [RecentProductViewModel] = recentList.map { product in
-                    // 수량 포맷: "%,d" 와 동일하게 천단위 콤마
                     let qtyInt = Int(product.quantity ?? "") ?? 0
                     let formattedQty = NumberFormatter.localizedString(from: NSNumber(value: qtyInt), number: .decimal)
-                    
+
                     let title = "\(product.title ?? "") \(formattedQty) \(product.unitCodeNm ?? "-")"
                     let subInfo = "\(product.areaMidNm ?? "") \(product.areaSclsNm ?? "") / \(product.desiredShippingDate ?? "")"
-                    
+
                     return RecentProductViewModel(
                         title: title,
                         subInfo: subInfo,
@@ -293,14 +290,15 @@ class DashboardViewController: UITableViewController {
                         userId: product.userId ?? ""
                     )
                 }
-                
+
                 DispatchQueue.main.async {
                     self.items = viewModels
                     self.tableView.reloadData()
-                    
+
                     let hasData = !viewModels.isEmpty
-                    self.noDataCardView.isHidden = hasData
-                    self.tableView.isHidden = !hasData
+                    self.tableView.tableFooterView?.isHidden = hasData
+                    self.tableView.isHidden = false
+
                     self.showProgress(false)
                 }
             } catch {
@@ -308,14 +306,16 @@ class DashboardViewController: UITableViewController {
                 DispatchQueue.main.async {
                     self.items = []
                     self.tableView.reloadData()
-                    self.noDataCardView.isHidden = false
-                    self.tableView.isHidden = true
+
+                    self.tableView.tableFooterView?.isHidden = false
+                    self.tableView.isHidden = false
+
                     self.showProgress(false)
                 }
             }
         }
     }
-    
+
     // 안드로이드 handleAddProductClick() 포팅
     private func handleAddProductClick() {
         let userId = LoginInfoUtil.getUserId()
@@ -441,7 +441,11 @@ class DashboardViewController: UITableViewController {
     private func setupOverlayViews() {
         guard let containerView = navigationController?.view else { return }
 
-        // 1) 로딩 오버레이
+        // 배경 통일 (검은 배경 방지)
+        view.backgroundColor = .systemGroupedBackground
+        tableView.backgroundColor = .systemGroupedBackground
+
+        // 1) 로딩 오버레이 (유지)
         loadingView = UIView(frame: containerView.bounds)
         loadingView.backgroundColor = UIColor(white: 0, alpha: 0.25)
         loadingView.isHidden = true
@@ -453,26 +457,37 @@ class DashboardViewController: UITableViewController {
 
         containerView.addSubview(loadingView)
 
-        // 2) noData 카드
-        let width = containerView.bounds.width - 40
-        noDataCardView = UIView(frame: CGRect(x: 20, y: 140, width: width, height: 120))
-        noDataCardView.backgroundColor = .systemBackground
-        noDataCardView.layer.cornerRadius = 12
-        noDataCardView.layer.shadowColor = UIColor.black.cgColor
-        noDataCardView.layer.shadowOpacity = 0.12
-        noDataCardView.layer.shadowRadius = 4
-        noDataCardView.isHidden = true
+        // 2) ✅ noData 카드는 tableFooterView 로!
+        tableView.tableFooterView = makeNoDataFooterView()
+        tableView.tableFooterView?.isHidden = true
+    }
+    
+    private func makeNoDataFooterView() -> UIView {
+        let width = tableView.bounds.width
+        let footerHeight: CGFloat = 180
 
-        let label = UILabel(frame: noDataCardView.bounds.insetBy(dx: 8, dy: 8))
+        let wrapper = UIView(frame: CGRect(x: 0, y: 0, width: width, height: footerHeight))
+        wrapper.backgroundColor = .clear
+
+        let cardWidth = width - 40
+        let card = UIView(frame: CGRect(x: 20, y: 20, width: cardWidth, height: 120))
+        card.backgroundColor = .systemBackground
+        card.layer.cornerRadius = 12
+        card.layer.shadowColor = UIColor.black.cgColor
+        card.layer.shadowOpacity = 0.12
+        card.layer.shadowRadius = 4
+        card.layer.shadowOffset = CGSize(width: 0, height: 2)
+
+        let label = UILabel(frame: card.bounds.insetBy(dx: 12, dy: 12))
         label.text = "최근 등록된 매물이 없습니다."
         label.textAlignment = .center
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        noDataCardView.addSubview(label)
 
-        containerView.addSubview(noDataCardView)
+        card.addSubview(label)
+        wrapper.addSubview(card)
+        return wrapper
     }
-
     
     // MARK: - Table view data source
     
