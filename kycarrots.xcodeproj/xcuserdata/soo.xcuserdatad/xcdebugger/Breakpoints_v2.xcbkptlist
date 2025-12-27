@@ -78,8 +78,8 @@
             filePath = "kycarrots/Loginout/LoginViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "245"
-            endingLineNumber = "245"
+            startingLineNumber = "246"
+            endingLineNumber = "246"
             landmarkName = "chkLoginCondition()"
             landmarkType = "7">
          </BreakpointContent>

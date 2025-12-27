@@ -41,7 +41,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         completionHandler(.newData)
     }
+    
+    func application(_ application: UIApplication,
+                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
 
+         let regId = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+         PushRegIdUtil.saveRegId(regId)
+     }
+
+     func application(_ application: UIApplication,
+                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
+         // 필요 시 로그
+     }
+    
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,

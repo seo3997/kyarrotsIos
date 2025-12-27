@@ -62,7 +62,7 @@ class DashboardViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        addLeftMenuButton()
         title = "대시보드"
         addLeftMenuButton()
         

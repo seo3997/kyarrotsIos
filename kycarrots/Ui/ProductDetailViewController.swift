@@ -45,6 +45,8 @@ final class ProductDetailViewController: UIViewController {
     var productId: Int64 = 0
     var productUserId: String = "0"
     var productTitle: String = ""
+    var pushType: String?
+    var pushMsg: String?
     
     // MARK: - Parallax/Collapsing
     private let headerBaseHeight: CGFloat = 260

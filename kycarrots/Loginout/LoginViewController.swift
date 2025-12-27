@@ -28,6 +28,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     var selectedUserType: String = Constants.ROLE_SELL
+    var pendingDeepLink: PushDeepLink?
     
     override func viewDidLoad() {
         super.viewDidLoad()
