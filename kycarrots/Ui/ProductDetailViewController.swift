@@ -269,7 +269,7 @@ final class ProductDetailViewController: UIViewController {
 
     private func setupActions() {
         chatButton.addTarget(self, action: #selector(onTapChat), for: .touchUpInside)
-        //editButton.addTarget(self, action: #selector(onTapEdit), for: .touchUpInside)
+        editButton.addTarget(self, action: #selector(onTapEdit), for: .touchUpInside)
 
         // 찜(구매자만 보여야 함) - 네비바 우측 버튼
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -980,6 +980,12 @@ final class ProductDetailViewController: UIViewController {
     @objc private func onTapEdit() {
         // TODO: iOS 상품 수정 화면으로 push
         print("edit product:", productId)
+        let vc = MakeAdMainViewController(
+             service: AppServiceProvider.shared,
+             productId: String(productId)
+        )
+        navigationController?.pushViewController(vc, animated: true)
+
     }
 
     // MARK: - Alerts

@@ -420,6 +420,11 @@ class DashboardViewController: UITableViewController {
             navigationController?.pushViewController(vc, animated: true)
         }
         */
+        let vc = MakeAdMainViewController(
+            service: AppServiceProvider.shared
+        )
+
+        navigationController?.pushViewController(vc, animated: true)
         print("상품등록 화면으로 이동 TODO")
     }
     
@@ -525,15 +530,11 @@ class DashboardViewController: UITableViewController {
         // 안드로이드: AdDetailActivity 로 이동 + imageUrl, productId, userId 전달
         // iOS: AdDetailViewController 로 이동한다고 가정
         // TODO: 실제 클래스/스토리보드 ID에 맞게 수정
-        /*
-        if let storyboard = storyboard,
-           let vc = storyboard.instantiateViewController(withIdentifier: "AdDetailViewController") as? AdDetailViewController {
-            vc.imageUrl = vm.imageUrl
-            vc.productId = vm.productId
-            vc.userId = vm.userId
-            navigationController?.pushViewController(vc, animated: true)
-        }
-        */
-        print("최근 매물 선택 → 상세 화면 이동 TODO, productId=\(vm.productId)")
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "ProductDetailVC") as! ProductDetailViewController
+        vc.productId = Int64(vm.productId ?? "") ?? 0
+        vc.productUserId = vm.userId ?? ""
+        vc.productTitle = vm.title ?? ""
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

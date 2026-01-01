@@ -25,7 +25,22 @@ final class AppService {
         do { return try await repo.getBuyAdvertiseList(req: req).items }
         catch { return [] }
     }
-    
+
+    func registerAdvertise(
+        product: ProductVo,
+        imageMetas: [ProductImageVo],
+        images: [Data]
+    ) async -> Bool {
+        (try? await repo.registerAdvertise(product: product, imageMetas: imageMetas, images: images).result) ?? false
+    }
+
+    func updateAdvertise(
+        product: ProductVo,
+        imageMetas: [ProductImageVo],
+        images: [Data]
+    ) async -> Bool {
+        (try? await repo.updateAdvertise(product: product, imageMetas: imageMetas, images: images).result) ?? false
+    }
     // 코드 리스트 조회
     func getCodeList(groupId: String) async -> [TxtListDataInfo] {
         (try? await repo.getCodeList(groupId: groupId)) ?? []
@@ -147,10 +162,10 @@ final class AppService {
         (try? await repo.getWholesalers(memberCode: memberCode)) ?? []
     }
 
-    func getDefaultWholesaler(userId: String) async -> OpUserVO? {
-        try? await repo.getDefaultWholesaler(userId: userId)
+    func getDefaultWholesaler(userId: String) async throws -> Int64 {
+        try await repo.getDefaultWholesaler(userId: userId)
     }
-
+    
     func setDefaultWholesaler(userId: String, wholesalerNo: String) async -> Bool {
         (try? await repo.setDefaultWholesaler(userId: userId, wholesalerNo: wholesalerNo).result) ?? false
     }

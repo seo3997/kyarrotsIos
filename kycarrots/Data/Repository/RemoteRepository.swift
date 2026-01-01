@@ -83,7 +83,31 @@ final class RemoteRepository {
             as: SimpleResultResponse.self
         )
     }
+    
+    func registerAdvertise(
+          product: ProductVo,
+          imageMetas: [ProductImageVo],
+          images: [Data]
+      ) async throws -> SimpleResultResponse {
+          // ✅ ApiClient에 multipart 업로드 함수가 있어야 함 (아래 3) 참고)
+          try await api.uploadMultipart(
+              AdApiEndpoint.registerAdvertise(product: product, imageMetas: imageMetas, images: images),
+              as: SimpleResultResponse.self
+          )
+      }
 
+      /// 광고 수정
+      func updateAdvertise(
+          product: ProductVo,
+          imageMetas: [ProductImageVo],
+          images: [Data]
+      ) async throws -> SimpleResultResponse {
+          try await api.uploadMultipart(
+              AdApiEndpoint.updateAdvertise(product: product, imageMetas: imageMetas, images: images),
+              as: SimpleResultResponse.self
+          )
+      }
+    
     // MARK: - 로그인 / 이메일/비번
     func login(
         email: String,
@@ -215,13 +239,13 @@ final class RemoteRepository {
         )
     }
 
-    func getDefaultWholesaler(userId: String) async throws -> OpUserVO {
+    func getDefaultWholesaler(userId: String) async throws -> Int64 {
         try await api.request(
             AdApiEndpoint.getDefaultWholesaler(userId: userId),
-            as: OpUserVO.self
+            as: Int64.self
         )
     }
-
+    
     func setDefaultWholesaler(userId: String, wholesalerNo: String) async throws -> SimpleResultResponse {
         try await api.request(
             AdApiEndpoint.setDefaultWholesaler(userId: userId, wholesalerNo: wholesalerNo),
