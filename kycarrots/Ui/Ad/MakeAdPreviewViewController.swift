@@ -174,8 +174,16 @@ final class MakeAdPreviewViewController: UIViewController {
     }
 
     @objc private func onSubmitTapped() {
+        if draft.isModify == false {
+               let hasTitle = (draft.titleImageData != nil && !(draft.titleImageData?.isEmpty ?? true))
+               if !hasTitle {
+                   toast("대표 이미지를 선택해 주세요")
+                   return
+               }
+        }
+        print("✅ onSubmitTapped called, isModify=\(draft.isModify)")
         btnSubmit.isEnabled = false
-
+        btnSubmit.setTitle("처리중...", for: .normal)
         Task {
             do {
                 let (product, metas, images) = buildUploadPayload(from: draft)
@@ -188,9 +196,11 @@ final class MakeAdPreviewViewController: UIViewController {
 
                 await MainActor.run {
                     self.btnSubmit.isEnabled = true
+                    self.btnSubmit.setTitle(self.draft.isModify ? "수정 완료" : "등록", for: .normal)
                     self.onCompleted?(true)
                 }
             } catch {
+                print("❌ submit error:", error)
                 await MainActor.run {
                     self.btnSubmit.isEnabled = true
                     self.toast("등록/수정 실패")
@@ -201,27 +211,36 @@ final class MakeAdPreviewViewController: UIViewController {
     }
 
     private func buildUploadPayload(from d: MakeAdDraft) -> (ProductVo, [ProductImageVo], [Data]) {
+        let userNo = LoginInfoUtil.getUserNo() // ✅ 프로젝트에 있는 util 사용
+        let systemType = String(Constants.SYSTEM_TYPE)
+
+        // ✅ Kotlin과 동일 규칙
+        let saleStatus: String = {
+            if systemType == "1" { return "1" }   // 판매중
+            return "0"                            // 승인요청(또는 기본)
+        }()
+
         let product = ProductVo(
             productId: d.productId,
-            userNo: nil,
+            userNo: userNo,                       // ✅ nil 금지 (Kotlin처럼 세팅)
             title: d.name,
             description: d.detail,
             price: d.amount,
-            categoryGroup: nil,
+            categoryGroup: "R010610",             // ✅ Kotlin 고정
             categoryMid: d.categoryMid,
             categoryScls: d.categoryScls,
-            saleStatus: d.saleStatus,
-            areaGroup: nil,
+            saleStatus: saleStatus,               // ✅ Kotlin 규칙 강제
+            areaGroup: "R010070",                 // ✅ Kotlin 고정
             areaMid: d.areaMid,
             areaScls: d.areaScls,
             quantity: d.quantity,
-            unitGroup: nil,
+            unitGroup: "R010620",                 // ✅ Kotlin 고정
             unitCode: d.unitCode,
             desiredShippingDate: d.desiredShippingDate,
-            registerNo: nil,
-            registDt: nil,
-            updusrNo: nil,
-            updtDt: nil,
+            registerNo: userNo,                   // ✅ Kotlin: userNo
+            registDt: "",
+            updusrNo: userNo,                     // ✅ Kotlin: userNo
+            updtDt: "",
             imageUrl: nil,
             categoryMidNm: nil,
             categorySclsNm: nil,
@@ -233,7 +252,7 @@ final class MakeAdPreviewViewController: UIViewController {
             wholesalerNo: nil,
             wholesalerId: nil,
             fav: nil,
-            systemType: d.systemType,
+            systemType: systemType,               // ✅ Kotlin과 동일 (무조건 "1"/"2")
             rejectReason: nil
         )
 

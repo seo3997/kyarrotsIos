@@ -21,7 +21,16 @@
                             </imageView>
                             <view alpha="0.25" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FPB-gn-Q5N">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="hKf-c3-QsD">
+                                        <rect key="frame" x="178" y="407.66666666666669" width="37" height="37"/>
+                                    </activityIndicatorView>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="hKf-c3-QsD" firstAttribute="centerY" secondItem="FPB-gn-Q5N" secondAttribute="centerY" id="U8X-A1-LOv"/>
+                                    <constraint firstItem="hKf-c3-QsD" firstAttribute="centerX" secondItem="FPB-gn-Q5N" secondAttribute="centerX" id="xD6-5s-Lqh"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>

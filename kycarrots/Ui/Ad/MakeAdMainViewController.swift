@@ -101,7 +101,20 @@ final class MakeAdMainViewController: UIViewController {
                 }
             }
         }
-
+        detailVC.onAreaMidChanged = { [weak self] code in
+             guard let self else { return }
+             Task {
+                 do {
+                     // 카테고리랑 동일한 getSCodeList 시그니처 사용
+                     let sub = try await self.service.getSCodeList(groupId: "R010070", mcode: code)
+                     await MainActor.run {
+                         self.detailVC.setSubAreaList(sub)
+                     }
+                 } catch {
+                     await MainActor.run { self.toast("지역(소) 불러오기 실패") }
+                 }
+             }
+         }
         imageVC.onRequestPreview = { [weak self] in
             self?.openPreview()
         }
