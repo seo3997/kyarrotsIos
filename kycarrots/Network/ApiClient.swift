@@ -144,10 +144,13 @@ final class ApiClient {
         var builder = MultipartBuilder(boundary: boundary)
         try builder.addJSON(name: "product", encodable: product)
         try builder.addJSON(name: "imageMetas", encodable: metas)
-        builder.addFiles(name: "images",
-                         files: images,
-                         fileNamePrefix: "img",
-                         mimeType: "image/jpeg")
+        let stamp = String(Int(Date().timeIntervalSince1970))
+        builder.addFiles(
+            name: "images",
+            files: images,
+            fileNamePrefix: "img_\(stamp)",
+            mimeType: "image/jpeg"
+        )
         request.httpBody = builder.build()
 
         // =================================================

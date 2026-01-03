@@ -23,7 +23,7 @@ struct Constants {
     }
 
     /// 현재 서버 설정 (Android Constants.kt의 currentServer 대응)
-    private static let currentServer: ServerType = .LOCAL
+    private static let currentServer: ServerType = .DEV
 
     // MARK: - Base URL (Android Constants.kt BASE_URL 대응)
     static var BASE_URL: String {
