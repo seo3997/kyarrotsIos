@@ -211,10 +211,11 @@ final class MakeAdPreviewViewController: UIViewController {
     }
 
     private func buildUploadPayload(from d: MakeAdDraft) -> (ProductVo, [ProductImageVo], [Data]) {
-        let userNo = LoginInfoUtil.getUserNo() // ✅ 프로젝트에 있는 util 사용
+        let userId = LoginInfoUtil.getUserId()
+        let userNo = LoginInfoUtil.getUserNo()
         let systemType = String(Constants.SYSTEM_TYPE)
 
-        // ✅ Kotlin과 동일 규칙
+        
         let saleStatus: String = {
             if systemType == "1" { return "1" }   // 판매중
             return "0"                            // 승인요청(또는 기본)
@@ -222,24 +223,24 @@ final class MakeAdPreviewViewController: UIViewController {
 
         let product = ProductVo(
             productId: d.productId,
-            userNo: userNo,                       // ✅ nil 금지 (Kotlin처럼 세팅)
+            userNo: userNo,
             title: d.name,
             description: d.detail,
             price: d.amount,
-            categoryGroup: "R010610",             // ✅ Kotlin 고정
+            categoryGroup: "R010610",
             categoryMid: d.categoryMid,
             categoryScls: d.categoryScls,
-            saleStatus: saleStatus,               // ✅ Kotlin 규칙 강제
-            areaGroup: "R010070",                 // ✅ Kotlin 고정
+            saleStatus: saleStatus,
+            areaGroup: "R010070",
             areaMid: d.areaMid,
             areaScls: d.areaScls,
             quantity: d.quantity,
-            unitGroup: "R010620",                 // ✅ Kotlin 고정
+            unitGroup: "R010620",
             unitCode: d.unitCode,
             desiredShippingDate: d.desiredShippingDate,
-            registerNo: userNo,                   // ✅ Kotlin: userNo
+            registerNo: userNo,
             registDt: "",
-            updusrNo: userNo,                     // ✅ Kotlin: userNo
+            updusrNo: userNo,
             updtDt: "",
             imageUrl: nil,
             categoryMidNm: nil,
@@ -248,11 +249,11 @@ final class MakeAdPreviewViewController: UIViewController {
             areaSclsNm: nil,
             unitCodeNm: nil,
             saleStatusNm: nil,
-            userId: nil,
+            userId: userId,
             wholesalerNo: nil,
             wholesalerId: nil,
             fav: nil,
-            systemType: systemType,               // ✅ Kotlin과 동일 (무조건 "1"/"2")
+            systemType: systemType,
             rejectReason: nil
         )
 

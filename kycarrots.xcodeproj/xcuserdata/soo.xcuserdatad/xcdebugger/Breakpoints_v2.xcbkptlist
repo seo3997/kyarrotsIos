@@ -84,5 +84,83 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "33FF112E-3BE5-41CB-92A3-1AA95A713747"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kycarrots/Ui/Ad/MakeAdPreviewViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "285"
+            endingLineNumber = "285"
+            landmarkName = "buildUploadPayload(from:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "33FF112E-3BE5-41CB-92A3-1AA95A713747 - 6cf08b227402d4e9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kycarrots.MakeAdPreviewViewController.buildUploadPayload(from: kycarrots.MakeAdDraft) -&gt; (kycarrots.ProductVo, Swift.Array&lt;kycarrots.ProductImageVo&gt;, Swift.Array&lt;Foundation.Data&gt;)"
+                  moduleName = "kycarrots.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "285"
+                  endingLineNumber = "285">
+               </Location>
+               <Location
+                  uuid = "33FF112E-3BE5-41CB-92A3-1AA95A713747 - 6cf08b227402d4e9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kycarrots.MakeAdPreviewViewController.buildUploadPayload(from: kycarrots.MakeAdDraft) -&gt; (kycarrots.ProductVo, Swift.Array&lt;kycarrots.ProductImageVo&gt;, Swift.Array&lt;Foundation.Data&gt;)"
+                  moduleName = "kycarrots.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "285"
+                  endingLineNumber = "285">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F10F2300-F69B-4E1C-926E-4F12333AF476"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kycarrots/Ui/Ad/MakeAdPreviewViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
+            landmarkName = "buildUploadPayload(from:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3481BD7D-6117-4257-85E5-E57695CF0241"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kycarrots/Ui/Ad/MakeAdPreviewViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "init(service:draft:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

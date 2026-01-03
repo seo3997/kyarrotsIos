@@ -23,13 +23,13 @@ struct Constants {
     }
 
     /// 현재 서버 설정 (Android Constants.kt의 currentServer 대응)
-    private static let currentServer: ServerType = .DEV
+    private static let currentServer: ServerType = .LOCAL
 
     // MARK: - Base URL (Android Constants.kt BASE_URL 대응)
     static var BASE_URL: String {
         switch currentServer {
         case .LOCAL:
-            return "http://10.69.122.25:9000/"
+            return "http://10.133.36.8:9000/"
         case .DEV:
             return "http://52.231.229.156:9000/"
         case .PROD:
@@ -41,7 +41,7 @@ struct Constants {
     static var WS_URL: String {
         switch currentServer {
         case .LOCAL:
-            return "ws://10.69.122.25:9000/chat-ws?userId="
+            return "ws://10.133.36.8:9000/chat-ws?userId="
         case .DEV:
             return "ws://52.231.229.156:9000/chat-ws?userId="
         case .PROD:
