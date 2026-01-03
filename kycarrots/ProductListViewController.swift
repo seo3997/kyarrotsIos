@@ -224,8 +224,10 @@ final class ProductListViewController: UIViewController {
     }
 
     @objc private func floatingButtonTapped() {
-        print("Floating button tapped - 상품 등록 화면으로 이동 예정")
-        // TODO: 안드로이드 MakeADMainActivity 대응 iOS 화면으로 push/present
+        let vc = MakeAdMainViewController(
+            service: AppServiceProvider.shared
+        )
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func tapNotifications() {

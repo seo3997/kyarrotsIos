@@ -423,7 +423,6 @@ class DashboardViewController: UITableViewController {
         let vc = MakeAdMainViewController(
             service: AppServiceProvider.shared
         )
-
         navigationController?.pushViewController(vc, animated: true)
         print("상품등록 화면으로 이동 TODO")
     }
