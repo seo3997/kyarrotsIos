@@ -6,12 +6,45 @@ final class MakeAdMainViewController: UIViewController {
     private let service: AppService
     private var draft = MakeAdDraft()
 
-    private lazy var detailVC = MakeAdDetailViewController(service: service)
-    private lazy var imageVC  = MakeAdImgRegiViewController()
+    private lazy var detailVC: MakeAdDetailViewController = {
+        let vc = MakeAdDetailViewController(service: service)
 
+        vc.onRequestGoImageTab = { [weak self] in
+            self?.selectTab(index: 1)   // 탭2 = 이미지등록
+        }
+
+        return vc
+    }()
+    private lazy var imageVC: MakeAdImgRegiViewController = {
+        let vc = MakeAdImgRegiViewController()
+
+        // ✅ 여기서 이전 버튼 콜백 연결
+        vc.onRequestGoDetailTab = { [weak self] in
+            self?.selectTab(index: 0)   // 탭1 = MakeAdDetailViewController
+        }
+
+        return vc
+    }()
+    
+    private func selectTab(index: Int) {
+        // ✅ 너희 탭 전환 로직을 여기서 실행
+        // 1) SegmentedControl 쓰는 경우:
+        // segmentedControl.selectedSegmentIndex = index
+        // onChangedSegment(segmentedControl)
+
+        // 2) Child VC show/hide 쓰는 경우(예시):
+        if index == 0 {
+            // 탭1: 상세정보
+            showDetailStep()
+        } else {
+            // 탭2: 이미지
+            showImageStep()
+        }
+    }
+    
     private let segmented = UISegmentedControl(items: ["상세정보", "이미지등록"])
     private let containerView = UIView()
-
+    
     init(service: AppService,
          productId: String? = nil,
          adStatus: String? = nil) {
@@ -47,18 +80,22 @@ final class MakeAdMainViewController: UIViewController {
             segmented.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             segmented.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
 
+            segmented.heightAnchor.constraint(equalToConstant: 44),
+
             containerView.topAnchor.constraint(equalTo: segmented.bottomAnchor, constant: 12),
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-
+        segmented.isUserInteractionEnabled = false
+        /*
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "미리보기",
             style: .done,
             target: self,
             action: #selector(openPreview)
         )
+        */
     }
 
     private func setupChildren() {
@@ -121,12 +158,52 @@ final class MakeAdMainViewController: UIViewController {
     }
 
     @objc private func onSegmentChanged() {
-        let isDetail = segmented.selectedSegmentIndex == 0
-        detailVC.view.isHidden = !isDetail
-        imageVC.view.isHidden = isDetail
+        selectTab(index: segmented.selectedSegmentIndex)
     }
 
-    private func loadIfModify() {
+    
+    // MARK: - Step Switch (탭 전환)
+
+    /// containerView에 child VC를 1회만 붙임
+    private func attachIfNeeded(_ vc: UIViewController) {
+        guard vc.parent == nil else { return }
+
+        addChild(vc)
+        containerView.addSubview(vc.view)
+        vc.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            vc.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            vc.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            vc.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            vc.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+        ])
+        vc.didMove(toParent: self)
+    }
+
+    /// 탭1: 상세정보 화면 표시
+    private func showDetailStep() {
+        // setupChildren()에서 이미 붙여두지만, 혹시 구조 변경 대비
+        attachIfNeeded(detailVC)
+        attachIfNeeded(imageVC)
+
+        segmented.selectedSegmentIndex = 0
+        detailVC.view.isHidden = false
+        imageVC.view.isHidden = true
+        containerView.bringSubviewToFront(detailVC.view)
+    }
+
+    /// 탭2: 이미지등록 화면 표시
+    private func showImageStep() {
+        attachIfNeeded(detailVC)
+        attachIfNeeded(imageVC)
+
+        segmented.selectedSegmentIndex = 1
+        detailVC.view.isHidden = true
+        imageVC.view.isHidden = false
+        containerView.bringSubviewToFront(imageVC.view)
+    }
+
+private func loadIfModify() {
         let userNo = LoginInfoUtil.getUserNo()
         guard
             draft.isModify,

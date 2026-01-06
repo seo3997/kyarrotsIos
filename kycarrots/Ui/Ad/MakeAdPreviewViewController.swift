@@ -17,7 +17,8 @@ final class MakeAdPreviewViewController: UIViewController {
 
     private let imgTitle = UIImageView()
 
-    // ✅ 상세 이미지 3개 추가
+    // ✅ 상세 이미지
+    private let lblDetailTitle = UILabel()
     private var imgDetails: [UIImageView] = []
 
     private let lblSummary = UILabel()
@@ -70,10 +71,9 @@ final class MakeAdPreviewViewController: UIViewController {
         stack.addArrangedSubview(imgTitle)
 
         // ✅ 상세 이미지 3장 UI 추가
-        let detailLabel = UILabel()
-        detailLabel.text = "상세 이미지"
-        detailLabel.font = .systemFont(ofSize: 14, weight: .semibold)
-        stack.addArrangedSubview(detailLabel)
+        lblDetailTitle.text = "상세 이미지"
+        lblDetailTitle.font = .systemFont(ofSize: 14, weight: .semibold)
+        stack.addArrangedSubview(lblDetailTitle)
 
         for _ in 0..<3 {
             let iv = UIImageView()
@@ -129,6 +129,16 @@ final class MakeAdPreviewViewController: UIViewController {
             )
         }
 
+        // ✅ 빈 상세이미지 슬롯은 미리보기에서 숨김
+        var anyDetail = false
+        for i in 0..<imgDetails.count {
+            let has = hasDetailImage(at: i)
+            imgDetails[i].isHidden = !has
+            if has { anyDetail = true }
+        }
+        lblDetailTitle.isHidden = !anyDetail
+
+
         lblSummary.text =
 """
 상품명: \(draft.name)
@@ -143,7 +153,22 @@ final class MakeAdPreviewViewController: UIViewController {
 """
     }
 
-    // ✅ 공통 이미지 표시 로직
+    
+    // ✅ 상세 이미지가 있는지(미리보기에서 빈 슬롯 숨김용)
+    private func hasDetailImage(at index: Int) -> Bool {
+        if draft.detailImageDatas.indices.contains(index),
+           !draft.detailImageDatas[index].isEmpty {
+            return true
+        }
+        if draft.isModify,
+           draft.detailImageUrls.indices.contains(index),
+           !draft.detailImageUrls[index].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return true
+        }
+        return false
+    }
+
+// ✅ 공통 이미지 표시 로직
     private func setImage(
         imageView: UIImageView,
         localData: Data?,

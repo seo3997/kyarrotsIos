@@ -142,6 +142,8 @@ final class ProductListViewController: UIViewController {
             segmented.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
             segmented.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
 
+            segmented.heightAnchor.constraint(equalToConstant: 44),
+
             tableView.topAnchor.constraint(equalTo: segmented.bottomAnchor, constant: 8),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),

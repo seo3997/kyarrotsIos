@@ -8,6 +8,7 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
     // callbacks
     var onCategoryMidChanged: ((String) -> Void)?
     var onAreaMidChanged: ((String) -> Void)?
+    var onRequestGoImageTab: (() -> Void)?
 
     // ✅ 선택 코드 임시 저장 (버튼 title은 UI일 뿐, Draft에는 코드가 들어가야 함)
     private var selectedCategoryMidCode: String?
@@ -38,6 +39,8 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
     private var areaMidList: [TxtListDataInfo] = []
     private var areaSubList: [TxtListDataInfo] = []
     private var unitList: [TxtListDataInfo] = []
+    private let btnNext = UIButton(type: .system)
+
 
     init(service: AppService) {
         self.service = service
@@ -129,6 +132,17 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         lbl.font = .systemFont(ofSize: 14, weight: .semibold)
         stack.addArrangedSubview(lbl)
         stack.addArrangedSubview(tvDetail)
+        
+        btnNext.setTitle("다음", for: .normal)
+        btnNext.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        btnNext.backgroundColor = .systemBlue
+        btnNext.setTitleColor(.white, for: .normal)
+        btnNext.layer.cornerRadius = 10
+        btnNext.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        btnNext.addTarget(self, action: #selector(onNextTapped), for: .touchUpInside)
+
+        // 스택에 추가
+        stack.addArrangedSubview(btnNext)
 
         // textfield 기본 스타일
         [tfName, tfAmount, tfQuantity, tfDesiredDate].forEach {
@@ -141,6 +155,17 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         let numberToolbar = makeNumberToolbar()
         tfAmount.inputAccessoryView = numberToolbar
         tfQuantity.inputAccessoryView = numberToolbar
+    }
+
+    @objc private func onNextTapped() {
+        // 🔎 여기서 간단 검증 가능 (선택)
+        if (tfName.text ?? "").isEmpty {
+            toast("상품명을 입력해 주세요")
+            return
+        }
+
+        // ✅ Main에게 "이미지등록 탭으로 가라" 요청
+        onRequestGoImageTab?()
     }
 
     // ✅ 바깥 탭하면 키보드 내려감
