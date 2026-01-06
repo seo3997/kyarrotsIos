@@ -255,6 +255,9 @@ final class MakeAdImgRegiViewController: UIViewController,
         // draft 적용 시 삭제 플래그는 URL/Data 기준으로 다시 판단 (삭제를 했으면 titleImageUrl을 비우도록 되어 있음)
         isTitleDeleted = false
 
+        // ✅ 배열 길이 보정(수정모드에서 URL만 있고 배열이 짧으면 슬롯 계산이 틀어짐)
+        ensureDetailArraysSize3()
+
         // ✅ 대표 이미지
         if let data = d.titleImageData, !data.isEmpty, let img = UIImage(data: data) {
             titleImageView.kf.cancelDownloadTask()
@@ -417,14 +420,18 @@ final class MakeAdImgRegiViewController: UIViewController,
             return draft.isModify && !url.isEmpty
 
         case .detail(let index):
-            guard draft.detailImageDatas.indices.contains(index),
-                  draft.detailImageUrls.indices.contains(index) else { return false }
+            // ✅ data가 있으면 urls 길이와 무관하게 "있음" 처리
+            if draft.detailImageDatas.indices.contains(index) {
+                let data = draft.detailImageDatas[index]
+                if !data.isEmpty { return true }
+            }
 
-            let data = draft.detailImageDatas[index]
-            if !data.isEmpty { return true }
-
-            let url = draft.detailImageUrls[index].trimmingCharacters(in: .whitespacesAndNewlines)
-            return draft.isModify && !url.isEmpty
+            // ✅ 수정모드에서만 URL fallback
+            if draft.isModify, draft.detailImageUrls.indices.contains(index) {
+                let url = draft.detailImageUrls[index].trimmingCharacters(in: .whitespacesAndNewlines)
+                return !url.isEmpty
+            }
+            return false
         }
     }
 
