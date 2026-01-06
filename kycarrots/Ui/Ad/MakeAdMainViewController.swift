@@ -265,10 +265,16 @@ private func loadIfModify() {
             for img in images {
                 // represent == 1 → 대표 이미지
                 if img.represent == 1 {
-                    d.titleImageId = String(img.imageId)
+                    if let id = img.imageId {
+                        d.titleImageId = String(id)
+                    } else {
+                        d.titleImageId = nil   // 또는 "" / 아예 세팅 안 함
+                    }
                     d.titleImageUrl = img.imageUrl
                 } else {
-                    d.detailImageIds.append(String(img.imageId))
+                    if let id = img.imageId {
+                        d.detailImageIds.append(String(id))
+                    }
                     if let url = img.imageUrl {
                         d.detailImageUrls.append(url)
                     }

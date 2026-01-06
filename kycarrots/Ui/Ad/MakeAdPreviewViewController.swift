@@ -289,7 +289,7 @@ final class MakeAdPreviewViewController: UIViewController {
             images.append(data)
             metas.append(
                 ProductImageVo(
-                    imageId: imageId ?? 0,
+                    imageId: imageId,
                     productId: 0,
                     imageCd: represent == 1 ? "1" : "0",
                     imageUrl: nil,

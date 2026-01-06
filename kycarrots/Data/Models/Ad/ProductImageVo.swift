@@ -9,7 +9,7 @@
 import Foundation
 
 struct ProductImageVo: Codable {
-    let imageId: Int64
+    let imageId: Int64?
     let productId: Int64
     let imageCd: String?
     let imageUrl: String?
