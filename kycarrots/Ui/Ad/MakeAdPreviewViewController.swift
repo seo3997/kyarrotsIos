@@ -5,97 +5,71 @@
 
 import UIKit
 import Kingfisher
+import Foundation
 
 final class MakeAdPreviewViewController: UIViewController {
 
-    private let service: AppService
-    private var draft: MakeAdDraft
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var section1CardView: UIView!
+    @IBOutlet weak var section2CardView: UIView!
+    @IBOutlet weak var section1DescLabel: UILabel!
+
+    @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet weak var shipDateLabel: UILabel!
+    @IBOutlet weak var quantityLabel: UILabel!
+    @IBOutlet weak var categoryLabel: UILabel!
+    @IBOutlet weak var areaLabel: UILabel!
+
+    @IBOutlet weak var imgTitle: UIImageView!
+    @IBOutlet weak var imgDetail1: UIImageView!
+    @IBOutlet weak var imgDetail2: UIImageView!
+    @IBOutlet weak var imgDetail3: UIImageView!
+    @IBOutlet weak var lblSummary: UILabel!
+    @IBOutlet weak var btnSubmit: UIButton!
+    @IBOutlet weak var lblDetailTitle: UILabel!
+    private var service: AppService!
+    private var draft: MakeAdDraft!
     var onCompleted: ((Bool) -> Void)?
 
-    private let scroll = UIScrollView()
-    private let stack = UIStackView()
-
-    private let imgTitle = UIImageView()
-
-    // ✅ 상세 이미지
-    private let lblDetailTitle = UILabel()
     private var imgDetails: [UIImageView] = []
 
-    private let lblSummary = UILabel()
-    private let btnSubmit = UIButton(type: .system)
+    static func instantiate(
+        service: AppService,
+        draft: MakeAdDraft
+    ) -> MakeAdPreviewViewController {
 
-    init(service: AppService, draft: MakeAdDraft) {
-        self.service = service
-        self.draft = draft
-        super.init(nibName: nil, bundle: nil)
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let vc = sb.instantiateViewController(
+            withIdentifier: "MakeAdPVC"
+        ) as! MakeAdPreviewViewController
+
+        vc.service = service
+        vc.draft = draft
+        return vc
     }
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        section1CardView.applyCardStyle()
+        section2CardView.applyCardStyle()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        imgDetails = [imgDetail1, imgDetail2, imgDetail3]   // ✅ 필수
+
+        btnSubmit.addTarget(self, action: #selector(onSubmitTapped), for: .touchUpInside) // ✅ 스토리보드면 액션 연결 or 이걸로
+
         view.backgroundColor = .systemBackground
         title = draft.isModify ? "상품 수정 미리보기" : "상품 등록 미리보기"
-        setupUI()
         bind()
     }
-
     func applyDraft(_ d: MakeAdDraft) {
         self.draft = d
         if isViewLoaded { bind() }
     }
 
-    private func setupUI() {
-        scroll.alwaysBounceVertical = true
-        view.addSubview(scroll)
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            scroll.topAnchor.constraint(equalTo: view.topAnchor),
-            scroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        stack.axis = .vertical
-        stack.spacing = 12
-        scroll.addSubview(stack)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor, constant: 16),
-            stack.leadingAnchor.constraint(equalTo: scroll.frameLayoutGuide.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: scroll.frameLayoutGuide.trailingAnchor, constant: -16),
-            stack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor, constant: -16)
-        ])
-
-        // 대표 이미지
-        configImageView(imgTitle, height: 220)
-        stack.addArrangedSubview(imgTitle)
-
-        // ✅ 상세 이미지 3장 UI 추가
-        lblDetailTitle.text = "상세 이미지"
-        lblDetailTitle.font = .systemFont(ofSize: 14, weight: .semibold)
-        stack.addArrangedSubview(lblDetailTitle)
-
-        for _ in 0..<3 {
-            let iv = UIImageView()
-            configImageView(iv, height: 180)
-            imgDetails.append(iv)
-            stack.addArrangedSubview(iv)
-        }
-
-        lblSummary.numberOfLines = 0
-        lblSummary.font = .systemFont(ofSize: 16)
-        lblSummary.textColor = .label
-        stack.addArrangedSubview(lblSummary)
-
-        btnSubmit.setTitle(draft.isModify ? "수정 완료" : "등록", for: .normal)
-        btnSubmit.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        btnSubmit.heightAnchor.constraint(equalToConstant: 52).isActive = true
-        btnSubmit.layer.cornerRadius = 12
-        btnSubmit.layer.borderWidth = 1
-        btnSubmit.layer.borderColor = UIColor.systemGray4.cgColor
-        btnSubmit.addTarget(self, action: #selector(onSubmitTapped), for: .touchUpInside)
-        stack.addArrangedSubview(btnSubmit)
-    }
 
     private func configImageView(_ iv: UIImageView, height: CGFloat) {
         iv.contentMode = .scaleAspectFill
@@ -107,7 +81,7 @@ final class MakeAdPreviewViewController: UIViewController {
 
     private func bind() {
         btnSubmit.setTitle(draft.isModify ? "수정 완료" : "등록", for: .normal)
-
+        
         // ✅ 대표 이미지 표시
         setImage(
             imageView: imgTitle,
@@ -115,12 +89,12 @@ final class MakeAdPreviewViewController: UIViewController {
             remoteUrl: draft.titleImageUrl,
             allowRemoteWhenModify: draft.isModify
         )
-
+        
         // ✅ 상세 이미지 3장 표시 (Data 우선 / 수정일 때만 URL fallback)
         for i in 0..<imgDetails.count {
             let data: Data? = (draft.detailImageDatas.indices.contains(i) ? draft.detailImageDatas[i] : nil)
             let url: String? = (draft.detailImageUrls.indices.contains(i) ? draft.detailImageUrls[i] : nil)
-
+            
             setImage(
                 imageView: imgDetails[i],
                 localData: data,
@@ -128,7 +102,7 @@ final class MakeAdPreviewViewController: UIViewController {
                 allowRemoteWhenModify: draft.isModify
             )
         }
-
+        
         // ✅ 빈 상세이미지 슬롯은 미리보기에서 숨김
         var anyDetail = false
         for i in 0..<imgDetails.count {
@@ -137,22 +111,39 @@ final class MakeAdPreviewViewController: UIViewController {
             if has { anyDetail = true }
         }
         lblDetailTitle.isHidden = !anyDetail
-
-
+        
+        
         lblSummary.text =
 """
 상품명: \(draft.name)
-금액: \(draft.amount)
-수량: \(draft.quantity)
-단위: \(draft.unitName ?? draft.unitCode ?? "")
-카테고리: \(draft.categoryMidName ?? draft.categoryMid ?? "") / \(draft.categorySclsName ?? draft.categoryScls ?? "")
-지역: \(draft.areaMidName ?? draft.areaMid ?? "") / \(draft.areaSclsName ?? draft.areaScls ?? "")
-희망 발송일: \(draft.desiredShippingDate ?? "")
 설명:
 \(draft.detail)
 """
+        
+        //가격
+        let priceText = formatCommaNoDecimal(draft.amount)
+        priceLabel.text = "가격:\(priceText)원"
+        
+        //희망출하일
+        let shipDate = draft.desiredShippingDate ?? "-"   // 예: "2025-11-01"
+        shipDateLabel.text = "희망출하일: \(shipDate)"
+        
+        // 수량
+        let qtyText = formatCommaNoDecimal(draft.quantity)
+        let unit = draft.unitName ?? draft.unitCode ?? ""
+        quantityLabel.text = "수량: \(qtyText)\(unit)"
+        
+        // 카테고리 (서버 필드명에 맞게 바꿔)
+        let cm = draft.categoryMidName ?? draft.categoryMid ?? ""
+        let cs = draft.categorySclsName ?? draft.categoryScls ?? ""
+        let cat = [cm, cs].filter { !$0.isEmpty }.joined(separator: " > ")
+        categoryLabel.text = "카테고리: \(cat.isEmpty ? "-" : cat)"
+        
+        
+        let areaMid = draft.areaMidName ?? draft.areaMid ?? ""
+        let areaScls = draft.areaSclsName ?? draft.areaScls ?? ""
+        areaLabel.text = "지역: \(areaMid) \(areaScls)"
     }
-
     
     // ✅ 상세 이미지가 있는지(미리보기에서 빈 슬롯 숨김용)
     private func hasDetailImage(at index: Int) -> Bool {

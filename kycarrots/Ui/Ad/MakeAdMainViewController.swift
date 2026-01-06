@@ -302,7 +302,7 @@ private func loadIfModify() {
 
         draft = imageVC.collectDraft(into: draft)
 
-        let vc = MakeAdPreviewViewController(service: service, draft: draft)
+        let vc = MakeAdPreviewViewController.instantiate(service: service, draft: draft)
         vc.onCompleted = { [weak self] ok in
             guard let self else { return }
             if ok { self.navigationController?.popViewController(animated: true) }

@@ -80,16 +80,6 @@ final class ProductDetailViewController: UIViewController {
     // Picker
     private let statusPicker = UIPickerView()
     
-    func styleCard(_ view: UIView) {
-        view.layer.cornerRadius = 12
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.1
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 6
-
-        view.layer.masksToBounds = false
-        view.backgroundColor = .white
-    }
     func styleRejectReasonCard(_ view: UIView) {
         view.layer.cornerRadius = 8
         view.layer.masksToBounds = false
@@ -161,8 +151,6 @@ final class ProductDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupChatButton()
-        styleCard(section1CardView)
-        styleCard(section2CardView)
         styleRejectReasonCard(rejectReasonCardView)
         // ✅ 프로젝트 유틸/상수로 값 주입(여기만 너 프로젝트에 맞게)
         systemType = Constants.SYSTEM_TYPE
@@ -197,6 +185,8 @@ final class ProductDetailViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        section1CardView.applyCardStyle()
+        section2CardView.applyCardStyle()
         navBarOverlay?.frame = navigationController?.navigationBar.bounds ?? .zero
     }
 
@@ -441,21 +431,6 @@ final class ProductDetailViewController: UIViewController {
         // 상태 옵션 로딩
         currentStatus = detail.product.saleStatus
         loadProductStatusOptions(systemType: systemType, currentStatus: currentStatus)
-    }
-    private func formatCommaNoDecimal(_ raw: String?) -> String {
-        let s = (raw ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        if s.isEmpty { return "-" }
-
-        // "100000.00" 대응
-        let d = Double(s) ?? 0
-        let n = Int64(d.rounded(.towardZero))   // 소수점 버림
-
-        let f = NumberFormatter()
-        f.numberStyle = NumberFormatter.Style.decimal
-        f.maximumFractionDigits = 0
-        f.minimumFractionDigits = 0
-
-        return f.string(from: NSNumber(value: n)) ?? "\(n)"
     }
     // MARK: - Images (Glide -> Kingfisher)
     private func applyImageMetas(_ metas: [ProductImageVo]) {
