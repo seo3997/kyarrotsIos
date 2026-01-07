@@ -85,23 +85,39 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         tvDetail.layer.cornerRadius = 8
         tvDetail.textContainerInset = UIEdgeInsets(top: 10, left: 8, bottom: 10, right: 8)
 
+        styleTextField(tfName)
+        styleTextField(tfQuantity)
+        styleTextField(tfAmount)
+        styleTextField(tfDesiredDate)
+        
         // 선택 버튼 스타일
-        styleSelectButton(btnUnit)
-        styleSelectButton(btnCategoryMid)
-        styleSelectButton(btnCategorySub)
-        styleSelectButton(btnAreaMid)
-        styleSelectButton(btnAreaSub)
+        stylePillButton(btnUnit)
+        stylePillButton(btnCategoryMid)
+        stylePillButton(btnCategorySub)
+        stylePillButton(btnAreaMid)
+        stylePillButton(btnAreaSub)
 
         // Next 버튼 스타일(원하면 스토리보드에서 처리해도 됨)
         btnNext.layer.cornerRadius = 10
     }
+    private func styleTextField(_ t: UITextField) {
+        t.borderStyle = .none
+        t.layer.cornerRadius = 12
+        t.layer.borderWidth = 1
+        t.layer.borderColor = UIColor.systemGray4.cgColor
+        t.backgroundColor = .white
+        t.setLeftPadding(14)
+        t.heightAnchor.constraint(equalToConstant: 48).isActive = true
+    }
 
-    private func styleSelectButton(_ b: UIButton) {
+    private func stylePillButton(_ b: UIButton) {
         b.contentHorizontalAlignment = .left
+        b.layer.cornerRadius = 12
         b.layer.borderWidth = 1
         b.layer.borderColor = UIColor.systemGray4.cgColor
-        b.layer.cornerRadius = 8
-        b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        b.backgroundColor = .white
+        b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 14, bottom: 0, right: 14)
+        b.heightAnchor.constraint(equalToConstant: 48).isActive = true
     }
 
     private func setupDatePicker() {
@@ -155,19 +171,29 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         }
     }
 
-    // 외부에서 sub list 주입 (MakeAdMainViewController가 호출)
     func setSubCategoryList(_ list: [TxtListDataInfo]) {
         self.categorySubList = list
-        self.selectedCategorySubCode = nil
-        btnCategorySub.setTitle("카테고리(소) 선택", for: .normal)
+
+        // ✅ 기존 선택이 있으면 유지
+        if let sel = selectedCategorySubCode, !sel.isEmpty,
+           let hit = list.first(where: { $0.strIdx == sel }) {
+            btnCategorySub.setTitle(hit.strMsg, for: .normal)
+        } else {
+            // 선택이 없으면 안내 문구
+            btnCategorySub.setTitle("카테고리(소) 선택", for: .normal)
+        }
     }
 
     func setSubAreaList(_ list: [TxtListDataInfo]) {
         self.areaSubList = list
-        self.selectedAreaSubCode = nil
-        btnAreaSub.setTitle("지역(소) 선택", for: .normal)
-    }
 
+        if let sel = selectedAreaSubCode, !sel.isEmpty,
+           let hit = list.first(where: { $0.strIdx == sel }) {
+            btnAreaSub.setTitle(hit.strMsg, for: .normal)
+        } else {
+            btnAreaSub.setTitle("지역(소) 선택", for: .normal)
+        }
+    }
     // MARK: - Draft Binding
     func applyDraft(_ d: MakeAdDraft) {
         tfName.text = d.name
@@ -187,6 +213,12 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         if let nm = d.areaMidName { btnAreaMid.setTitle(nm, for: .normal) }
         if let nm = d.areaSclsName { btnAreaSub.setTitle(nm, for: .normal) }
         if let nm = d.unitName { btnUnit.setTitle(nm, for: .normal) }
+        if let mid = d.categoryMid, !mid.isEmpty {
+            onCategoryMidChanged?(mid)
+        }
+        if let mid = d.areaMid, !mid.isEmpty {
+            onAreaMidChanged?(mid)
+        }
     }
 
     func collectDraft(into base: MakeAdDraft) -> MakeAdDraft? {

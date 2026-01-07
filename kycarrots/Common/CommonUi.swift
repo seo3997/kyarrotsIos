@@ -18,3 +18,11 @@ extension UIView {
         self.backgroundColor = backgroundColor
     }
 }
+
+extension UITextField {
+    func setLeftPadding(_ v: CGFloat) {
+        let pad = UIView(frame: CGRect(x: 0, y: 0, width: v, height: 1))
+        leftView = pad
+        leftViewMode = .always
+    }
+}
