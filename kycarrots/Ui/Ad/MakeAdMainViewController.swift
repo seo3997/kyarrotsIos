@@ -7,12 +7,15 @@ final class MakeAdMainViewController: UIViewController {
     private var draft = MakeAdDraft()
 
     private lazy var detailVC: MakeAdDetailViewController = {
-        let vc = MakeAdDetailViewController(service: service)
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = sb.instantiateViewController(withIdentifier: "MakeAdDetailVC") as? MakeAdDetailViewController else {
+            fatalError("MakeAdDetailVC not found in storyboard")
+        }
+        vc.service = service   // ✅ 주입
 
         vc.onRequestGoImageTab = { [weak self] in
-            self?.selectTab(index: 1)   // 탭2 = 이미지등록
+            self?.selectTab(index: 1)
         }
-
         return vc
     }()
     private lazy var imageVC: MakeAdImgRegiViewController = {

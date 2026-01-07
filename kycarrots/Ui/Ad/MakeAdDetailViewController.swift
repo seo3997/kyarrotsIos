@@ -1,37 +1,39 @@
 import UIKit
 
-/// Kotlin: KtMakeADDetailView 대응 (상세 입력 화면)
+/// 스토리보드용 (탭 없음) - 폼 + 하단 다음 버튼
 final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
-    private let service: AppService
+    // MARK: - Dependencies (Storyboard에서는 init 주입 불가 → 외부에서 할당)
+    var service: AppService!
 
     // callbacks
     var onCategoryMidChanged: ((String) -> Void)?
     var onAreaMidChanged: ((String) -> Void)?
     var onRequestGoImageTab: (() -> Void)?
 
-    // ✅ 선택 코드 임시 저장 (버튼 title은 UI일 뿐, Draft에는 코드가 들어가야 함)
+    // MARK: - IBOutlets (스토리보드에서 연결)
+    @IBOutlet weak var tfName: UITextField!
+    @IBOutlet weak var tfQuantity: UITextField!
+    @IBOutlet weak var btnUnit: UIButton!
+
+    @IBOutlet weak var tfAmount: UITextField!
+    @IBOutlet weak var tfDesiredDate: UITextField!
+
+    @IBOutlet weak var tvDetail: UITextView!
+
+    @IBOutlet weak var btnCategoryMid: UIButton!
+    @IBOutlet weak var btnCategorySub: UIButton!
+    @IBOutlet weak var btnAreaMid: UIButton!
+    @IBOutlet weak var btnAreaSub: UIButton!
+
+    @IBOutlet weak var btnNext: UIButton!
+
+    // MARK: - State (선택 코드 저장)
     private var selectedCategoryMidCode: String?
     private var selectedCategorySubCode: String?
     private var selectedAreaMidCode: String?
     private var selectedAreaSubCode: String?
     private var selectedUnitCode: String?
-
-    // UI (간단한 폼)
-    private let scroll = UIScrollView()
-    private let stack = UIStackView()
-
-    private let tfName = UITextField()
-    private let tfAmount = UITextField()
-    private let tfQuantity = UITextField()
-    private let tfDesiredDate = UITextField()
-    private let tvDetail = UITextView()
-
-    private let btnCategoryMid = UIButton(type: .system)
-    private let btnCategorySub = UIButton(type: .system)
-    private let btnAreaMid = UIButton(type: .system)
-    private let btnAreaSub = UIButton(type: .system)
-    private let btnUnit = UIButton(type: .system)
 
     // code lists
     private var categoryMidList: [TxtListDataInfo] = []
@@ -39,165 +41,103 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
     private var areaMidList: [TxtListDataInfo] = []
     private var areaSubList: [TxtListDataInfo] = []
     private var unitList: [TxtListDataInfo] = []
-    private let btnNext = UIButton(type: .system)
 
+    // DatePicker
+    private let datePicker = UIDatePicker()
 
-    init(service: AppService) {
-        self.service = service
-        super.init(nibName: nil, bundle: nil)
-    }
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-
+    // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        setupUI()
-        loadCodes()
 
-        // ✅ 키보드 내려가기 추가
+        assert(service != nil, "MakeAdDetailViewController.service 가 주입되지 않았습니다. 화면 띄우기 전에 vc.service = ... 해주세요.")
+
+        setupUI()
         setupKeyboardDismiss()
+        loadCodes()
     }
 
+    // MARK: - UI Setup
     private func setupUI() {
-        scroll.alwaysBounceVertical = true
+        // TextField
+        tfName.delegate = self
+        tfAmount.delegate = self
+        tfQuantity.delegate = self
+        tfDesiredDate.delegate = self
 
-        // ✅ 스크롤하면 키보드 내려가게
-        scroll.keyboardDismissMode = .onDrag
-
-        view.addSubview(scroll)
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            scroll.topAnchor.constraint(equalTo: view.topAnchor),
-            scroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        stack.axis = .vertical
-        stack.spacing = 12
-        scroll.addSubview(stack)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor, constant: 16),
-            stack.leadingAnchor.constraint(equalTo: scroll.frameLayoutGuide.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: scroll.frameLayoutGuide.trailingAnchor, constant: -16),
-            stack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor, constant: -16)
-        ])
-
-        tfName.placeholder = "상품명"
         tfName.returnKeyType = .done
-
-        tfAmount.placeholder = "금액"
-        tfAmount.keyboardType = .numberPad
-        tfAmount.returnKeyType = .done
-
-        tfQuantity.placeholder = "수량"
-        tfQuantity.keyboardType = .numberPad
-        tfQuantity.returnKeyType = .done
-
-        tfDesiredDate.placeholder = "희망 발송일 (YYYY-MM-DD)"
         tfDesiredDate.returnKeyType = .done
 
-        tvDetail.layer.borderWidth = 1
-        tvDetail.layer.borderColor = UIColor.systemGray4.cgColor
-        tvDetail.layer.cornerRadius = 8
-        tvDetail.heightAnchor.constraint(equalToConstant: 140).isActive = true
+        tfAmount.keyboardType = .numberPad
+        tfQuantity.keyboardType = .numberPad
 
-        configButton(btnCategoryMid, title: "카테고리(중) 선택")
-        configButton(btnCategorySub, title: "카테고리(소) 선택")
-        configButton(btnAreaMid, title: "지역(중) 선택")
-        configButton(btnAreaSub, title: "지역(소) 선택")
-        configButton(btnUnit, title: "단위 선택")
-
-        btnCategoryMid.addTarget(self, action: #selector(pickCategoryMid), for: .touchUpInside)
-        btnCategorySub.addTarget(self, action: #selector(pickCategorySub), for: .touchUpInside)
-        btnAreaMid.addTarget(self, action: #selector(pickAreaMid), for: .touchUpInside)
-        btnAreaSub.addTarget(self, action: #selector(pickAreaSub), for: .touchUpInside)
-        btnUnit.addTarget(self, action: #selector(pickUnit), for: .touchUpInside)
-
-        stack.addArrangedSubview(tfName)
-        stack.addArrangedSubview(tfAmount)
-        stack.addArrangedSubview(tfQuantity)
-        stack.addArrangedSubview(btnUnit)
-        stack.addArrangedSubview(tfDesiredDate)
-
-        stack.addArrangedSubview(btnCategoryMid)
-        stack.addArrangedSubview(btnCategorySub)
-
-        stack.addArrangedSubview(btnAreaMid)
-        stack.addArrangedSubview(btnAreaSub)
-
-        let lbl = UILabel()
-        lbl.text = "상세 설명"
-        lbl.font = .systemFont(ofSize: 14, weight: .semibold)
-        stack.addArrangedSubview(lbl)
-        stack.addArrangedSubview(tvDetail)
-        
-        btnNext.setTitle("다음", for: .normal)
-        btnNext.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
-        btnNext.backgroundColor = .systemBlue
-        btnNext.setTitleColor(.white, for: .normal)
-        btnNext.layer.cornerRadius = 10
-        btnNext.heightAnchor.constraint(equalToConstant: 52).isActive = true
-        btnNext.addTarget(self, action: #selector(onNextTapped), for: .touchUpInside)
-
-        // 스택에 추가
-        stack.addArrangedSubview(btnNext)
-
-        // textfield 기본 스타일
-        [tfName, tfAmount, tfQuantity, tfDesiredDate].forEach {
-            $0.borderStyle = .roundedRect
-            $0.delegate = self        // ✅ Return 처리
-        }
-        tvDetail.delegate = self
-
-        // 숫자키보드 Done toolbar
+        // 숫자키보드 done toolbar
         let numberToolbar = makeNumberToolbar()
         tfAmount.inputAccessoryView = numberToolbar
         tfQuantity.inputAccessoryView = numberToolbar
+
+        // 날짜 picker
+        setupDatePicker()
+
+        // TextView
+        tvDetail.delegate = self
+        tvDetail.layer.borderWidth = 1
+        tvDetail.layer.borderColor = UIColor.systemGray4.cgColor
+        tvDetail.layer.cornerRadius = 8
+        tvDetail.textContainerInset = UIEdgeInsets(top: 10, left: 8, bottom: 10, right: 8)
+
+        // 선택 버튼 스타일
+        styleSelectButton(btnUnit)
+        styleSelectButton(btnCategoryMid)
+        styleSelectButton(btnCategorySub)
+        styleSelectButton(btnAreaMid)
+        styleSelectButton(btnAreaSub)
+
+        // Next 버튼 스타일(원하면 스토리보드에서 처리해도 됨)
+        btnNext.layer.cornerRadius = 10
     }
 
-    @objc private func onNextTapped() {
-        // 🔎 여기서 간단 검증 가능 (선택)
-        if (tfName.text ?? "").isEmpty {
-            toast("상품명을 입력해 주세요")
-            return
-        }
-
-        // ✅ Main에게 "이미지등록 탭으로 가라" 요청
-        onRequestGoImageTab?()
-    }
-
-    // ✅ 바깥 탭하면 키보드 내려감
-    private func setupKeyboardDismiss() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(endEditingAll))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-
-    @objc private func endEditingAll() {
-        view.endEditing(true)
-    }
-
-    // ✅ Return(완료) 누르면 키보드 내려감
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-
-    private func configButton(_ b: UIButton, title: String) {
-        b.setTitle(title, for: .normal)
+    private func styleSelectButton(_ b: UIButton) {
         b.contentHorizontalAlignment = .left
         b.layer.borderWidth = 1
         b.layer.borderColor = UIColor.systemGray4.cgColor
         b.layer.cornerRadius = 8
-        b.heightAnchor.constraint(equalToConstant: 44).isActive = true
         b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
     }
 
+    private func setupDatePicker() {
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ko_KR")
+
+        tfDesiredDate.inputView = datePicker
+
+        let bar = UIToolbar()
+        bar.sizeToFit()
+        bar.items = [
+            UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(onCancelDate)),
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
+            UIBarButtonItem(title: "확인", style: .done, target: self, action: #selector(onConfirmDate))
+        ]
+        tfDesiredDate.inputAccessoryView = bar
+    }
+
+    @objc private func onCancelDate() {
+        tfDesiredDate.resignFirstResponder()
+    }
+
+    @objc private func onConfirmDate() {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        tfDesiredDate.text = f.string(from: datePicker.date)
+        tfDesiredDate.resignFirstResponder()
+    }
+
+    // MARK: - Load Codes
     private func loadCodes() {
         Task {
             do {
+                // 그룹코드 id는 기존 서버 규칙대로
                 async let cat = service.getCodeList(groupId: "R010610")
                 async let area = service.getCodeList(groupId: "R010070")
                 async let unit = service.getCodeList(groupId: "R010620")
@@ -215,17 +155,20 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         }
     }
 
-    // 외부에서 subCategory 리스트 주입
+    // 외부에서 sub list 주입 (MakeAdMainViewController가 호출)
     func setSubCategoryList(_ list: [TxtListDataInfo]) {
         self.categorySubList = list
+        self.selectedCategorySubCode = nil
         btnCategorySub.setTitle("카테고리(소) 선택", for: .normal)
     }
 
     func setSubAreaList(_ list: [TxtListDataInfo]) {
         self.areaSubList = list
+        self.selectedAreaSubCode = nil
         btnAreaSub.setTitle("지역(소) 선택", for: .normal)
     }
 
+    // MARK: - Draft Binding
     func applyDraft(_ d: MakeAdDraft) {
         tfName.text = d.name
         tfAmount.text = d.amount
@@ -233,7 +176,6 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         tfDesiredDate.text = d.desiredShippingDate
         tvDetail.text = d.detail
 
-        // ✅ 기존 Draft 코드도 임시 선택값에 반영 (수정 화면에서 필수)
         selectedCategoryMidCode = d.categoryMid
         selectedCategorySubCode = d.categoryScls
         selectedAreaMidCode = d.areaMid
@@ -247,7 +189,6 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         if let nm = d.unitName { btnUnit.setTitle(nm, for: .normal) }
     }
 
-    /// Main에서 미리보기 눌렀을 때 Draft 수집/검증
     func collectDraft(into base: MakeAdDraft) -> MakeAdDraft? {
         var d = base
         d.name = (tfName.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -256,7 +197,6 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
         d.desiredShippingDate = (tfDesiredDate.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         d.detail = tvDetail.text.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        // ✅ 선택 코드들을 Draft에 넣어준다 (버튼 title 말고 실제 코드!)
         d.categoryMid = selectedCategoryMidCode ?? d.categoryMid
         d.categoryScls = selectedCategorySubCode ?? d.categoryScls
         d.areaMid = selectedAreaMidCode ?? d.areaMid
@@ -265,124 +205,134 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
 
         if d.name.isEmpty { toast("상품명을 입력해 주세요"); return nil }
         if d.amount.isEmpty { toast("금액을 입력해 주세요"); return nil }
+        if d.quantity.isEmpty { toast("수량을 입력해 주세요"); return nil }
+        if (d.desiredShippingDate ?? "").isEmpty {
+            toast("희망 출하일을 선택해 주세요")
+            return nil
+        }
         if (d.categoryMid ?? "").isEmpty { toast("카테고리를 선택해 주세요"); return nil }
         if (d.areaMid ?? "").isEmpty { toast("지역을 선택해 주세요"); return nil }
         if (d.unitCode ?? "").isEmpty { toast("단위를 선택해 주세요"); return nil }
+
         return d
     }
 
-    // MARK: - Pickers (간단 ActionSheet)
-    @objc private func pickCategoryMid() {
-        pick(from: categoryMidList, title: "카테고리(중) 선택") { [weak self] item in
-            guard let self else { return }
-
-            self.btnCategoryMid.setTitle(item.strMsg, for: .normal)
-
-            // ✅ 코드 저장
-            self.selectedCategoryMidCode = item.strIdx
-
-            // ✅ 중 바뀌면 소 초기화
-            self.selectedCategorySubCode = nil
-            self.categorySubList = []
-            self.btnCategorySub.setTitle("카테고리(소) 선택", for: .normal)
-
-            // ✅ Main에 sub 목록 요청
-            self.onCategoryMidChanged?(item.strIdx)
-        }
-    }
-
-    @objc private func pickCategorySub() {
-        pick(from: categorySubList, title: "카테고리(소) 선택") { [weak self] item in
-            guard let self else { return }
-            self.btnCategorySub.setTitle(item.strMsg, for: .normal)
-
-            // ✅ 코드 저장
-            self.selectedCategorySubCode = item.strIdx
-        }
-    }
-
-    @objc private func pickAreaMid() {
-        pick(from: areaMidList, title: "지역(중) 선택") { [weak self] item in
-            guard let self else { return }
-
-            self.btnAreaMid.setTitle(item.strMsg, for: .normal)
-
-            // ✅ 코드 저장
-            self.selectedAreaMidCode = item.strIdx
-
-            // ✅ 중 바뀌면 소 초기화
-            self.selectedAreaSubCode = nil
-            self.areaSubList = []
-            self.btnAreaSub.setTitle("지역(소) 선택", for: .normal)
-
-            // ✅ Main에 sub 목록 요청
-            self.onAreaMidChanged?(item.strIdx)
-        }
-    }
-
-    @objc private func pickAreaSub() {
-        pick(from: areaSubList, title: "지역(소) 선택") { [weak self] item in
-            guard let self else { return }
-            self.btnAreaSub.setTitle(item.strMsg, for: .normal)
-
-            // ✅ 코드 저장
-            self.selectedAreaSubCode = item.strIdx
-        }
-    }
-
-    @objc private func pickUnit() {
-        pick(from: unitList, title: "단위 선택") { [weak self] item in
+    // MARK: - IBActions
+    @IBAction func onPickUnit(_ sender: UIButton) {
+        pick(from: unitList, title: "단위 선택", anchor: sender) { [weak self] item in
             guard let self else { return }
             self.btnUnit.setTitle(item.strMsg, for: .normal)
-
-            // ✅ 코드 저장
             self.selectedUnitCode = item.strIdx
         }
     }
 
+    @IBAction func onPickCategoryMid(_ sender: UIButton) {
+        pick(from: categoryMidList, title: "카테고리(중) 선택", anchor: sender) { [weak self] item in
+            guard let self else { return }
+
+            self.btnCategoryMid.setTitle(item.strMsg, for: .normal)
+            self.selectedCategoryMidCode = item.strIdx
+
+            // 중 변경 시 소 초기화
+            self.selectedCategorySubCode = nil
+            self.categorySubList = []
+            self.btnCategorySub.setTitle("카테고리(소) 선택", for: .normal)
+
+            // MakeAdMain에게 sub 목록 요청
+            self.onCategoryMidChanged?(item.strIdx)
+        }
+    }
+
+    @IBAction func onPickCategorySub(_ sender: UIButton) {
+        pick(from: categorySubList, title: "카테고리(소) 선택", anchor: sender) { [weak self] item in
+            guard let self else { return }
+            self.btnCategorySub.setTitle(item.strMsg, for: .normal)
+            self.selectedCategorySubCode = item.strIdx
+        }
+    }
+
+    @IBAction func onPickAreaMid(_ sender: UIButton) {
+        pick(from: areaMidList, title: "지역(중) 선택", anchor: sender) { [weak self] item in
+            guard let self else { return }
+
+            self.btnAreaMid.setTitle(item.strMsg, for: .normal)
+            self.selectedAreaMidCode = item.strIdx
+
+            // 중 변경 시 소 초기화
+            self.selectedAreaSubCode = nil
+            self.areaSubList = []
+            self.btnAreaSub.setTitle("지역(소) 선택", for: .normal)
+
+            // MakeAdMain에게 sub 목록 요청
+            self.onAreaMidChanged?(item.strIdx)
+        }
+    }
+
+    @IBAction func onPickAreaSub(_ sender: UIButton) {
+        pick(from: areaSubList, title: "지역(소) 선택", anchor: sender) { [weak self] item in
+            guard let self else { return }
+            self.btnAreaSub.setTitle(item.strMsg, for: .normal)
+            self.selectedAreaSubCode = item.strIdx
+        }
+    }
+
+    @IBAction func onNextTapped(_ sender: UIButton) {
+        // “다음” 누르면 탭 이동(이미지등록)만 요청
+        if (tfName.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            toast("상품명을 입력해 주세요")
+            return
+        }
+        onRequestGoImageTab?()
+    }
+
+    // MARK: - Picker (ActionSheet)
     private func pick(
         from list: [TxtListDataInfo],
         title: String,
+        anchor: UIView,
         onPick: @escaping (TxtListDataInfo) -> Void
     ) {
         guard !list.isEmpty else { toast("목록이 없습니다"); return }
 
         let ac = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+
+        // 길면 임시로 20개만. (필요하면 '더보기'로 확장 가능)
         for item in list.prefix(20) {
             ac.addAction(UIAlertAction(title: item.strMsg, style: .default) { _ in onPick(item) })
         }
         ac.addAction(UIAlertAction(title: "취소", style: .cancel))
 
+        // iPad 대응
         if let pop = ac.popoverPresentationController {
-            pop.sourceView = view
-            pop.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 1, height: 1)
+            pop.sourceView = anchor
+            pop.sourceRect = anchor.bounds
         }
 
         present(ac, animated: true)
     }
 
-    private func toast(_ msg: String) {
-        let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
-        present(alert, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { alert.dismiss(animated: true) }
+    // MARK: - Keyboard
+    private func setupKeyboardDismiss() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(endEditingAll))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc private func endEditingAll() {
+        view.endEditing(true)
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 
     private func makeNumberToolbar() -> UIToolbar {
         let bar = UIToolbar()
         bar.sizeToFit()
 
-        let flex = UIBarButtonItem(
-            barButtonSystemItem: .flexibleSpace,
-            target: nil,
-            action: nil
-        )
-
-        let done = UIBarButtonItem(
-            title: "완료",
-            style: .done,
-            target: self,
-            action: #selector(doneTapped)
-        )
+        let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(doneTapped))
 
         bar.items = [flex, done]
         return bar
@@ -390,5 +340,12 @@ final class MakeAdDetailViewController: UIViewController, UITextFieldDelegate, U
 
     @objc private func doneTapped() {
         view.endEditing(true)
+    }
+
+    // MARK: - Toast
+    private func toast(_ msg: String) {
+        let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
+        present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { alert.dismiss(animated: true) }
     }
 }
