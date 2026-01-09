@@ -57,7 +57,7 @@ final class AppCoordinator {
             assertionFailure("LoginVC not found in storyboard")
             return
         }
-
+        vc.coordinator = self               
         vc.pendingDeepLink = pendingDeepLink
         nav.setViewControllers([vc], animated: true)
     }
@@ -86,6 +86,18 @@ final class AppCoordinator {
             nav.setViewControllers([makeMainTabBarVC()], animated: true)
         }
     }
+    
+    func showIntro(launchDeepLink: PushDeepLink? = nil, animated: Bool = true) {
+        let intro = IntroViewController(
+            service: AppServiceProvider.shared,
+            coordinator: self,
+            launchDeepLink: launchDeepLink
+        )
+        nav.setViewControllers([intro], animated: animated)
+    }
+    
+    
+    
 }
 
 // MARK: - Storyboard Factory

@@ -184,4 +184,5 @@ final class IntroViewController: UIViewController {
         let finalMemberCode = (res.memberCode?.isEmpty == false) ? res.memberCode! : memberCodeHint
         coordinator?.showHome(memberCode: finalMemberCode, deepLink: launchDeepLink)
     }
+    
 }

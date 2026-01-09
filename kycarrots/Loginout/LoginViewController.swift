@@ -29,6 +29,7 @@ class LoginViewController: UIViewController {
 
     var selectedUserType: String = Constants.ROLE_SELL
     var pendingDeepLink: PushDeepLink?
+    var coordinator: AppCoordinator?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -242,22 +243,10 @@ class LoginViewController: UIViewController {
                 if let token = response.token {
                     TokenUtil.saveToken(token)
                 }
-                // Push Token 저장
-                PushTokenUtil.ensureTokenRegistered()
+                print("coordinator is nil? ->", coordinator == nil)
                 
-                let userRole = LoginInfoUtil.getMemberCode()
-
-                if userRole == "ROLE_SELL" || userRole == "ROLE_PROJ" {
-                    // 판매자 또는 도매업자인 경우: 기존 DashboardVC로 이동
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    let dashboardVC = storyboard.instantiateViewController(withIdentifier: "DashboardVC")
-                    switchRoot(to: dashboardVC)
-                } else {
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    let mainTabVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarVC")
-                    switchRoot(to: mainTabVC)
-                }
-
+                coordinator?.showIntro(launchDeepLink: pendingDeepLink, animated: true)
+                
             case StaticDataInfo.RESULT_NO_USER,
                  StaticDataInfo.RESULT_NO_DATA:
                 self.showAlert(message: "가입된 이메일을 찾을 수 없습니다.")

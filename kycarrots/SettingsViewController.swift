@@ -12,7 +12,7 @@ final class SettingsViewController: UIViewController {
     // MARK: - UI
     private let scrollView = UIScrollView()
     private let content = UIStackView()
-
+    
     // 프로필
     private let profileImageView: UIImageView = {
         let iv = UIImageView(image: UIImage(systemName: "person.crop.circle"))
@@ -238,9 +238,12 @@ final class SettingsViewController: UIViewController {
             // 필요하면 여기서 소켓 종료, 캐시 삭제 등 추가 작업
 
             // ✅ 로그인 화면으로 루트 전환
+            UIApplication.shared.appCoordinator?.showLogin(pendingDeepLink: nil)
+            /*
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginVC")
             self.switchRoot(to: loginVC)
+             */
         }))
 
         present(alert, animated: true)
