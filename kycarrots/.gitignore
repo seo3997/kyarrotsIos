@@ -13,5 +13,9 @@ Packages/
 
 # CocoaPods
 Pods/
-# Firebase (Google Service Info)
-GoogleService-Info.plist
+# Firebase
+**/GoogleService-Info.plist
+
+# Xcode User Settings
+*.xcuserstate
+**/xcuserdata/
