@@ -89,9 +89,13 @@ final class IntroViewController: UIViewController {
             guard let self else { return }
             guard ok else { self.showNetworkAlert(); return }
 
-            self.requestNotificationPermissionIfNeeded { _ in
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
+            self.requestNotificationPermissionIfNeeded { granted in
+                if granted {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                } else {
+                    print("⚠️ notification permission denied")
                 }
                 Task { [weak self] in
                     await self?.autoLoginOrGoLogin()
@@ -152,7 +156,7 @@ final class IntroViewController: UIViewController {
         let socialId = LoginInfoUtil.getUserSocialId()
         let memberCodeHint = LoginInfoUtil.getMemberCode()
 
-        let regId = PushRegIdUtil.getRegId()
+        let regId = ""
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
 
         let res = await service.login(
@@ -168,21 +172,15 @@ final class IntroViewController: UIViewController {
             coordinator?.showLogin(pendingDeepLink: launchDeepLink)
             return
         }
-
+        
+        // 로그인 성공
         if let token = res.token, !token.isEmpty {
             TokenUtil.saveToken(token)
         }
 
-        if !regId.isEmpty {
-            let req = PushTokenVo(
-                userNo: userNo,
-                userId: userId,
-                pushToken: regId,
-                deviceType: "iOS"
-            )
-            _ = await service.savePushToken(req)
-        }
-
+        // Push Token 저장
+        PushTokenUtil.ensureTokenRegistered()
+        
         let finalMemberCode = (res.memberCode?.isEmpty == false) ? res.memberCode! : memberCodeHint
         coordinator?.showHome(memberCode: finalMemberCode, deepLink: launchDeepLink)
     }

@@ -67,9 +67,17 @@ final class AppService {
 
     // 푸시 토큰 저장
     func savePushToken(_ req: PushTokenVo) async -> Bool {
-        (try? await repo.registerPushToken(req).result) ?? false
+        do {
+            let res = try await repo.registerPushToken(req)
+            if !res.result {
+                print("❌ savePushToken fail:", res.message)
+            }
+            return res.result
+        } catch {
+            print("❌ savePushToken error:", error)
+            return false
+        }
     }
-
     // 로그인
     func login(
         email: String,

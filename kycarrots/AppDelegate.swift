@@ -2,13 +2,22 @@ import UIKit
 import UserNotifications
 import CoreData
 
+import FirebaseCore
+import FirebaseMessaging
+
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+
+        // ✅ Firebase 초기화
+        FirebaseApp.configure()
+
+        // ✅ FCM token 콜백
+        Messaging.messaging().delegate = self
 
         // ✅ UNUserNotificationCenter delegate 지정 (필수)
         let center = UNUserNotificationCenter.current()
@@ -16,8 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         // ✅ 알림 권한 요청
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            print("🔔 Notification permission granted:", granted)
-
+            print("🔔 Notification permission granted:", granted, "error:", String(describing: error))
             guard granted else { return }
 
             // ⚠️ 시뮬레이터에서는 의미 없고, 실기기에서만 사용됨
@@ -28,7 +36,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         return true
     }
+
+    // ✅ APNs 토큰을 받으면 FCM에게 연결해줘야 FCM->APNs 라우팅됨
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        // (선택) 로그용 APNs 토큰
+        let apnsHex = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print("📌 APNs token(hex):", apnsHex)
+
+        // ✅ 핵심: FCM SDK에 APNs 토큰 연결
+        Messaging.messaging().apnsToken = deviceToken
+    }
+
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("❌ APNs register failed:", error)
+    }
+
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let fcmToken else { return }
+        print("✅ FCM token:", fcmToken)
+
+        // ✅ util에게 전담
+        PushTokenUtil.onNewToken(fcmToken)
+    }
     
+    // ✅ silent/background push (content-available:1) 수신
     func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable : Any],
@@ -36,41 +73,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     ) {
         print("📩 background fetch push:", userInfo)
 
-        // ✅ silent/background push로 들어온 데이터 저장
-        //savePushToLocalDb(userInfo: userInfo)
+        // 필요하면 저장(지금은 주석 유지)
+        // savePushToLocalDb(userInfo: userInfo)
 
         completionHandler(.newData)
     }
     
-    func application(_ application: UIApplication,
-                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
 
-         let regId = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-         PushRegIdUtil.saveRegId(regId)
-     }
-
-     func application(_ application: UIApplication,
-                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
-         // 필요 시 로그
-     }
-    
+    // MARK: - Foreground 표시 + 저장
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         let userInfo = notification.request.content.userInfo
-        savePushToLocalDb(userInfo: userInfo) // ✅ 수신 시 저장
+
+        // 🔥 포그라운드 푸시 최초 진입 로그
+        print("🔥userNotificationCenter  [PUSH] willPresent (foreground) userInfo:", userInfo)
+
+        savePushToLocalDb(userInfo: userInfo)
         completionHandler([.banner, .sound, .badge])
     }
-
+    // MARK: - 탭 처리 + 저장 + 목록 열기
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
-        savePushToLocalDb(userInfo: userInfo) // ✅ 탭 시에도 호출해도 OK(중복방지됨)
+        savePushToLocalDb(userInfo: userInfo)
 
         DispatchQueue.main.async {
             self.openNotificationList()
@@ -107,10 +138,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 }
 
+// 기존 DB 저장 로직 그대로 유지
 extension AppDelegate {
 
     func savePushToLocalDb(userInfo: [AnyHashable: Any]) {
-        // ✅ 서버에서 내려준 id가 없으면 저장 불가(중복 방지 불가)
         guard let idStr = userInfo["id"] as? String,
               let pushId = UUID(uuidString: idStr) else {
             print("❌ push id 없음 -> 저장 스킵. userInfo=", userInfo)
@@ -119,7 +150,6 @@ extension AppDelegate {
 
         let ctx = PersistenceController.shared.container.viewContext
         ctx.perform {
-            // 1) 중복 체크
             let req = NSFetchRequest<CDPushNotification>(entityName: "CDPushNotification")
             req.predicate = NSPredicate(format: "id == %@", pushId as CVarArg)
             req.fetchLimit = 1
@@ -131,12 +161,9 @@ extension AppDelegate {
                 }
             } catch {
                 print("❌ 중복 체크 실패:", error)
-                // 중복 체크 실패면 안전하게 저장 스킵하거나 계속 진행 중 선택.
-                // 여기선 스킵하지 않고 계속 저장 진행하지 않도록 return 권장:
                 return
             }
 
-            // 2) 값 파싱(aps.alert + data 둘 다 대응)
             let aps = userInfo["aps"] as? [String: Any]
             let alert = aps?["alert"] as? [String: Any]
             let titleFromAps = alert?["title"] as? String
@@ -155,9 +182,8 @@ extension AppDelegate {
 
             let userId = UserDefaults.standard.string(forKey: "LogIn_ID") ?? ""
 
-            // 3) 저장
             let row = CDPushNotification(context: ctx)
-            row.id = pushId                 // ✅ 서버 id 사용
+            row.id = pushId
             row.userId = userId
             row.type = type
             row.title = title
@@ -167,7 +193,7 @@ extension AppDelegate {
             row.roomId = roomId
             row.deeplink = deeplink
             row.isRead = false
-            row.createdAt = Date()          // ✅ 현재일시
+            row.createdAt = Date()
 
             do {
                 try ctx.save()

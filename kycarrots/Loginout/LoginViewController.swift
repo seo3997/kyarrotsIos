@@ -242,7 +242,9 @@ class LoginViewController: UIViewController {
                 if let token = response.token {
                     TokenUtil.saveToken(token)
                 }
-
+                // Push Token 저장
+                PushTokenUtil.ensureTokenRegistered()
+                
                 let userRole = LoginInfoUtil.getMemberCode()
 
                 if userRole == "ROLE_SELL" || userRole == "ROLE_PROJ" {

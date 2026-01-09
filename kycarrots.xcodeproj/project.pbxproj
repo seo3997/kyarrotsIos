@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		828039EA2EB05E0300B504B6 /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 828039E92EB05E0300B504B6 /* SideMenu */; };
+		EB313C4F2F0F64DD00EA4480 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = EB313C4E2F0F64DD00EA4480 /* FirebaseAnalytics */; };
+		EB313C512F0F64DD00EA4480 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = EB313C502F0F64DD00EA4480 /* FirebaseCore */; };
+		EB313C532F0F64DD00EA4480 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = EB313C522F0F64DD00EA4480 /* FirebaseMessaging */; };
 		EB766A312EE4C17C00F44D87 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = EB766A302EE4C17C00F44D87 /* Kingfisher */; };
 		EB766A3A2EF5ED1400F44D87 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = EB766A392EF5ED1400F44D87 /* Starscream */; };
 /* End PBXBuildFile section */
@@ -42,8 +45,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB313C532F0F64DD00EA4480 /* FirebaseMessaging in Frameworks */,
 				EB766A312EE4C17C00F44D87 /* Kingfisher in Frameworks */,
+				EB313C512F0F64DD00EA4480 /* FirebaseCore in Frameworks */,
 				828039EA2EB05E0300B504B6 /* SideMenu in Frameworks */,
+				EB313C4F2F0F64DD00EA4480 /* FirebaseAnalytics in Frameworks */,
 				EB766A3A2EF5ED1400F44D87 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,6 +96,9 @@
 				828039E92EB05E0300B504B6 /* SideMenu */,
 				EB766A302EE4C17C00F44D87 /* Kingfisher */,
 				EB766A392EF5ED1400F44D87 /* Starscream */,
+				EB313C4E2F0F64DD00EA4480 /* FirebaseAnalytics */,
+				EB313C502F0F64DD00EA4480 /* FirebaseCore */,
+				EB313C522F0F64DD00EA4480 /* FirebaseMessaging */,
 			);
 			productName = kycarrots;
 			productReference = 828039C12EB0527C00B504B6 /* kycarrots.app */;
@@ -123,6 +132,7 @@
 				828039E82EB05E0300B504B6 /* XCRemoteSwiftPackageReference "SideMenu" */,
 				EB766A2F2EE4C17C00F44D87 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				EB766A382EF5ED1400F44D87 /* XCRemoteSwiftPackageReference "Starscream" */,
+				EB313C4D2F0F64DD00EA4480 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 828039C22EB0527C00B504B6 /* Products */;
@@ -160,6 +170,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = kycarrots/kycarrots.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WT5RTL52JK;
@@ -195,6 +206,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = kycarrots/kycarrots.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WT5RTL52JK;
@@ -376,6 +388,14 @@
 				minimumVersion = 6.5.0;
 			};
 		};
+		EB313C4D2F0F64DD00EA4480 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
 		EB766A2F2EE4C17C00F44D87 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -399,6 +419,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 828039E82EB05E0300B504B6 /* XCRemoteSwiftPackageReference "SideMenu" */;
 			productName = SideMenu;
+		};
+		EB313C4E2F0F64DD00EA4480 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB313C4D2F0F64DD00EA4480 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		EB313C502F0F64DD00EA4480 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB313C4D2F0F64DD00EA4480 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		EB313C522F0F64DD00EA4480 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB313C4D2F0F64DD00EA4480 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		EB766A302EE4C17C00F44D87 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
