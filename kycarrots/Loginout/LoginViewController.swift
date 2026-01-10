@@ -34,8 +34,24 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        enableDismissKeyboardOnTap()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        // ✅ 로그인 화면에서는 메뉴 버튼 자체 없음
+        navigationItem.leftBarButtonItem = nil
+
+        // ✅ 스와이프/엣지 제스처로 메뉴 열리는 것도 차단
+        navigationController?.view.gestureRecognizers?.forEach { $0.isEnabled = false }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        // ✅ 로그인 화면을 나가면 다시 제스처 복구(다른 화면에서 메뉴 사용 가능)
+        navigationController?.view.gestureRecognizers?.forEach { $0.isEnabled = true }
+    }
     private func setupUI() {
         // 배경은 스토리보드에서 설정할 거라 여기선 패스해도 됨
         backgroundImageView.contentMode = .scaleAspectFill

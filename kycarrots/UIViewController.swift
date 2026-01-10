@@ -47,4 +47,14 @@ extension UIViewController {
           guard let menuNav = SideMenuManager.default.leftMenuNavigationController else { return }
           present(menuNav, animated: true)
       }
+    
+      func enableDismissKeyboardOnTap() {
+           let tap = UITapGestureRecognizer(target: self, action: #selector(_dismissKeyboard))
+           tap.cancelsTouchesInView = false
+           view.addGestureRecognizer(tap)
+       }
+
+       @objc private func _dismissKeyboard() {
+           view.endEditing(true)
+       }
 }

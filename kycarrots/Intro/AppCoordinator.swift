@@ -63,30 +63,34 @@ final class AppCoordinator {
     }
 
     func showHome(memberCode: String, deepLink: PushDeepLink?) {
-        // ✅ 1) 딥링크 우선
-        if let deepLink {
-            switch deepLink.type {
-            case .chat:
-                if let chat = makeChatVC(from: deepLink) {
-                    nav.setViewControllers([chat], animated: true)
-                    return
-                }
-            case .product:
-                if let detail = makeProductDetailVC(from: deepLink) {
-                    nav.setViewControllers([detail], animated: true)
-                    return
-                }
-            }
+
+        // ✅ 1) 기본 랜딩을 "항상" 루트로 세팅 (뒤로가기/메뉴/탭 구조 보존)
+        let root: UIViewController
+        if memberCode == "ROLE_SELL" || memberCode == "ROLE_PROJ" {
+            root = makeDashboardVC()
+        } else {
+            root = makeMainTabBarVC()
         }
 
-        // ✅ 2) 기본 랜딩
-        if memberCode == "ROLE_SELL" || memberCode == "ROLE_PROJ" {
-            nav.setViewControllers([makeDashboardVC()], animated: true)
-        } else {
-            nav.setViewControllers([makeMainTabBarVC()], animated: true)
+        // 루트가 이미 같은 타입이면 굳이 다시 세팅하지 않아도 되지만,
+        // 푸시로 "Intro -> Home" 흐름에서는 그냥 세팅해도 문제 없음.
+        nav.setViewControllers([root], animated: true)
+
+        // ✅ 2) 딥링크가 있으면 루트 위로 push (뒤로가기 생성)
+        guard let deepLink else { return }
+
+        switch deepLink.type {
+        case .chat:
+            if let chat = makeChatVC(from: deepLink) {
+                nav.pushViewController(chat, animated: true)
+            }
+        case .product:
+            if let detail = makeProductDetailVC(from: deepLink) {
+                nav.pushViewController(detail, animated: true)
+            }
         }
     }
-    
+
     func showIntro(launchDeepLink: PushDeepLink? = nil, animated: Bool = true) {
         let intro = IntroViewController(
             service: AppServiceProvider.shared,

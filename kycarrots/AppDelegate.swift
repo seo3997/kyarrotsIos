@@ -94,19 +94,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         savePushToLocalDb(userInfo: userInfo)
         completionHandler([.banner, .sound, .badge])
     }
-    // MARK: - 탭 처리 + 저장 + 목록 열기
+
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
-        savePushToLocalDb(userInfo: userInfo)
+        savePushToLocalDb(userInfo: userInfo) // 기존 유지
+
+        // ✅ PushType.swift의 파서 사용
+        let deepLink = PushDeepLink.from(userInfo: userInfo)
 
         DispatchQueue.main.async {
-            self.openNotificationList()
+            self.routeViaIntro(deepLink: deepLink)
         }
         completionHandler()
+    }
+
+    private func routeViaIntro(deepLink: PushDeepLink?) {
+        guard
+            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let sceneDelegate = scene.delegate as? SceneDelegate
+        else { return }
+
+        // ✅ Android: PendingIntent -> IntroActivity 와 동일
+        sceneDelegate.appCoordinator?.start(launchDeepLink: deepLink)
     }
 
     // MARK: - 알림 리스트 화면 열기

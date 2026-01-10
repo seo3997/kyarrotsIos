@@ -134,9 +134,13 @@ final class AppService {
 
     // 상품 상태 변경
     func updateProductStatus(token: String, product: ProductItem) async -> Bool {
-        (try? await repo.updateProductStatus(token: token, product: product).result) ?? false
+        do {
+            let response = try await repo.updateProductStatus(token: token, product: product)
+            return response.result
+        } catch {
+            return false
+        }
     }
-
     // 구매내역
     func getPurchaseItems(token: String, pageNo: Int) async -> [AdItem] {
         (try? await repo.getPurchaseItems(token: token, pageNo: pageNo).items) ?? []

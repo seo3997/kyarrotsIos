@@ -184,9 +184,10 @@ final class IntroViewController: UIViewController {
         
         let finalMemberCode = (res.memberCode?.isEmpty == false) ? res.memberCode! : memberCodeHint
         subscribeTopicIfNeeded(memberCode: finalMemberCode)
+        // ✅ 딥링크 없거나 실패 → 기본 홈
         coordinator?.showHome(memberCode: finalMemberCode, deepLink: launchDeepLink)
     }
-    
+
     func subscribeTopicIfNeeded(memberCode: String) {
         guard memberCode == Constants.ROLE_PUB else { return }
 
