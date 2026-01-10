@@ -6,7 +6,7 @@ final class ChatViewController: UIViewController {
     @IBOutlet weak var chatTableView: UITableView!
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var sendButton: UIButton!
-    @IBOutlet weak var inputBarBottom: NSLayoutConstraint! // inputBar.bottom = SafeArea.bottom
+    @IBOutlet weak var inputBarBottom: NSLayoutConstraint!
     @IBOutlet weak var inputBarView: UIView!
 
     // MARK: - Inputs
@@ -14,15 +14,15 @@ final class ChatViewController: UIViewController {
     var buyerId: String!
     var sellerId: String!
     var productId: String!
-    var currentUserId: String! // 로그인 ID
+    var currentUserId: String!
 
     // MARK: - State
     private var otherId: String = ""
     private var chatMessages: [ChatMessage] = []
     private var topicPath: String { "/topic/\(roomId!)" }
 
-    // ✅ inset 변화로 인한 “위로 튐” 방지용
-    private var lastBottomInset: CGFloat = 0
+    // ✅ “내용이 짧아도 아래 붙이기” 용 Spacer Header
+    private let headerSpacer = UIView(frame: .zero)
 
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -33,10 +33,6 @@ final class ChatViewController: UIViewController {
 
         setupUI()
         setupTable()
-
-        chatTableView.rowHeight = UITableView.automaticDimension
-        chatTableView.estimatedRowHeight = 60
-
         setupKeyboardHandling()
 
         resolveOtherId()
@@ -50,11 +46,7 @@ final class ChatViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        // ✅ 키보드가 없어도 "실제로 가려지는(overlay)" 만큼만 inset 적용 (초기 1회)
-        if lastBottomInset == 0 {
-            applyBottomInset(baseBottomInset(), keepVisiblePosition: false)
-        }
+        updateHeaderSpacer()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -67,18 +59,7 @@ final class ChatViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
-    // MARK: - Tap to dismiss keyboard
-    private func setupTapToDismissKeyboard() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        chatTableView.addGestureRecognizer(tap)
-    }
-
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-
-    // MARK: - UI
+    // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .systemBackground
         sendButton.setTitle("전송", for: .normal)
@@ -92,13 +73,69 @@ final class ChatViewController: UIViewController {
         chatTableView.dataSource = self
         chatTableView.delegate = self
 
-        chatTableView.keyboardDismissMode = .interactive
         chatTableView.separatorStyle = .none
+        chatTableView.keyboardDismissMode = .interactive
+
         chatTableView.rowHeight = UITableView.automaticDimension
-        chatTableView.estimatedRowHeight = 52
+        chatTableView.estimatedRowHeight = 56
+
+        // ✅ 원칙: inset/offset으로 아래 붙이기 X
+        // ✅ 대신 header spacer로 아래 정렬
+        headerSpacer.backgroundColor = .clear
+        chatTableView.tableHeaderView = headerSpacer
     }
 
-    // MARK: - Keyboard
+    private func setupTapToDismissKeyboard() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        chatTableView.addGestureRecognizer(tap)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
+    // MARK: - Header Spacer (핵심)
+    /// 콘텐츠가 화면보다 짧으면 header를 늘려서 "내용이 아래로 붙는" 효과를 만듦
+    private func updateHeaderSpacer() {
+        // tableHeaderView 높이 계산은 contentSize가 확정된 뒤 해야 안정적
+        chatTableView.layoutIfNeeded()
+
+        let tableH = chatTableView.bounds.height
+
+        // header를 제외한 실제 content 높이를 써야 함
+        // tableHeaderView가 이미 존재하므로 그 높이를 빼고 계산
+        let currentHeaderH = chatTableView.tableHeaderView?.frame.height ?? 0
+        let contentHWithoutHeader = max(0, chatTableView.contentSize.height - currentHeaderH)
+
+        // inputBar 위에 table이 붙어있다는 전제(정석 제약)
+        // tableH 안에서 content가 짧으면 header로 남는 공간 채움
+        let neededHeaderH = max(0, tableH - contentHWithoutHeader)
+
+        if abs(neededHeaderH - currentHeaderH) > 0.5 {
+            headerSpacer.frame = CGRect(x: 0, y: 0, width: chatTableView.bounds.width, height: neededHeaderH)
+            chatTableView.tableHeaderView = headerSpacer // ✅ 이 재할당이 중요 (tableHeaderView는 frame 변경만으로 반영 안됨)
+        }
+    }
+
+    // MARK: - Bottom 판단 / 스크롤
+    private func isAtBottom(threshold: CGFloat = 40) -> Bool {
+        chatTableView.layoutIfNeeded()
+        let inset = chatTableView.adjustedContentInset
+        let visibleH = chatTableView.bounds.height - inset.top - inset.bottom
+        let maxOffsetY = max(-inset.top, chatTableView.contentSize.height - visibleH)
+        return chatTableView.contentOffset.y >= (maxOffsetY - threshold)
+    }
+
+    private func scrollToBottom(animated: Bool) {
+        chatTableView.layoutIfNeeded()
+        let rows = chatMessages.count
+        guard rows > 0 else { return }
+        let idx = IndexPath(row: rows - 1, section: 0)
+        chatTableView.scrollToRow(at: idx, at: .bottom, animated: animated)
+    }
+
+    // MARK: - Keyboard (정석)
     private func setupKeyboardHandling() {
         NotificationCenter.default.addObserver(
             self,
@@ -106,40 +143,6 @@ final class ChatViewController: UIViewController {
             name: UIResponder.keyboardWillChangeFrameNotification,
             object: nil
         )
-    }
-
-    /// ✅ 더 안정적인 “바닥 근처” 판정
-    private func isNearBottom(_ threshold: CGFloat = 60) -> Bool {
-        let inset = chatTableView.adjustedContentInset
-        let visibleHeight = chatTableView.bounds.height - inset.top - inset.bottom
-        let maxOffsetY = max(-inset.top, chatTableView.contentSize.height - visibleHeight)
-        return chatTableView.contentOffset.y >= (maxOffsetY - threshold)
-    }
-
-    /// ✅ chatTableView가 inputBarView에 실제로 "가려지는(overlay)" 높이만 계산
-    /// - tableView.bottom이 inputBar.top에 붙어있으면 0
-    /// - inputBar가 tableView 위에 떠 있으면 inputBar 높이만큼
-    private func baseBottomInset() -> CGFloat {
-        view.layoutIfNeeded()
-        let tableBottom = chatTableView.frame.maxY
-        let inputTop = inputBarView.frame.minY
-        return max(0, tableBottom - inputTop)
-    }
-
-    private func applyBottomInset(_ bottomInset: CGFloat, keepVisiblePosition: Bool) {
-        let old = lastBottomInset
-        lastBottomInset = bottomInset
-
-        chatTableView.contentInset.bottom = bottomInset
-        chatTableView.scrollIndicatorInsets.bottom = bottomInset
-
-        // ✅ inset이 변해도 현재 보던 내용이 “위로 튀지” 않게 offset 보정
-        if keepVisiblePosition {
-            let delta = bottomInset - old
-            if delta != 0 {
-                chatTableView.contentOffset.y += delta
-            }
-        }
     }
 
     @objc private func keyboardWillChange(_ noti: Notification) {
@@ -150,26 +153,22 @@ final class ChatViewController: UIViewController {
             let curveRaw = info[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
 
+        // ✅ 키보드 애니메이션 시작 전 “내가 바닥 보고 있었나”만 체크
+        let follow = isAtBottom()
+
         let endFrameInView = view.convert(endFrame, from: nil)
         let overlap = max(0, view.bounds.maxY - endFrameInView.minY)
-        let keyboardHeight = max(0, overlap - view.safeAreaInsets.bottom)
+        let keyboardH = max(0, overlap - view.safeAreaInsets.bottom)
 
-        // ✅ 내가 이미 바닥 보고 있으면 키보드 올라와도 따라가기, 아니면 위치 유지
-        let followBottom = isNearBottom()
-
-        inputBarBottom.constant = -keyboardHeight
+        inputBarBottom.constant = -keyboardH
         let options = UIView.AnimationOptions(rawValue: curveRaw << 16)
 
         UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.view.layoutIfNeeded()
-
-            // ✅ 핵심: inputBar 높이를 무조건 더하지 말고 "실제 overlay"만 더하기
-            let bottomInset = keyboardHeight + self.baseBottomInset()
-
-            // followBottom == false면 현재 보던 위치 유지(튐 방지)
-            self.applyBottomInset(bottomInset, keepVisiblePosition: !followBottom)
+            // ✅ 제약이 바뀌면 table 높이도 바뀌니 spacer도 갱신
+            self.updateHeaderSpacer()
         } completion: { _ in
-            if followBottom {
+            if follow {
                 self.scrollToBottom(animated: false)
             }
         }
@@ -191,7 +190,6 @@ final class ChatViewController: UIViewController {
     // MARK: - OtherId
     private func resolveOtherId() {
         let myId = currentUserId!
-
         if myId == buyerId { otherId = sellerId }
         else if myId == sellerId { otherId = buyerId }
         else { otherId = [buyerId!, sellerId!].first(where: { $0 != myId }) ?? sellerId! }
@@ -203,23 +201,18 @@ final class ChatViewController: UIViewController {
 
         stomp.onConnected = { [weak self] in
             guard let self else { return }
-            print("✅ STOMP connected! subscribe => \(self.topicPath)")
             stomp.subscribe(topicPath: self.topicPath)
         }
 
         stomp.onMessage = { [weak self] received in
             guard let self else { return }
-            print("📩 STOMP recv: sender=\(received.senderId ?? "nil") room=\(received.roomId ?? "nil") msg=\(received.message)")
-
-            // 내가 보낸 메시지는 서버에서 다시 오면 중복 방지
             if received.senderId == self.currentUserId { return }
 
             var msg = received
             msg.isMe = false
 
             DispatchQueue.main.async {
-                // ✅ 상대 메시지 오면 무조건 맨 아래로
-                self.appendMessage(msg, autoScroll: true, forceScroll: true)
+                self.appendMessage(msg, forceScroll: true) // ✅ 상대 오면 무조건 아래
             }
         }
 
@@ -229,30 +222,25 @@ final class ChatViewController: UIViewController {
     }
 
     private func connectAndSubscribe() {
-        print("🔌 STOMP connect() try. userId=\(currentUserId ?? "nil") roomId=\(roomId ?? "nil") topic=\(topicPath)")
         StompManager.shared.connect(userId: currentUserId)
     }
 
-    // MARK: - Actions
+    // MARK: - Send / Append
     @IBAction func tapSend(_ sender: Any) {
         sendCurrentText()
     }
 
-    /// ✅ insertRows + (옵션) 강제 스크롤
-    private func appendMessage(_ msg: ChatMessage, autoScroll: Bool, forceScroll: Bool = false) {
-        let shouldFollow = forceScroll ? true : (autoScroll && isNearBottom())
-
+    private func appendMessage(_ msg: ChatMessage, forceScroll: Bool) {
         chatMessages.append(msg)
         let indexPath = IndexPath(row: chatMessages.count - 1, section: 0)
 
         chatTableView.performBatchUpdates({
             chatTableView.insertRows(at: [indexPath], with: .none)
         }, completion: { _ in
-            guard shouldFollow else { return }
+            // ✅ contentSize 변했으니 spacer 갱신
+            self.updateHeaderSpacer()
 
-            // ✅ contentSize 확정 후 다음 프레임에 내려가는 게 가장 안정적
-            DispatchQueue.main.async {
-                self.chatTableView.layoutIfNeeded()
+            if forceScroll {
                 self.scrollToBottom(animated: true)
             }
         })
@@ -275,21 +263,10 @@ final class ChatViewController: UIViewController {
 
         messageTextField.text = ""
 
-        // ✅ 내가 보내도 무조건 맨 아래로
-        appendMessage(msg, autoScroll: true, forceScroll: true)
+        // ✅ 내 메시지도 무조건 아래
+        appendMessage(msg, forceScroll: true)
 
         StompManager.shared.sendRoomMessage(msg)
-    }
-
-    private func scrollToBottom(animated: Bool) {
-        chatTableView.layoutIfNeeded()
-
-        let contentHeight = chatTableView.contentSize.height
-        let inset = chatTableView.adjustedContentInset
-        let visibleHeight = chatTableView.bounds.height - inset.top - inset.bottom
-
-        let y = max(-inset.top, contentHeight - visibleHeight)
-        chatTableView.setContentOffset(CGPoint(x: 0, y: y), animated: animated)
     }
 
     private static func formatNow() -> String {
@@ -299,6 +276,7 @@ final class ChatViewController: UIViewController {
         return f.string(from: Date())
     }
 
+    // MARK: - Load
     private func loadChatMessages(roomId: String) {
         Task {
             do {
@@ -318,8 +296,7 @@ final class ChatViewController: UIViewController {
                     }
 
                     self.chatTableView.reloadData()
-                    self.chatTableView.layoutIfNeeded()
-
+                    self.updateHeaderSpacer()
                     DispatchQueue.main.async {
                         self.scrollToBottom(animated: false)
                     }
@@ -355,7 +332,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-// MARK: - UITextFieldDelegate (Return=Send)
+// MARK: - UITextFieldDelegate
 extension ChatViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         sendCurrentText()
