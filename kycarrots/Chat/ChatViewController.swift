@@ -34,7 +34,6 @@ final class ChatViewController: UIViewController {
         setupUI()
         setupTable()
 
-        // (중복이어도 안전)
         chatTableView.rowHeight = UITableView.automaticDimension
         chatTableView.estimatedRowHeight = 60
 
@@ -52,9 +51,9 @@ final class ChatViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        // ✅ 키보드가 없어도 inputBar 높이만큼 bottom inset 기본 유지 (초기 1회)
+        // ✅ 키보드가 없어도 "실제로 가려지는(overlay)" 만큼만 inset 적용 (초기 1회)
         if lastBottomInset == 0 {
-            applyBottomInset(inputBarView.bounds.height, keepVisiblePosition: false)
+            applyBottomInset(baseBottomInset(), keepVisiblePosition: false)
         }
     }
 
@@ -71,7 +70,7 @@ final class ChatViewController: UIViewController {
     // MARK: - Tap to dismiss keyboard
     private func setupTapToDismissKeyboard() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false   // ✅ 셀 터치/스크롤 방해하지 않게
+        tap.cancelsTouchesInView = false
         chatTableView.addGestureRecognizer(tap)
     }
 
@@ -117,6 +116,16 @@ final class ChatViewController: UIViewController {
         return chatTableView.contentOffset.y >= (maxOffsetY - threshold)
     }
 
+    /// ✅ chatTableView가 inputBarView에 실제로 "가려지는(overlay)" 높이만 계산
+    /// - tableView.bottom이 inputBar.top에 붙어있으면 0
+    /// - inputBar가 tableView 위에 떠 있으면 inputBar 높이만큼
+    private func baseBottomInset() -> CGFloat {
+        view.layoutIfNeeded()
+        let tableBottom = chatTableView.frame.maxY
+        let inputTop = inputBarView.frame.minY
+        return max(0, tableBottom - inputTop)
+    }
+
     private func applyBottomInset(_ bottomInset: CGFloat, keepVisiblePosition: Bool) {
         let old = lastBottomInset
         lastBottomInset = bottomInset
@@ -148,15 +157,14 @@ final class ChatViewController: UIViewController {
         // ✅ 내가 이미 바닥 보고 있으면 키보드 올라와도 따라가기, 아니면 위치 유지
         let followBottom = isNearBottom()
 
-        // ✅ 아래에서 위로 올라가게 (부호 반대)
         inputBarBottom.constant = -keyboardHeight
         let options = UIView.AnimationOptions(rawValue: curveRaw << 16)
 
         UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.view.layoutIfNeeded()
 
-            // ✅ 마지막 메시지가 입력바/키보드에 가리지 않게 (항상 inputBar 높이는 포함)
-            let bottomInset = keyboardHeight + self.inputBarView.bounds.height
+            // ✅ 핵심: inputBar 높이를 무조건 더하지 말고 "실제 overlay"만 더하기
+            let bottomInset = keyboardHeight + self.baseBottomInset()
 
             // followBottom == false면 현재 보던 위치 유지(튐 방지)
             self.applyBottomInset(bottomInset, keepVisiblePosition: !followBottom)
@@ -265,14 +273,10 @@ final class ChatViewController: UIViewController {
             isMe: true
         )
 
-        // 입력창 정리
         messageTextField.text = ""
 
         // ✅ 내가 보내도 무조건 맨 아래로
         appendMessage(msg, autoScroll: true, forceScroll: true)
-
-        // 키보드 유지 필요하면 켜도 됨
-        // messageTextField.becomeFirstResponder()
 
         StompManager.shared.sendRoomMessage(msg)
     }
@@ -281,12 +285,10 @@ final class ChatViewController: UIViewController {
         chatTableView.layoutIfNeeded()
 
         let contentHeight = chatTableView.contentSize.height
-        let tableHeight = chatTableView.bounds.height
         let inset = chatTableView.adjustedContentInset
+        let visibleHeight = chatTableView.bounds.height - inset.top - inset.bottom
 
-        let visibleHeight = tableHeight - inset.top - inset.bottom
         let y = max(-inset.top, contentHeight - visibleHeight)
-
         chatTableView.setContentOffset(CGPoint(x: 0, y: y), animated: animated)
     }
 
