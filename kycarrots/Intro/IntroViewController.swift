@@ -1,6 +1,7 @@
 import UIKit
 import Network
 import UserNotifications
+import FirebaseMessaging
 
 final class IntroViewController: UIViewController {
 
@@ -182,7 +183,19 @@ final class IntroViewController: UIViewController {
         PushTokenUtil.ensureTokenRegistered()
         
         let finalMemberCode = (res.memberCode?.isEmpty == false) ? res.memberCode! : memberCodeHint
+        subscribeTopicIfNeeded(memberCode: finalMemberCode)
         coordinator?.showHome(memberCode: finalMemberCode, deepLink: launchDeepLink)
     }
     
+    func subscribeTopicIfNeeded(memberCode: String) {
+        guard memberCode == Constants.ROLE_PUB else { return }
+
+        Messaging.messaging().subscribe(toTopic: Constants.ROLE_PUB) { error in
+            if let error = error {
+                print("FCM ROLE_PUB 토픽 구독 실패:", error)
+            } else {
+                print("FCM ROLE_PUB 토픽 구독 성공")
+            }
+        }
+    }
 }
