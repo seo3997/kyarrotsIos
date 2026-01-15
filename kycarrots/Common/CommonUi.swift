@@ -17,6 +17,27 @@ extension UIView {
         layer.masksToBounds = false
         self.backgroundColor = backgroundColor
     }
+    
+    func applyTermsBoxStyle() {
+          backgroundColor = .white
+          layer.cornerRadius = 12
+          layer.borderWidth = 1
+          layer.borderColor = UIColor.systemGray3.cgColor
+          layer.masksToBounds = true
+      }
+    
+    func applyFormFieldStyle(
+          radius: CGFloat = 12,
+          borderColor: UIColor = .systemGray4,
+          borderWidth: CGFloat = 1,
+          backgroundColor: UIColor = .white
+      ) {
+          layer.cornerRadius = radius
+          layer.borderWidth = borderWidth
+          layer.borderColor = borderColor.cgColor
+          layer.masksToBounds = true
+          self.backgroundColor = backgroundColor
+      }
 }
 
 extension UITextField {

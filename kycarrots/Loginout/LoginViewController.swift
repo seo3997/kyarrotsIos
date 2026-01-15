@@ -179,9 +179,32 @@ class LoginViewController: UIViewController {
 
     @IBAction func googleLoginButtonTapped(_ sender: UIButton) { }
 
-    @IBAction func membershipButtonTapped(_ sender: UIButton) { }
+    @IBAction func membershipButtonTapped(_ sender: UIButton) {
+        let sb = UIStoryboard(name: "Main", bundle: nil)
 
-    @IBAction func findIdPwdButtonTapped(_ sender: UIButton) { }
+        guard let vc = sb.instantiateViewController(
+            withIdentifier: "TermsAgreeVC"
+        ) as? TermsAgreeViewController else {
+            assertionFailure("TermsAgreeVC not found in storyboard")
+            return
+        }
+
+       navigationController?.pushViewController(vc, animated: true)
+    }
+
+    @IBAction func findIdPwdButtonTapped(_ sender: UIButton) {
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = sb.instantiateViewController(
+            withIdentifier: "FindAccountVC"
+        ) as? FindAccountViewController else {
+            assertionFailure("FindAccountVC not found in storyboard")
+            return
+        }
+        // ✅ 서비스 주입 (네 프로젝트 방식에 맞게)
+        vc.service = AppServiceProvider.shared   // ← 실제 사용하는 서비스로 교체
+        // ✅ 네비게이션으로 이동
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
     
     private func chkLoginCondition() {
