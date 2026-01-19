@@ -23,6 +23,7 @@ final class TermsAgreeViewController: UIViewController, WKNavigationDelegate, UI
 
     private var pg1: UIActivityIndicatorView!
     private var pg2: UIActivityIndicatorView!
+    var coordinator: AppCoordinator?
 
     // MARK: - URLs (Android와 동일)
     private var terms1Url: String {
@@ -270,7 +271,9 @@ final class TermsAgreeViewController: UIViewController, WKNavigationDelegate, UI
 
         // ✅ 여기서 주입
         vc.service = AppServiceProvider.shared   // ← 너 프로젝트에 맞는 service
+        print("TermsAgreeViewController coordinator is nil? ->", coordinator == nil)
 
+        vc.coordinator = self.coordinator
         navigationController?.pushViewController(vc, animated: true)
     }
 

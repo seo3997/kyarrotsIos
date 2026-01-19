@@ -143,10 +143,10 @@ final class RemoteRepository {
     }
 
     // MARK: - 회원가입
-    func registerUser(_ user: OpUserVO) async throws -> SimpleResultResponse {
+    func registerUser(_ user: OpUserVO) async throws -> LoginResponse {
         try await api.request(
             AdApiEndpoint.registerUser(user: user),
-            as: SimpleResultResponse.self
+            as: LoginResponse.self
         )
     }
 

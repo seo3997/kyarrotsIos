@@ -188,7 +188,8 @@ class LoginViewController: UIViewController {
             assertionFailure("TermsAgreeVC not found in storyboard")
             return
         }
-
+        print("membershipButtonTapped coordinator is nil? ->", coordinator == nil)
+        vc.coordinator = self.coordinator
        navigationController?.pushViewController(vc, animated: true)
     }
 

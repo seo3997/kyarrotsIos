@@ -46,7 +46,7 @@ final class MembershipViewController: UIViewController, UITextFieldDelegate {
 
     private var selectedCityCode: String = ""
     private var selectedTownCode: String = ""
-
+    var coordinator: AppCoordinator?
     // 사용자구분 (Android roleMap)
     private lazy var roleMap: [String: String] = {
         if Constants.SYSTEM_TYPE == 1 {
@@ -316,17 +316,25 @@ final class MembershipViewController: UIViewController, UITextFieldDelegate {
         user.userAge = ""                // Android userAge = ""
         showLoading(true)
         Task {
-            let ok = await service.registerUser(user)
+            let response = await service.registerUser(user)
             await MainActor.run {
                 self.showLoading(false)
-                if ok {
-                    self.toast("회원가입 성공!")
-                    // Android는 MainNavigation.goMain(...)로 이동.
-                    // iOS는 네 앱 흐름에 맞게 처리 (예: popToRoot / coordinator showHome 등)
-                    self.navigationController?.popToRootViewController(animated: true)
-                } else {
-                    self.toast("회원가입 실패")
-                }
+                if let res = response, res.resultCode == 200 {
+                       var okRes = res
+                       okRes.loginPwd = password   // Android의 response.login_pwd=password 대응
+
+                       self.toast("회원가입 성공!")
+                       LoginInfoUtil.saveLoginInfo(okRes)
+                       print("MembershipViewController coordinator is nil? ->", coordinator == nil)
+
+                       coordinator?.showIntro(launchDeepLink: nil, animated: true)
+                       // Android: goMain(...)
+                       // iOS: coordinator/showHome or pop
+                       //self.navigationController?.popToRootViewController(animated: true)
+
+                   } else {
+                       self.toast("회원가입 실패")
+                   }
             }
         }
     }

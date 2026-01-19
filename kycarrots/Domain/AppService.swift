@@ -111,8 +111,12 @@ final class AppService {
     }
 
     // 회원가입
-    func registerUser(_ user: OpUserVO) async -> Bool {
-        (try? await repo.registerUser(user).result) ?? false
+    func registerUser(_ user: OpUserVO) async -> LoginResponse? {
+        do {
+                return try await repo.registerUser(user)
+            } catch {
+                return nil
+            }
     }
 
     func checkEmailDuplicate(email: String) async -> Bool {

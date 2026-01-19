@@ -88,4 +88,16 @@ struct LoginInfoUtil {
         defaults.removeObject(forKey: KEY_LOGIN_CD)
         defaults.removeObject(forKey: KEY_SOCIAL_ID)
     }
+    
+    static func saveLoginInfo(_ login: LoginResponse) {
+           saveLoginInfo(
+               email: login.loginId ?? "",
+               loginNo: login.loginIdx ?? "",
+               password: login.loginPwd ?? "",
+               memberCode: login.memberCode ?? "",
+               loginNm: login.loginNm ?? "",
+               loginCd: login.loginCd ?? "",
+               loginSocialId: login.loginSocialId ?? ""
+           )
+    }
 }
