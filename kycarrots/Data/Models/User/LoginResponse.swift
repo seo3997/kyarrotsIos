@@ -21,7 +21,7 @@ struct LoginResponse: Decodable {
     let loginId: String?
     let loginCd: String?
     let loginSocialId: String?
-    var loginPwd: String?
+    let loginPwd: String?
 
     enum CodingKeys: String, CodingKey {
         case resultCode      = "resultCode"

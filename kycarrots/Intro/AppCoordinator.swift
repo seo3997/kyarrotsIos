@@ -92,12 +92,27 @@ final class AppCoordinator {
     }
 
     func showIntro(launchDeepLink: PushDeepLink? = nil, animated: Bool = true) {
+        print("coordinator nav =", nav)
+        print("window.rootVC =", window.rootViewController as Any)
+        
         let intro = IntroViewController(
             service: AppServiceProvider.shared,
             coordinator: self,
             launchDeepLink: launchDeepLink
         )
         nav.setViewControllers([intro], animated: animated)
+        /*
+        // ✅ 핵심: 루트를 강제로 nav로 맞춘다
+         window.rootViewController = nav
+         window.makeKeyAndVisible()
+
+         if animated {
+             UIView.transition(with: window,
+                               duration: 0.25,
+                               options: .transitionCrossDissolve,
+                               animations: nil)
+         }
+         */
     }
     
     

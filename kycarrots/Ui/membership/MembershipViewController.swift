@@ -318,21 +318,25 @@ final class MembershipViewController: UIViewController, UITextFieldDelegate {
         Task {
             let response = await service.registerUser(user)
             await MainActor.run {
-                self.showLoading(false)
                 if let res = response, res.resultCode == 200 {
-                       var okRes = res
-                       okRes.loginPwd = password   // Android의 response.login_pwd=password 대응
-
-                       self.toast("회원가입 성공!")
-                       LoginInfoUtil.saveLoginInfo(okRes)
-                       print("MembershipViewController coordinator is nil? ->", coordinator == nil)
-
-                       coordinator?.showIntro(launchDeepLink: nil, animated: true)
-                       // Android: goMain(...)
-                       // iOS: coordinator/showHome or pop
-                       //self.navigationController?.popToRootViewController(animated: true)
-
+                        LoginInfoUtil.saveLoginInfo(
+                        email: res.loginId  ?? "",
+                        loginNo: res.loginIdx  ?? "",
+                        password: password,          // ✅ 여기서 직접 저장
+                        memberCode: res.memberCode ?? "",
+                        loginNm: res.loginNm ?? "",
+                        loginCd: res.loginCd  ?? "",
+                        loginSocialId: res.loginSocialId ?? ""
+                       )
+                        DispatchQueue.main.async {
+                            self.coordinator?.showIntro(launchDeepLink: nil, animated: true)
+                            // ✅ 안전장치: 아직 화면에 있을 때만 실행
+                            guard self.isViewLoaded, self.view.window != nil else { return }
+                            self.showLoading(false)
+                            self.toast("회원가입 성공!")
+                        }
                    } else {
+                       self.showLoading(false)
                        self.toast("회원가입 실패")
                    }
             }
