@@ -119,8 +119,8 @@ final class AppService {
             }
     }
 
-    func checkEmailDuplicate(email: String) async -> Bool {
-        (try? await repo.checkEmailDuplicate(email: email).result) ?? false
+    func checkEmailDuplicate(email: String) async -> SimpleResultResponse? {
+        try? await repo.checkEmailDuplicate(email: email)
     }
 
     func getUserInfoByToken(token: String) async -> OpUserVO? {
@@ -201,11 +201,15 @@ final class AppService {
     }
 
     // 소셜 로그인
-    func authSocial(_ req: SocialAuthRequest) async -> SocialAuthResponse? {
+    func authSocial(_ req: SocialAuthRequest) async -> LoginResponse? {
         try? await repo.authSocial(req)
     }
 
-    func linkSocial(_ req: LinkSocialRequest) async -> Bool {
-        (try? await repo.linkSocial(req).result) ?? false
+    func linkSocial(_ req: LinkSocialRequest) async -> LoginResponse? {
+        try? await repo.linkSocial(req)
+    }
+    // Android처럼 TODO 유지
+    func saveJwt(_ jwt: String) {
+        // TODO: Keychain / UserDefaults 등에 저장
     }
 }

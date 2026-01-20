@@ -5,6 +5,9 @@ import CoreData
 import FirebaseCore
 import FirebaseMessaging
 
+import KakaoSDKCommon
+import KakaoSDKAuth
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
 
@@ -33,10 +36,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 application.registerForRemoteNotifications()
             }
         }
-
+        
+        // ✅ Kakao SDK init (Info.plist의 KakaoNativeAppKey 사용)
+        if let key = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
+            KakaoSDK.initSDK(appKey: key)
+        }
+        
         return true
     }
-
+    func application(
+           _ app: UIApplication,
+           open url: URL,
+           options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+    ) -> Bool {
+        
+        if AuthApi.isKakaoTalkLoginUrl(url) {
+            return AuthController.handleOpenUrl(url: url)
+        }
+        return false
+        
+    }
     // ✅ APNs 토큰을 받으면 FCM에게 연결해줘야 FCM->APNs 라우팅됨
     func application(
         _ application: UIApplication,

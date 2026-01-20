@@ -1,5 +1,6 @@
 import UIKit
 import UserNotifications
+import KakaoSDKAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -26,7 +27,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.appCoordinator = coordinator
         coordinator.start(launchDeepLink: deepLink)
     }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else { return }
 
+        if AuthApi.isKakaoTalkLoginUrl(url) {
+            _ = AuthController.handleOpenUrl(url: url)
+        }
+    }
     /// ✅ terminated(콜드 스타트) 상태의 푸시 탭 딥링크 추출
     private func extractDeepLink(from options: UIScene.ConnectionOptions) -> PushDeepLink? {
         guard let response = options.notificationResponse else { return nil }

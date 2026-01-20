@@ -7,6 +7,8 @@
 
 
 import UIKit
+import KakaoSDKAuth
+import KakaoSDKUser
 
 class LoginViewController: UIViewController {
     @IBOutlet weak var backgroundImageView: UIImageView!
@@ -30,6 +32,7 @@ class LoginViewController: UIViewController {
     var selectedUserType: String = Constants.ROLE_SELL
     var pendingDeepLink: PushDeepLink?
     var coordinator: AppCoordinator?
+    private let appService = AppServiceProvider.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -175,7 +178,9 @@ class LoginViewController: UIViewController {
         */
     }
 
-    @IBAction func kakaoLoginButtonTapped(_ sender: UIButton) { }
+    @IBAction func kakaoLoginButtonTapped(_ sender: UIButton) {
+        startKakaoLogin()
+    }
 
     @IBAction func googleLoginButtonTapped(_ sender: UIButton) { }
 
@@ -202,7 +207,7 @@ class LoginViewController: UIViewController {
             return
         }
         // ✅ 서비스 주입 (네 프로젝트 방식에 맞게)
-        vc.service = AppServiceProvider.shared   // ← 실제 사용하는 서비스로 교체
+        vc.service = appService   // ← 실제 사용하는 서비스로 교체
         // ✅ 네비게이션으로 이동
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -241,7 +246,6 @@ class LoginViewController: UIViewController {
         startLoading()
 
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
-        let appService = AppServiceProvider.shared
 
         let regId = LoginInfoUtil.getUserNo()
         Task { [weak self] in
@@ -307,6 +311,187 @@ class LoginViewController: UIViewController {
             }
         }
         
+    }
+    // MARK: - Kakao Login (Android flow same)
+
+    private func startKakaoLogin() {
+        showLoading(true)
+
+        let callback: (OAuthToken?, Error?) -> Void = { [weak self] token, error in
+            guard let self = self else { return }
+            self.showLoading(false)
+
+            if let error = error {
+                // 취소면 메시지만
+                if self.isKakaoCancelled(error) {
+                    self.showAlert(message: "로그인이 취소되었습니다.")
+                    return
+                }
+                // 그 외 에러면 계정 로그인 폴백
+                self.loginWithKakaoAccount()
+                return
+            }
+
+            guard let token = token else {
+                self.showAlert(message: "카카오 토큰이 없습니다.")
+                return
+            }
+
+            self.fetchKakaoUserAndGo(token: token)
+        }
+
+        if UserApi.isKakaoTalkLoginAvailable() {
+            UserApi.shared.loginWithKakaoTalk(completion: callback)
+        } else {
+            loginWithKakaoAccount()
+        }
+    }
+
+    private func loginWithKakaoAccount() {
+        showLoading(true)
+        UserApi.shared.loginWithKakaoAccount { [weak self] token, error in
+            guard let self = self else { return }
+            self.showLoading(false)
+
+            if let error = error {
+                self.showAlert(message: "카카오 계정 로그인 실패: \(error.localizedDescription)")
+                return
+            }
+
+            guard let token = token else {
+                self.showAlert(message: "카카오 토큰이 없습니다.")
+                return
+            }
+
+            self.fetchKakaoUserAndGo(token: token)
+        }
+    }
+
+    // Android: fetchKakaoUserAndGo(token) + authSocial + (200/604) 분기
+    private func fetchKakaoUserAndGo(token: OAuthToken) {
+        startLoading()
+
+        UserApi.shared.me { [weak self] user, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                self.stopLoading()
+                self.showAlert(message: "카카오 사용자 조회 실패: \(error.localizedDescription)")
+                return
+            }
+
+            guard let user = user, let id = user.id else {
+                self.stopLoading()
+                self.showAlert(message: "카카오 사용자 정보가 없습니다.")
+                return
+            }
+
+            let kakaoUserId = String(id)
+            let nickname = user.kakaoAccount?.profile?.nickname ?? ""
+            let email = user.kakaoAccount?.email ?? "" // 없을 수도 있음
+            let profileUrl = user.kakaoAccount?.profile?.profileImageUrl?.absoluteString ?? ""
+
+            let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+            let deviceId = UIDevice.current.identifierForVendor?.uuidString
+
+            let req = SocialAuthRequest(
+                provider: "KAKAO",
+                providerUserId: kakaoUserId,
+                accessToken: token.accessToken,
+                idToken: nil,
+                deviceId: deviceId,
+                appVersion: appVersion
+            )
+
+            Task { [weak self] in
+                guard let self = self else { return }
+                defer { self.stopLoading() }
+
+                do {
+                    let auth = try await self.appService.authSocial(req)
+                    guard let auth = auth else {
+                        self.showAlert(message: "로그인 응답이 없습니다.")
+                        return
+                    }
+                    // ✅ 성공 (Android: resultCode==200 && token not blank)
+                    if auth.resultCode == StaticDataInfo.RESULT_CODE_200,
+                       let jwt = auth.token, !jwt.isEmpty {
+
+                        // Android도 TODO였으니 iOS도 일단 주석
+                        // self.service.saveJwt(jwt)
+
+                        // ✅ Android: LoginInfoUtil.saveLoginInfo(...) 동일 역할
+                        LoginInfoUtil.saveLoginInfo(
+                            email: auth.loginId ?? "",                  // 서버가 loginId 주면 그걸 우선
+                            loginNo: auth.loginIdx ?? "",
+                            password: auth.loginPwd ?? "",              // 소셜이면 보통 ""
+                            memberCode: auth.memberCode ?? "",
+                            loginNm: auth.loginNm ?? "",
+                            loginCd: auth.loginCd ?? "KAKAO",
+                            loginSocialId: auth.loginSocialId ?? ""
+                        )
+
+                        // ✅ Android: IntroActivity로 이동
+                        self.coordinator?.showIntro(
+                            launchDeepLink: self.pendingDeepLink,
+                            animated: true
+                        )
+                        return
+                    }
+
+                    // ✅ 온보딩 (Android: 604)
+                    if auth.resultCode == 604 {
+                        self.openOnboarding(
+                            provider: "KAKAO",
+                            providerUserId: kakaoUserId,
+                            nickname: nickname,
+                            email: email,
+                            profileUrl: profileUrl
+                        )
+                        return
+                    }
+
+                    self.showAlert(message: "소셜 로그인 실패(code=\(auth.resultCode))")
+
+                } catch {
+                    self.showAlert(message: "서버 통신 오류: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    // MARK: - Onboarding 이동 (스토리보드 ID 맞춰서 사용)
+    private func openOnboarding(provider: String,
+                                providerUserId: String,
+                                nickname: String,
+                                email: String,
+                                profileUrl: String) {
+        /*
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = sb.instantiateViewController(withIdentifier: "OnboardingVC") as? OnboardingViewController else {
+            showAlert(message: "OnboardingVC not found")
+            return
+        }
+
+        vc.provider = provider
+        vc.providerUserId = providerUserId
+        vc.nickname = nickname
+        vc.email = email
+        vc.profileUrl = profileUrl
+
+        if let nav = navigationController {
+            nav.pushViewController(vc, animated: true)
+        } else {
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true)
+        }
+         */
+    }
+
+    // MARK: - Cancel 판단 (간단 버전)
+    private func isKakaoCancelled(_ error: Error) -> Bool {
+        let msg = (error as NSError).localizedDescription.lowercased()
+        return msg.contains("cancel")
     }
 
 }

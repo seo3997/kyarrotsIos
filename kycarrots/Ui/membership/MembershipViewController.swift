@@ -239,10 +239,12 @@ final class MembershipViewController: UIViewController, UITextFieldDelegate {
 
         showLoading(true)
         Task {
-            let ok = await service.checkEmailDuplicate(email: email) // Android: response.result true => 사용 가능
+            guard let response = await service.checkEmailDuplicate(email: email) else {
+                return
+            }
             await MainActor.run {
                 self.showLoading(false)
-                if ok {
+                if response.result {
                     self.toast("사용 가능한 이메일입니다.")
                     self.isEmailChecked = true
                 } else {

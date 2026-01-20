@@ -150,10 +150,10 @@ final class RemoteRepository {
         )
     }
 
-    func checkEmailDuplicate(email: String) async throws -> SimpleResult {
+    func checkEmailDuplicate(email: String) async throws -> SimpleResultResponse {
         try await api.request(
             AdApiEndpoint.checkEmailDuplicate(email: email),
-            as: SimpleResult.self
+            as: SimpleResultResponse.self
         )
     }
 
@@ -277,17 +277,17 @@ final class RemoteRepository {
     }
 
     // MARK: - 소셜 로그인
-    func authSocial(_ req: SocialAuthRequest) async throws -> SocialAuthResponse {
+    func authSocial(_ req: SocialAuthRequest) async throws -> LoginResponse {
         try await api.request(
             AdApiEndpoint.authSocial(req: req),
-            as: SocialAuthResponse.self
+            as: LoginResponse.self
         )
     }
 
-    func linkSocial(_ req: LinkSocialRequest) async throws -> SimpleResultResponse {
+    func linkSocial(_ req: LinkSocialRequest) async throws -> LoginResponse {
         try await api.request(
             AdApiEndpoint.linkSocial(req: req),
-            as: SimpleResultResponse.self
+            as: LoginResponse.self
         )
     }
 }
