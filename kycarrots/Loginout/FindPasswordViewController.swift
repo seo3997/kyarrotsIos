@@ -37,24 +37,47 @@ final class FindPasswordViewController: UIViewController, UITextFieldDelegate {
 
     @IBAction func onFindPassword(_ sender: UIButton) {
         let email = (emailField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-
         guard !email.isEmpty else { return showAlert("이메일을 입력해 주세요.") }
         guard isValidEmail(email) else { return showAlert("이메일 형식이 올바르지 않습니다.") }
 
         Task { @MainActor in
-            loader.show(on: view)
-            defer { loader.hide() }
+             loader.show(on: view)
+             defer { loader.hide() }
 
-            let result = await service.findPassword(email: email)
+             let resultCode = await FindPassword(
+                 email: email,
+                 service: service
+             ).find()
 
-            if let msg = result, !msg.isEmpty {
-                showAlert(msg) { [weak self] in
-                    self?.navigationController?.popViewController(animated: true)
-                }
-            } else {
-                showAlert("가입 정보가 없습니다.")
-            }
-        }
+             switch resultCode {
+
+             case StaticDataInfo.RESULT_CODE_ERR:
+                 showAlert("통신 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.")
+
+             case StaticDataInfo.RESULT_NO_USER,
+                  StaticDataInfo.RESULT_NO_DATA:
+                 showAlert("가입된 회원 정보가 없습니다.")
+
+             case StaticDataInfo.RESULT_CODE_200:
+                 showAlert(
+                     "비밀번호 초기화 안내 메일을\n\(email) 로 전송했습니다."
+                 ) { [weak self] in
+                     self?.navigationController?.popViewController(animated: true)
+                 }
+
+             case StaticDataInfo.RESULT_PWD_ERR:
+                 showAlert("비밀번호 처리 중 오류가 발생했습니다.\n관리자에게 문의해주세요.")
+
+             case StaticDataInfo.RESULT_MEMBER_CODE_ERR:
+                 showAlert("회원 정보가 올바르지 않습니다.")
+
+             case StaticDataInfo.RESULT_NO_SOCAIL_DATA:
+                 showAlert("소셜 로그인 회원은 비밀번호를 변경할 수 없습니다.")
+
+             default:
+                 showAlert("알 수 없는 오류가 발생했습니다.")
+             }
+         }
     }
 
     private func isValidEmail(_ s: String) -> Bool {
