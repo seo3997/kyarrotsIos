@@ -1,57 +1,56 @@
-//
-//  OnboardingViewController.swift
-//  kycarrots
-//
-//  Created by soo on 1/20/26.
-//
-
-
 import UIKit
 
 final class OnboardingViewController: UIViewController {
 
-    // MARK: - Injected
-    var service: AppService!                 // AppServiceProvider.shared 주입
+    // MARK: - Inject
+    var service: AppService!
     weak var coordinator: AppCoordinator?
     var pendingDeepLink: PushDeepLink?
 
-    // Android intent extras 대응
-    var provider: String = "KAKAO"           // KAKAO / NAVER / GOOGLE / APPLE
-    var providerUserId: String = ""          // 소셜 userId
+    // Social inputs (LoginVC에서 주입)
+    var provider: String = "KAKAO"   // KAKAO / NAVER / GOOGLE / APPLE ...
+    var providerUserId: String = ""
     var presetEmail: String = ""
     var presetNickname: String = ""
 
-    // MARK: - Email section
-    @IBOutlet weak var emailField: UITextField!
-    @IBOutlet weak var checkEmailButton: UIButton!
-    @IBOutlet weak var emailStatusLabel: UILabel!
-
-    // MARK: - Form container (Membership와 동일)
+    // MARK: - IBOutlets (Membership와 동일 네이밍 + formContainer)
     @IBOutlet weak var formContainer: UIView!
-    @IBOutlet weak var nicknameField: UITextField!
 
+    @IBOutlet weak var tfName: UITextField!
+    @IBOutlet weak var tfEmail: UITextField!
+    @IBOutlet weak var tfPassword: UITextField!
+    @IBOutlet weak var tfPasswordConfirm: UITextField!
+    @IBOutlet weak var tfBirth: UITextField!
+    @IBOutlet weak var tfPhoneMid: UITextField!
+    @IBOutlet weak var tfPhoneLast: UITextField!
+
+    @IBOutlet weak var btnPhoneFirst: UIButton!
     @IBOutlet weak var btnCity: UIButton!
     @IBOutlet weak var btnTown: UIButton!
     @IBOutlet weak var btnRole: UIButton!
 
-    @IBOutlet weak var marketingPushSwitch: UISwitch!
-    @IBOutlet weak var marketingEmailSwitch: UISwitch!
-    @IBOutlet weak var tosAgreedSwitch: UISwitch!
-    @IBOutlet weak var privacyAgreedSwitch: UISwitch!
+    @IBOutlet weak var segGender: UISegmentedControl!
 
-    @IBOutlet weak var submitButton: UIButton!
+    @IBOutlet weak var btnCheckEmail: UIButton!
+    @IBOutlet weak var btnRegister: UIButton!
+
+    @IBOutlet weak var loadingOverlay: UIView!
+    @IBOutlet weak var loadingSpinner: UIActivityIndicatorView!
+
+    // (선택) 상태 메시지 라벨이 있으면 연결 (없으면 nil OK)
+    @IBOutlet weak var emailStatusLabel: UILabel?
 
     // MARK: - State
     private var isEmailChecked = false
-    private var isNewEmail = false
 
-    // 지역 / 역할 상태 (Membership와 동일)
+    // phone first options (010/011/016/017/018/019)
+    private let phoneFirstOptions = ["010", "011", "016", "017", "018", "019"]
+
+    // 지역/역할 (Membership 방식)
     private var cityList: [TxtListDataInfo] = []
     private var townList: [TxtListDataInfo] = []
-
-    private var selectedCityCode = ""
-    private var selectedTownCode = ""
-    private var selectedRoleCode = ""
+    private var selectedCityCode: String = ""
+    private var selectedTownCode: String = ""
 
     private lazy var roleMap: [String: String] = {
         if Constants.SYSTEM_TYPE == 1 {
@@ -60,6 +59,7 @@ final class OnboardingViewController: UIViewController {
             return ["판매자":"ROLE_SELL", "센터관리":"ROLE_PROJ", "구매자":"ROLE_PUB"]
         }
     }()
+    private var selectedRoleCode: String = ""
 
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -69,56 +69,82 @@ final class OnboardingViewController: UIViewController {
 
         title = "온보딩"
         setupUI()
-        bindPreset()
-        resetInitialState()
+        setupWatchers()
+        setupKeyboardDismiss()
 
-        emailField.addTarget(self, action: #selector(onEmailChanged), for: .editingChanged)
+        // preset
+        tfEmail.text = presetEmail
+        if !presetNickname.isEmpty { tfName.text = presetNickname }
 
+        // load initial lists
         resetTownSelectionUI()
         loadCityList()
+
+        // 이메일 확인 전에는 폼 숨김
+        closeForm()
     }
 
     // MARK: - UI Setup
     private func setupUI() {
-        emailField.keyboardType = .emailAddress
-        emailField.autocapitalizationType = .none
-        emailField.autocorrectionType = .no
+        showLoading(false)
 
-        checkEmailButton.layer.cornerRadius = 10
-        submitButton.layer.cornerRadius = 12
+        tfEmail.keyboardType = .emailAddress
+        tfEmail.autocapitalizationType = .none
+        tfEmail.autocorrectionType = .no
 
-        emailStatusLabel.text = ""
-        formContainer.isHidden = true
-        submitButton.isEnabled = false
+        tfPassword.isSecureTextEntry = true
+        tfPasswordConfirm.isSecureTextEntry = true
+
+        tfPhoneMid.keyboardType = .numberPad
+        tfPhoneLast.keyboardType = .numberPad
+        tfBirth.keyboardType = .numbersAndPunctuation
+
+        // default titles
+        if (btnPhoneFirst.currentTitle ?? "").isEmpty {
+            btnPhoneFirst.setTitle("010", for: .normal)
+        }
+        if (btnCity.currentTitle ?? "").isEmpty {
+            btnCity.setTitle("시/도 선택", for: .normal)
+        }
+        if (btnTown.currentTitle ?? "").isEmpty {
+            btnTown.setTitle("구/군 선택", for: .normal)
+        }
+        if (btnRole.currentTitle ?? "").isEmpty {
+            btnRole.setTitle("사용자구분 선택", for: .normal)
+        }
+
+        emailStatusLabel?.text = ""
+
+        // town disabled before city selected
+        resetTownSelectionUI()
     }
 
-    private func bindPreset() {
-        emailField.text = presetEmail
-        nicknameField.text = presetNickname
-    }
-
-    private func resetInitialState() {
-        isEmailChecked = false
-        isNewEmail = false
-        formContainer.isHidden = true
-        submitButton.isEnabled = false
-        emailStatusLabel.text = ""
+    private func setupWatchers() {
+        tfEmail.addTarget(self, action: #selector(onEmailChanged), for: .editingChanged)
     }
 
     @objc private func onEmailChanged() {
-        resetInitialState()
+        // email changed -> re-check required
+        isEmailChecked = false
+        emailStatusLabel?.text = ""
+        closeForm()
     }
 
-    private func openFullOnboarding() {
-        formContainer.isHidden = false
-        submitButton.isEnabled = true
-    }
+    private func openForm() { formContainer.isHidden = false }
+    private func closeForm() { formContainer.isHidden = true }
 
     // MARK: - Actions
 
-    /// Android checkEmailDuplicate()와 동일
+    /// btnPhoneFirst 선택 (010/011/016/017/018/019)
+    @IBAction func pickPhoneFirstTapped(_ sender: UIButton) {
+        pickSimple(title: "휴대폰 앞자리 선택", options: phoneFirstOptions, anchor: sender) { [weak self] v in
+            self?.btnPhoneFirst.setTitle(v, for: .normal)
+        }
+    }
+
+    /// 이메일 중복확인 (Android 1:1)
     @IBAction func checkEmailTapped(_ sender: UIButton) {
-        let email = emailField.text?.trimmed ?? ""
+        let email = trimmed(tfEmail.text)
 
         guard isValidEmail(email) else {
             toast("유효한 이메일을 입력하세요.")
@@ -127,27 +153,34 @@ final class OnboardingViewController: UIViewController {
 
         Task {
             showLoading(true)
-            guard let response = await service.checkEmailDuplicate(email: email) else {
-                    showLoading(false)
-                    toast("이메일 확인 응답이 없습니다.")
-                    return
-                }
+            let res = await service.checkEmailDuplicate(email: email) // SimpleResultResponse?
             showLoading(false)
-            isEmailChecked = true
-            let userNo = response.message
-            if response.result {
+
+            guard let res else {
+                toast("네트워크 오류 발생")
+                isEmailChecked = false
+                closeForm()
+                return
+            }
+
+            let userNo = res.message
+
+            if res.result == true {
                 // 신규
-                emailStatusLabel.text = "사용 가능한 이메일입니다."
-                openFullOnboarding()
+                isEmailChecked = true
+                emailStatusLabel?.text = "사용 가능한 이메일입니다."
+                openForm()
             } else {
-                // 기존 회원 → 소셜 연결
-                emailStatusLabel.text = "이미 가입된 이메일입니다. 계정 연결을 진행합니다."
+                // 기존 -> 소셜 연결
+                isEmailChecked = false
+                emailStatusLabel?.text = "이미 가입된 이메일입니다. 계정 연결을 진행합니다."
+                closeForm()
                 await linkSocialAndGoMain(email: email, userNo: userNo)
             }
         }
     }
 
-    /// 기존 회원 → linkSocial → 메인 이동 (Android 1:1)
+    /// 기존 회원 -> linkSocial -> 성공 시 Intro 이동
     private func linkSocialAndGoMain(email: String, userNo: String) async {
         let req = LinkSocialRequest(
             userId: email,
@@ -156,88 +189,131 @@ final class OnboardingViewController: UIViewController {
             providerUserId: providerUserId
         )
 
-        guard let body = await service.linkSocial(req) else {
-            toast("연결 응답이 비어 있습니다.")
+        showLoading(true)
+        let body = await service.linkSocial(req) // LoginResponse?
+        showLoading(false)
+
+        guard let body else {
+            await MainActor.run { self.toast("연결 응답이 비어 있습니다.") }
             return
         }
 
-        switch body.resultCode {
-        case 200:
-            LoginInfoUtil.saveLoginInfo(
-                email: body.loginId ?? email,
-                loginNo: body.loginIdx ?? "",
-                password: body.loginPwd ?? "",
-                memberCode: body.memberCode ?? "",
-                loginNm: body.loginNm ?? "",
-                loginCd: body.loginCd ?? provider,
-                loginSocialId: body.loginSocialId ?? providerUserId
-            )
-            coordinator?.showIntro(
-                launchDeepLink: pendingDeepLink,
-                animated: true
-            )
+        await MainActor.run {
+            switch body.resultCode {
+            case 200:
+                LoginInfoUtil.saveLoginInfo(
+                    email: body.loginId ?? "",
+                    loginNo: body.loginIdx ?? "",
+                    password: body.loginPwd ?? "",
+                    memberCode: body.memberCode ?? "",
+                    loginNm: body.loginNm ?? "",
+                    loginCd: body.loginCd ?? "",
+                    loginSocialId: body.loginSocialId ?? ""
+                )
+                self.toast("소셜계정 링크 성공!!!")
+                self.coordinator?.showIntro(launchDeepLink: self.pendingDeepLink, animated: true)
 
-        case 409:
-            toast("이미 다른 사용자에 연결된 소셜 계정입니다.")
-        case 400:
-            toast("요청이 올바르지 않습니다.")
-        case 601:
-            toast("사용자를 찾을 수 없습니다.")
-        case 500:
-            toast("서버 오류가 발생했습니다.")
-        default:
-            toast("연결 실패")
+            case 409: self.toast("이미 다른 사용자에 연결된 소셜 계정입니다. (409)")
+            case 400: self.toast("요청이 올바르지 않습니다. (400)")
+            case 601: self.toast("사용자를 찾을 수 없습니다. (601)")
+            case 500: self.toast("서버 오류가 발생했습니다. (500)")
+            default:  self.toast("연결 실패")
+            }
         }
     }
 
-    /// 신규 회원 → postOnboarding
-    @IBAction func submitTapped(_ sender: UIButton) {
-        guard isEmailChecked, isNewEmail else {
-            toast("이메일 확인 후 진행하세요.")
-            return
-        }
+    /// 신규 회원가입 (Android registerUser 1:1) — postOnboarding 미사용
+    @IBAction func registerTapped(_ sender: UIButton) {
+        let name = trimmed(tfName.text)
+        let email = trimmed(tfEmail.text)
+        let password = trimmed(tfPassword.text)
+        let password2 = trimmed(tfPasswordConfirm.text)
 
-        guard tosAgreedSwitch.isOn, privacyAgreedSwitch.isOn else {
-            toast("필수 약관 동의가 필요합니다.")
-            return
-        }
+        let phone = "\(trimmed(btnPhoneFirst.currentTitle))-\(trimmed(tfPhoneMid.text))-\(trimmed(tfPhoneLast.text))"
+        let birth = trimmed(tfBirth.text)
 
-        let req = OnboardingRequest(
-            nickname: nicknameField.text ?? "",
-            email: emailField.text ?? "",
-            role: selectedRoleCode,
-            areaGroup: selectedCityCode,
-            areaMid: selectedTownCode,
-            areaScls: nil,
-            marketingPush: marketingPushSwitch.isOn,
-            marketingEmail: marketingEmailSwitch.isOn,
-            tosAgreed: tosAgreedSwitch.isOn,
-            privacyAgreed: privacyAgreedSwitch.isOn
-        )
+        let gender: String = {
+            switch segGender.selectedSegmentIndex {
+            case 0: return "1"
+            case 1: return "2"
+            default: return ""
+            }
+        }()
+
+        // Android 검증 그대로
+        if name.isEmpty { toast("이름을 입력하세요."); return }
+        if !isValidEmail(email) { toast("유효한 이메일을 입력하세요."); return }
+        if !isEmailChecked { toast("이메일 중복 확인을 해주세요."); return }
+        if password.count < 4 { toast("비밀번호는 최소 4자 이상이어야 합니다."); return }
+        if password != password2 { toast("비밀번호 확인이 일치하지 않습니다."); return }
+        if birth.range(of: #"^\d{4}-\d{2}-\d{2}$"#, options: .regularExpression) == nil {
+            toast("생년월일은 YYYY-MM-DD 형식으로 입력하세요."); return
+        }
+        if phone.range(of: #"^01[016789]-\d{3,4}-\d{4}$"#, options: .regularExpression) == nil {
+            toast("유효한 전화번호를 입력하세요."); return
+        }
+        if gender.isEmpty { toast("성별을 선택하세요."); return }
+        if selectedCityCode.isEmpty || selectedTownCode.isEmpty { toast("지역을 모두 선택하세요."); return }
+        if selectedRoleCode.isEmpty { toast("사용자구분을 선택하세요."); return }
+
+        // Membership DTO(OpUserVO) 그대로
+        var user = OpUserVO()
+        user.userNm = name
+        user.email = email
+        user.userId = email
+        user.password = password
+        user.cttpc = phone
+        user.cttpcSeCode = ""         // Membership에 있으면 유지
+        user.gender = Int(gender)
+        user.userAge = ""
+        user.birthDate = birth
+        user.areaCode = selectedCityCode
+        user.areaSeCodeS = selectedTownCode
+        user.areaSeCodeD = ""
+        user.referrerId = ""
+        user.userSttusCode = "10"
+        user.memberCode = selectedRoleCode
+
+        // 소셜 가입 핵심
+        user.provider = provider
+        user.providerUserId = providerUserId
 
         Task {
             showLoading(true)
-            let res = await service.postOnboarding(req)
+            let res = await service.registerUser(user) // LoginResponse?
             showLoading(false)
 
-            if res != nil {
-                coordinator?.showIntro(
-                    launchDeepLink: pendingDeepLink,
-                    animated: true
+            guard let res else {
+                toast("네트워크 오류 발생")
+                return
+            }
+
+            if res.resultCode == 200 {
+                toast("회원가입 성공!")
+                LoginInfoUtil.saveLoginInfo(
+                    email: res.loginId ?? "",           // login_id
+                    loginNo: res.loginIdx ?? "",         // login_idx
+                    password: res.loginPwd ?? "",        // login_pwd (서버 응답 기준)
+                    memberCode: res.memberCode ?? "",   // member_code
+                    loginNm: res.loginNm ?? "",          // login_nm
+                    loginCd: res.loginCd ?? "",          // login_cd
+                    loginSocialId: res.loginSocialId ?? "" // login_social_id
                 )
+                coordinator?.showIntro(launchDeepLink: pendingDeepLink, animated: true)
             } else {
                 toast("회원가입 실패")
             }
         }
     }
 
-    // MARK: - City / Town / Role (Membership와 동일)
-
+    // MARK: - Pickers (Membership 스타일)
     @IBAction func pickCityTapped(_ sender: UIButton) {
-        pick(from: cityList, title: "시/도 선택", anchor: sender) { item in
+        pick(from: cityList, title: "시/도 선택", anchor: sender) { [weak self] item in
+            guard let self else { return }
             self.selectedCityCode = item.strIdx
             self.btnCity.setTitle(item.strMsg, for: .normal)
 
+            // reset town
             self.selectedTownCode = ""
             self.btnTown.setTitle("구/군 선택", for: .normal)
             self.resetTownSelectionUI()
@@ -250,29 +326,30 @@ final class OnboardingViewController: UIViewController {
             toast("먼저 시/도를 선택하세요.")
             return
         }
-        pick(from: townList, title: "구/군 선택", anchor: sender) { item in
+        pick(from: townList, title: "구/군 선택", anchor: sender) { [weak self] item in
+            guard let self else { return }
             self.selectedTownCode = item.strIdx
             self.btnTown.setTitle(item.strMsg, for: .normal)
         }
     }
 
     @IBAction func pickRoleTapped(_ sender: UIButton) {
-        let keys = Array(roleMap.keys)
-        pickSimple(title: "사용자구분 선택", options: keys, anchor: sender) { key in
+        let options = Array(roleMap.keys)
+        pickSimple(title: "사용자구분 선택", options: options, anchor: sender) { [weak self] key in
+            guard let self else { return }
             self.selectedRoleCode = self.roleMap[key] ?? ""
             self.btnRole.setTitle(key, for: .normal)
         }
     }
 
-    // MARK: - Code loading (Membership와 동일)
-
+    // MARK: - Code loading (Membership API 사용)
     private func loadCityList() {
         Task {
             do {
                 let list = try await service.getCodeList(groupId: "R010070")
-                self.cityList = list
+                await MainActor.run { self.cityList = list }
             } catch {
-                toast("지역 목록 불러오기 실패")
+                await MainActor.run { self.toast("지역 목록 불러오기 실패") }
             }
         }
     }
@@ -281,11 +358,13 @@ final class OnboardingViewController: UIViewController {
         Task {
             do {
                 let list = try await service.getSCodeList(groupId: "R010070", mcode: cityCode)
-                self.townList = list
-                btnTown.isEnabled = true
-                btnTown.alpha = 1.0
+                await MainActor.run {
+                    self.townList = list
+                    self.btnTown.isEnabled = true
+                    self.btnTown.alpha = 1.0
+                }
             } catch {
-                toast("지역 목록 불러오기 실패")
+                await MainActor.run { self.toast("지역 목록 불러오기 실패") }
             }
         }
     }
@@ -296,35 +375,16 @@ final class OnboardingViewController: UIViewController {
         townList = []
     }
 
-    // MARK: - Picker helpers (Membership와 동일)
-
-    private func pick(from list: [TxtListDataInfo],
-                      title: String,
-                      anchor: UIView,
-                      onPick: @escaping (TxtListDataInfo) -> Void) {
-        guard !list.isEmpty else { toast("목록이 없습니다."); return }
+    // MARK: - Sheet Helpers
+    private func pick(from list: [TxtListDataInfo], title: String, anchor: UIView, onPick: @escaping (TxtListDataInfo) -> Void) {
+        guard !list.isEmpty else { toast("목록이 없습니다"); return }
 
         let ac = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         for item in list {
             ac.addAction(UIAlertAction(title: item.strMsg, style: .default) { _ in onPick(item) })
         }
         ac.addAction(UIAlertAction(title: "취소", style: .cancel))
-        presentSheet(ac, anchor)
-    }
 
-    private func pickSimple(title: String,
-                            options: [String],
-                            anchor: UIView,
-                            onPick: @escaping (String) -> Void) {
-        let ac = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        for v in options {
-            ac.addAction(UIAlertAction(title: v, style: .default) { _ in onPick(v) })
-        }
-        ac.addAction(UIAlertAction(title: "취소", style: .cancel))
-        presentSheet(ac, anchor)
-    }
-
-    private func presentSheet(_ ac: UIAlertController, _ anchor: UIView) {
         if let pop = ac.popoverPresentationController {
             pop.sourceView = anchor
             pop.sourceRect = anchor.bounds
@@ -332,14 +392,27 @@ final class OnboardingViewController: UIViewController {
         present(ac, animated: true)
     }
 
-    // MARK: - Utils
+    private func pickSimple(title: String, options: [String], anchor: UIView, onPick: @escaping (String) -> Void) {
+        guard !options.isEmpty else { toast("목록이 없습니다"); return }
 
-    private func isValidEmail(_ s: String) -> Bool {
-        s.contains("@") && s.contains(".")
+        let ac = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+        for v in options {
+            ac.addAction(UIAlertAction(title: v, style: .default) { _ in onPick(v) })
+        }
+        ac.addAction(UIAlertAction(title: "취소", style: .cancel))
+
+        if let pop = ac.popoverPresentationController {
+            pop.sourceView = anchor
+            pop.sourceRect = anchor.bounds
+        }
+        present(ac, animated: true)
     }
 
+    // MARK: - Loading / Toast
     private func showLoading(_ show: Bool) {
-        // 기존 로딩 UI 연결
+        loadingOverlay.isHidden = !show
+        if show { loadingSpinner.startAnimating() }
+        else { loadingSpinner.stopAnimating() }
     }
 
     private func toast(_ msg: String) {
@@ -347,11 +420,24 @@ final class OnboardingViewController: UIViewController {
         a.addAction(UIAlertAction(title: "확인", style: .default))
         present(a, animated: true)
     }
-}
 
-// MARK: - String helper
-private extension String {
-    var trimmed: String {
-        trimmingCharacters(in: .whitespacesAndNewlines)
+    // MARK: - Utils
+    private func trimmed(_ s: String?) -> String {
+        (s ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func isValidEmail(_ s: String) -> Bool {
+        let p = #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
+        return s.range(of: p, options: .regularExpression) != nil
+    }
+
+    private func setupKeyboardDismiss() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(endEditingAll))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc private func endEditingAll() {
+        view.endEditing(true)
     }
 }

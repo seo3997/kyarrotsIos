@@ -22,6 +22,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var kakaoLoginButton: UIButton!
     @IBOutlet weak var googleLoginButton: UIButton!
+    @IBOutlet weak var kakaoLogOutButton: UIButton!
 
     @IBOutlet weak var membershipButton: UIButton!
     @IBOutlet weak var findIdPwdButton: UIButton!
@@ -119,6 +120,11 @@ class LoginViewController: UIViewController {
         kakaoLoginButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         kakaoLoginButton.setFont(size: 20, weight: .bold)
 
+        // 카카오 로그인해제 버튼
+        kakaoLogOutButton.translatesAutoresizingMaskIntoConstraints = false
+        kakaoLogOutButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        kakaoLogOutButton.setFont(size: 20, weight: .bold)
+
         // 구글 로그인 버튼 (이건 hidden 일 때도 height 필요)
         googleLoginButton.translatesAutoresizingMaskIntoConstraints = false
         googleLoginButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
@@ -182,7 +188,46 @@ class LoginViewController: UIViewController {
         startKakaoLogin()
     }
 
-    @IBAction func googleLoginButtonTapped(_ sender: UIButton) { }
+    @IBAction func kakaoLogOutButtonTapped(_ sender: UIButton) {
+        unlinkKakaoForTest()
+    }
+
+    @IBAction func googleLoginButtonTapped(_ sender: UIButton) {
+    }
+    func unlinkKakaoForTest(completion: (() -> Void)? = nil) {
+        UserApi.shared.unlink { error in
+            if let error = error {
+                print("KAKAO unlink 실패:", error)
+                completion?()
+                return
+            }
+
+            print("KAKAO unlink 성공 (연결 해제 완료)")
+
+            // 옵션: 로그아웃까지 같이 (Android와 동일)
+            UserApi.shared.logout { logoutError in
+                if let logoutError = logoutError {
+                    print("KAKAO logout 실패:", logoutError)
+                } else {
+                    print("KAKAO logout 성공")
+                }
+
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(
+                        title: "카카오 연결 해제 완료",
+                        message: "다음 로그인 시 재동의가 필요합니다.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    UIApplication.shared.keyWindow?
+                        .rootViewController?
+                        .present(alert, animated: true)
+
+                    completion?()
+                }
+            }
+        }
+    }
 
     @IBAction func membershipButtonTapped(_ sender: UIButton) {
         let sb = UIStoryboard(name: "Main", bundle: nil)
@@ -461,23 +506,30 @@ class LoginViewController: UIViewController {
     }
 
     // MARK: - Onboarding 이동 (스토리보드 ID 맞춰서 사용)
-    private func openOnboarding(provider: String,
-                                providerUserId: String,
-                                nickname: String,
-                                email: String,
-                                profileUrl: String) {
-        /*
+    private func openOnboarding(
+        provider: String,
+        providerUserId: String,
+        nickname: String,
+        email: String,
+        profileUrl: String
+    ) {
         let sb = UIStoryboard(name: "Main", bundle: nil)
         guard let vc = sb.instantiateViewController(withIdentifier: "OnboardingVC") as? OnboardingViewController else {
             showAlert(message: "OnboardingVC not found")
             return
         }
 
+        // ✅ 필수 주입
+        vc.service = appService
+        vc.coordinator = coordinator
+        vc.pendingDeepLink = pendingDeepLink
+
+        // ✅ 소셜 정보 전달
         vc.provider = provider
         vc.providerUserId = providerUserId
-        vc.nickname = nickname
-        vc.email = email
-        vc.profileUrl = profileUrl
+        vc.presetNickname = nickname
+        vc.presetEmail = email
+        // profileUrl은 필요하면 나중에 사용 (지금은 OK)
 
         if let nav = navigationController {
             nav.pushViewController(vc, animated: true)
@@ -485,7 +537,6 @@ class LoginViewController: UIViewController {
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true)
         }
-         */
     }
 
     // MARK: - Cancel 판단 (간단 버전)
