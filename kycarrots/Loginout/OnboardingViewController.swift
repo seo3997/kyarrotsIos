@@ -285,8 +285,8 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
                     loginCd: body.loginCd ?? "",
                     loginSocialId: body.loginSocialId ?? ""
                 )
-                self.toast("소셜계정 링크 성공!!!")
                 self.coordinator?.showIntro(launchDeepLink: self.pendingDeepLink, animated: true)
+                self.toast("소셜계정 링크 성공!!!")
 
             case 409: self.toast("이미 다른 사용자에 연결된 소셜 계정입니다. (409)")
             case 400: self.toast("요청이 올바르지 않습니다. (400)")
@@ -364,7 +364,6 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
             }
 
             if res.resultCode == 200 {
-                toast("회원가입 성공!")
                 LoginInfoUtil.saveLoginInfo(
                     email: res.loginId ?? "",           // login_id
                     loginNo: res.loginIdx ?? "",         // login_idx
@@ -375,6 +374,7 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
                     loginSocialId: res.loginSocialId ?? "" // login_social_id
                 )
                 coordinator?.showIntro(launchDeepLink: pendingDeepLink, animated: true)
+                toast("회원가입 성공!")
             } else {
                 toast("회원가입 실패")
             }

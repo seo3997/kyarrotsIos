@@ -208,6 +208,10 @@ final class AppService {
     func linkSocial(_ req: LinkSocialRequest) async -> LoginResponse? {
         try? await repo.linkSocial(req)
     }
+    
+    func unlinkSocial(_ req: UnlinkSocialRequest) async -> SimpleResultResponse? {
+        try? await repo.unlinkSocial(req)
+    }
     // Android처럼 TODO 유지
     func saveJwt(_ jwt: String) {
         // TODO: Keychain / UserDefaults 등에 저장

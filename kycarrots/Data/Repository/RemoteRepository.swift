@@ -290,4 +290,10 @@ final class RemoteRepository {
             as: LoginResponse.self
         )
     }
+    func unlinkSocial(_ req: UnlinkSocialRequest) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.unlinkSocial(req: req),
+            as: SimpleResultResponse.self
+        )
+    }
 }

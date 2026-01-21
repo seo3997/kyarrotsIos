@@ -86,7 +86,7 @@ enum AdApiEndpoint: Endpoint {
     case postOnboarding(req: OnboardingRequest)
     case authSocial(req: SocialAuthRequest)
     case linkSocial(req: LinkSocialRequest)
-
+    case unlinkSocial(req: UnlinkSocialRequest)
     // MARK: - Endpoint conformance
 
     var path: String {
@@ -171,6 +171,8 @@ enum AdApiEndpoint: Endpoint {
             return "api/members/social"
         case .linkSocial:
             return "api/members/link"
+        case .unlinkSocial:
+            return "api/members/unlink"
         }
     }
 
@@ -336,6 +338,8 @@ enum AdApiEndpoint: Endpoint {
             return req
 
         case let .linkSocial(req):
+            return req
+        case let .unlinkSocial(req):
             return req
 
         default:
