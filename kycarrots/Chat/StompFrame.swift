@@ -44,4 +44,13 @@ enum StompFrame {
         \(body)\u{0000}
         """
     }
+    static func disconnect(receipt: String? = nil) -> String {
+            // STOMP 1.2: DISCONNECT 프레임
+            // receipt 헤더는 선택(서버가 receipt 지원할 때만 의미)
+            var headers = ""
+            if let receipt = receipt {
+                headers += "receipt:\(receipt)\n"
+            }
+            return "DISCONNECT\n\(headers)\n\u{0000}"
+    }
 }

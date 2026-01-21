@@ -48,11 +48,22 @@ final class ChatViewController: UIViewController {
         super.viewDidLayoutSubviews()
         updateHeaderSpacer()
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        let leaving =
+            isMovingFromParent ||
+            isBeingDismissed ||
+            (navigationController?.isBeingDismissed ?? false)
+
+        guard leaving else { return }
+
         StompManager.shared.unsubscribe(topicPath: topicPath)
         StompManager.shared.disconnect()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
 
     deinit {

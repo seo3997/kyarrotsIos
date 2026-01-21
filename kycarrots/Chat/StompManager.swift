@@ -37,16 +37,21 @@ final class StompManager {
     }
 
     func disconnect() {
-        // 가능하면 서버에 unsubscribe를 보내고 종료
-        for (topic, subId) in subscriptions {
-            _ = topic
-            socket?.write(string: StompFrame.unsubscribe(id: subId))
+        guard let socket = socket else { return }
+
+        // 1️⃣ STOMP unsubscribe
+        for (_, subId) in subscriptions {
+            socket.write(string: StompFrame.unsubscribe(id: subId))
         }
         subscriptions.removeAll()
         pendingSubscribeTopicPaths.removeAll()
 
-        socket?.disconnect()
-        socket = nil
+        // 2️⃣ ⭐️ STOMP DISCONNECT 프레임
+        socket.write(string: StompFrame.disconnect())
+
+        // 3️⃣ WebSocket 종료
+        socket.disconnect()
+        self.socket = nil
         isConnected = false
     }
 
