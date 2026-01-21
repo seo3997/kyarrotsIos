@@ -2511,6 +2511,9 @@
                                                                 <subviews>
                                                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="이메일" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="x46-1F-SkS">
                                                                         <rect key="frame" x="0.0" y="0.0" width="266" height="46"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="height" constant="46" id="YRH-tZ-Dmz"/>
+                                                                        </constraints>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <textInputTraits key="textInputTraits"/>
                                                                     </textField>
@@ -2536,28 +2539,40 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="g3P-dJ-Kwm" userLabel="formContainerStack">
-                                                        <rect key="frame" x="0.0" y="0.0" width="361" height="190"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="361" height="512"/>
                                                         <subviews>
                                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="이름" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gFx-OS-mvZ">
-                                                                <rect key="frame" x="0.0" y="0.0" width="361" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="361" height="46"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="46" id="O8t-Hy-FMc"/>
+                                                                </constraints>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits"/>
                                                             </textField>
-                                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rDq-6d-Y2U">
-                                                                <rect key="frame" x="0.0" y="12" width="361" height="0.0"/>
+                                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="패스워드" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rDq-6d-Y2U">
+                                                                <rect key="frame" x="0.0" y="58" width="361" height="46"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="46" id="oY8-1I-9ve"/>
+                                                                </constraints>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                                             </textField>
-                                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RTY-vi-Z1r">
-                                                                <rect key="frame" x="0.0" y="24" width="361" height="0.0"/>
+                                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="패스워드 확이" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RTY-vi-Z1r">
+                                                                <rect key="frame" x="0.0" y="116" width="361" height="46"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="46" id="wMg-Dl-23W"/>
+                                                                </constraints>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                                             </textField>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="wbf-Du-lSf">
-                                                                <rect key="frame" x="0.0" y="36" width="361" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="174" width="361" height="46"/>
                                                                 <subviews>
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KWn-Yp-BAt">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="112.33333333333333" height="0.0"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="112.33333333333333" height="46"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="height" constant="46" id="bGO-TZ-I1U"/>
+                                                                        </constraints>
                                                                         <state key="normal" title="Button"/>
                                                                         <buttonConfiguration key="configuration" style="plain" title="010"/>
                                                                         <connections>
@@ -2565,7 +2580,10 @@
                                                                         </connections>
                                                                     </button>
                                                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="1234" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bcu-iW-5p7">
-                                                                        <rect key="frame" x="124.33333333333334" y="0.0" width="112.33333333333334" height="0.0"/>
+                                                                        <rect key="frame" x="124.33333333333334" y="0.0" width="112.33333333333334" height="46"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="height" constant="46" id="m7U-Jj-Kt6"/>
+                                                                        </constraints>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <textInputTraits key="textInputTraits" keyboardType="phonePad"/>
                                                                         <userDefinedRuntimeAttributes>
@@ -2575,7 +2593,10 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </textField>
                                                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="5678" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="b1b-Ix-Cd2">
-                                                                        <rect key="frame" x="248.66666666666671" y="0.0" width="112.33333333333334" height="0.0"/>
+                                                                        <rect key="frame" x="248.66666666666671" y="0.0" width="112.33333333333334" height="46"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="height" constant="46" id="e2s-It-Y15"/>
+                                                                        </constraints>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                                         <userDefinedRuntimeAttributes>
@@ -2587,7 +2608,7 @@
                                                                 </subviews>
                                                             </stackView>
                                                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ogL-Wj-TYQ">
-                                                                <rect key="frame" x="0.0" y="48" width="361" height="47"/>
+                                                                <rect key="frame" x="0.0" y="232" width="361" height="47"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="46" id="p0B-Td-XqP"/>
                                                                 </constraints>
@@ -2597,32 +2618,53 @@
                                                                 </segments>
                                                             </segmentedControl>
                                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="생년월일(YYYY-MM-DD)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="v4z-pm-eor">
-                                                                <rect key="frame" x="0.0" y="106" width="361" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="290" width="361" height="46"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="46" id="7oe-0g-HYP"/>
+                                                                </constraints>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits"/>
                                                             </textField>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="dnP-8J-FyZ">
-                                                                <rect key="frame" x="0.0" y="118" width="361" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="348" width="361" height="46"/>
                                                                 <subviews>
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r5B-Dh-lJ5">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="174.66666666666666" height="0.0"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="174.66666666666666" height="46"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="height" constant="46" id="PP8-De-V63"/>
+                                                                        </constraints>
                                                                         <state key="normal" title="Button"/>
                                                                         <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                                                        <connections>
+                                                                            <action selector="pickCityTapped:" destination="QOb-tT-X9I" eventType="touchUpInside" id="p3i-VD-9UO"/>
+                                                                        </connections>
                                                                     </button>
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MjB-pb-mu6">
-                                                                        <rect key="frame" x="186.66666666666663" y="0.0" width="174.33333333333337" height="0.0"/>
+                                                                        <rect key="frame" x="186.66666666666663" y="0.0" width="174.33333333333337" height="46"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="height" constant="46" id="8O5-zH-J8g"/>
+                                                                        </constraints>
                                                                         <state key="normal" title="Button"/>
                                                                         <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                                                        <connections>
+                                                                            <action selector="pickTownTapped:" destination="QOb-tT-X9I" eventType="touchUpInside" id="Icx-6x-b3x"/>
+                                                                        </connections>
                                                                     </button>
                                                                 </subviews>
                                                             </stackView>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ub-1T-hLR">
-                                                                <rect key="frame" x="0.0" y="130" width="361" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="406" width="361" height="46"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="46" id="zTv-6L-dTz"/>
+                                                                </constraints>
                                                                 <state key="normal" title="Button"/>
                                                                 <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                                                <connections>
+                                                                    <action selector="pickRoleTapped:" destination="QOb-tT-X9I" eventType="touchUpInside" id="gp0-Ut-mR5"/>
+                                                                </connections>
                                                             </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kh9-V4-0li">
-                                                                <rect key="frame" x="0.0" y="142" width="361" height="48"/>
+                                                                <rect key="frame" x="0.0" y="464" width="361" height="48"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="48" id="Fuq-0n-o0Q"/>
                                                                 </constraints>

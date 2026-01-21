@@ -194,17 +194,23 @@ class LoginViewController: UIViewController {
 
     @IBAction func googleLoginButtonTapped(_ sender: UIButton) {
     }
+
     func unlinkKakaoForTest(completion: (() -> Void)? = nil) {
-        UserApi.shared.unlink { error in
+        UserApi.shared.unlink { [weak self] error in
+            guard let self else { return }
+
             if let error = error {
                 print("KAKAO unlink 실패:", error)
-                completion?()
+                DispatchQueue.main.async {
+                    self.presentKakaoAlert(title: "연결 해제 실패", message: "잠시 후 다시 시도해주세요.")
+                    completion?()
+                }
                 return
             }
 
             print("KAKAO unlink 성공 (연결 해제 완료)")
 
-            // 옵션: 로그아웃까지 같이 (Android와 동일)
+            // ✅ 카카오 세션 정리
             UserApi.shared.logout { logoutError in
                 if let logoutError = logoutError {
                     print("KAKAO logout 실패:", logoutError)
@@ -212,23 +218,27 @@ class LoginViewController: UIViewController {
                     print("KAKAO logout 성공")
                 }
 
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(
-                        title: "카카오 연결 해제 완료",
-                        message: "다음 로그인 시 재동의가 필요합니다.",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "확인", style: .default))
-                    UIApplication.shared.keyWindow?
-                        .rootViewController?
-                        .present(alert, animated: true)
+                // ✅ 우리 앱 저장 로그인/토큰 삭제 (핵심)
+                LoginInfoUtil.clearLoginInfo()
+                TokenUtil.clearToken()
 
+                DispatchQueue.main.async {
+                    self.presentKakaoAlert(
+                        title: "카카오 연결 해제 완료",
+                        message: "저장된 로그인 정보를 삭제했습니다.\n다른 계정으로 다시 로그인하세요."
+                    )
                     completion?()
                 }
             }
         }
     }
 
+    private func presentKakaoAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        self.present(alert, animated: true)
+    }
+    
     @IBAction func membershipButtonTapped(_ sender: UIButton) {
         let sb = UIStoryboard(name: "Main", bundle: nil)
 

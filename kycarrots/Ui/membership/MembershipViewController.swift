@@ -103,18 +103,18 @@ final class MembershipViewController: UIViewController, UITextFieldDelegate {
         tfPhoneLast.keyboardType = .numberPad
 
         // 스타일(네 프로젝트 기존 폼 스타일과 동일하게)
-        styleTextField(tfName)
-        styleTextField(tfEmail)
-        styleTextField(tfPassword)
-        styleTextField(tfPasswordConfirm)
-        styleTextField(tfBirth)
-        styleTextField(tfPhoneMid)
-        styleTextField(tfPhoneLast)
+        tfName.styleTextField()
+        tfEmail.styleTextField()
+        tfPassword.styleTextField()
+        tfPasswordConfirm.styleTextField()
+        tfBirth.styleTextField()
+        tfPhoneMid.styleTextField()
+        tfPhoneLast.styleTextField()
 
-        stylePillButton(btnPhoneFirst)
-        stylePillButton(btnCity)
-        stylePillButton(btnTown)
-        stylePillButton(btnRole)
+        btnPhoneFirst.applyPillStyle()
+        btnCity.applyPillStyle()
+        btnTown.applyPillStyle()
+        btnRole.applyPillStyle()
 
         btnRegister.layer.cornerRadius = 10
 
@@ -133,25 +133,7 @@ final class MembershipViewController: UIViewController, UITextFieldDelegate {
         segGender.selectedSegmentIndex = UISegmentedControl.noSegment
     }
 
-    private func styleTextField(_ t: UITextField) {
-        t.borderStyle = .none
-        t.layer.cornerRadius = 12
-        t.layer.borderWidth = 1
-        t.layer.borderColor = UIColor.systemGray4.cgColor
-        t.backgroundColor = .white
-        t.setLeftPadding(14)
-        t.heightAnchor.constraint(equalToConstant: 48).isActive = true
-    }
 
-    private func stylePillButton(_ b: UIButton) {
-        b.contentHorizontalAlignment = .left
-        b.layer.cornerRadius = 12
-        b.layer.borderWidth = 1
-        b.layer.borderColor = UIColor.systemGray4.cgColor
-        b.backgroundColor = .white
-        b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 14, bottom: 0, right: 14)
-        b.heightAnchor.constraint(equalToConstant: 48).isActive = true
-    }
 
     // MARK: - Watchers (Android TextWatcher/YmdDateWatcher 동일)
     private func setupWatchers() {

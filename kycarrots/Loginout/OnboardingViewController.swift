@@ -1,6 +1,6 @@
 import UIKit
 
-final class OnboardingViewController: UIViewController {
+final class OnboardingViewController: UIViewController, UITextFieldDelegate {
 
     // MARK: - Inject
     var service: AppService!
@@ -42,7 +42,7 @@ final class OnboardingViewController: UIViewController {
 
     // MARK: - State
     private var isEmailChecked = false
-
+    private var selectedPhoneFirst = "010"
     // phone first options (010/011/016/017/018/019)
     private let phoneFirstOptions = ["010", "011", "016", "017", "018", "019"]
 
@@ -67,7 +67,7 @@ final class OnboardingViewController: UIViewController {
 
         assert(service != nil, "OnboardingViewController.service 주입 필요")
 
-        title = "온보딩"
+        title = "추가정보입력"
         setupUI()
         setupWatchers()
         setupKeyboardDismiss()
@@ -86,8 +86,26 @@ final class OnboardingViewController: UIViewController {
 
     // MARK: - UI Setup
     private func setupUI() {
+        // ✅ 로딩 초기화
         showLoading(false)
 
+        // ✅ TextField 공통 세팅 (delegate + 공통 스타일 + 패딩 + 높이)
+        [
+            tfName,
+            tfEmail,
+            tfPassword,
+            tfPasswordConfirm,
+            tfBirth,
+            tfPhoneMid,
+            tfPhoneLast
+        ].forEach { tf in
+            tf?.delegate = self
+            tf?.applyFormFieldStyle()
+            tf?.setLeftPadding(14)
+            tf?.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        }
+
+        // ✅ 키보드/입력 옵션
         tfEmail.keyboardType = .emailAddress
         tfEmail.autocapitalizationType = .none
         tfEmail.autocorrectionType = .no
@@ -97,12 +115,32 @@ final class OnboardingViewController: UIViewController {
 
         tfPhoneMid.keyboardType = .numberPad
         tfPhoneLast.keyboardType = .numberPad
-        tfBirth.keyboardType = .numbersAndPunctuation
+        tfBirth.keyboardType = .numberPad   // (원래 numbersAndPunctuation 쓰고 싶으면 바꿔도 됨)
 
-        // default titles
+        // ✅ (선택) 개별 스타일 함수 유지하고 싶으면 그대로
+        tfName.styleTextField()
+        tfEmail.styleTextField()
+        tfPassword.styleTextField()
+        tfPasswordConfirm.styleTextField()
+        tfBirth.styleTextField()
+        tfPhoneMid.styleTextField()
+        tfPhoneLast.styleTextField()
+
+        btnPhoneFirst.applyPillStyle()
+        btnCity.applyPillStyle()
+        btnTown.applyPillStyle()
+        btnRole.applyPillStyle()
+
+        btnRegister.layer.cornerRadius = 10
+
+        // ✅ 기본 타이틀 (비어있을 때만 세팅)
         if (btnPhoneFirst.currentTitle ?? "").isEmpty {
-            btnPhoneFirst.setTitle("010", for: .normal)
+            selectedPhoneFirst = "010"
+            btnPhoneFirst.setTitle(selectedPhoneFirst, for: .normal)
+        } else {
+            selectedPhoneFirst = btnPhoneFirst.currentTitle ?? "010"
         }
+
         if (btnCity.currentTitle ?? "").isEmpty {
             btnCity.setTitle("시/도 선택", for: .normal)
         }
@@ -113,14 +151,51 @@ final class OnboardingViewController: UIViewController {
             btnRole.setTitle("사용자구분 선택", for: .normal)
         }
 
+        // ✅ 이메일 상태 라벨 초기화
         emailStatusLabel?.text = ""
 
-        // town disabled before city selected
+        // ✅ 성별 세그먼트 구성
+        segGender.removeAllSegments()
+        segGender.insertSegment(withTitle: "남", at: 0, animated: false)
+        segGender.insertSegment(withTitle: "여", at: 1, animated: false)
+        segGender.selectedSegmentIndex = UISegmentedControl.noSegment
+
+        // ✅ 시/도 선택 전엔 구/군 비활성
         resetTownSelectionUI()
     }
 
     private func setupWatchers() {
         tfEmail.addTarget(self, action: #selector(onEmailChanged), for: .editingChanged)
+
+        // ✅ 생년월일 YYYY-MM-DD 자동 포맷
+        tfBirth.addTarget(self, action: #selector(onBirthChanged), for: .editingChanged)
+
+        // ✅ 숫자 키보드 Done toolbar (선택)
+        let numberToolbar = makeNumberToolbar()
+        tfBirth.inputAccessoryView = numberToolbar
+        tfPhoneMid.inputAccessoryView = numberToolbar
+        tfPhoneLast.inputAccessoryView = numberToolbar
+    }
+    @objc private func onBirthChanged() {
+        let raw = (tfBirth.text ?? "").replacingOccurrences(of: "-", with: "")
+        let digits = raw.filter { $0.isNumber }
+
+        var out = ""
+        for (i, ch) in digits.enumerated() {
+            if i == 4 || i == 6 { out.append("-") }
+            if out.count >= 10 { break }
+            out.append(ch)
+        }
+
+        if tfBirth.text != out { tfBirth.text = out }
+    }
+    private func makeNumberToolbar() -> UIToolbar {
+        let bar = UIToolbar()
+        bar.sizeToFit()
+        let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(endEditingAll))
+        bar.items = [flex, done]
+        return bar
     }
 
     @objc private func onEmailChanged() {
