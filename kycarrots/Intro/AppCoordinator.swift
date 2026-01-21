@@ -115,7 +115,16 @@ final class AppCoordinator {
          */
     }
     
-    
+    func showProductList() {
+        /*
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let vc = sb.instantiateViewController(
+            withIdentifier: "ProductListVC"
+        )
+        */
+        let vc = ProductListViewController()
+        nav.pushViewController(vc, animated: true)
+    }
     
 }
 
@@ -175,10 +184,14 @@ private extension AppCoordinator {
     }
 
     func makeDashboardVC() -> UIViewController {
-        if let vc = storyboard.instantiateViewController(withIdentifier: "DashboardVC") as? DashboardViewController {
-            return vc
-        }
-        return DashboardViewController()
+        guard let vc = storyboard.instantiateViewController(
+              withIdentifier: "DashboardVC"
+          ) as? DashboardViewController else {
+              fatalError("DashboardVC not found in storyboard")
+          }
+
+          vc.coordinator = self   // ✅ 반드시 instantiate 직후 주입
+          return vc
     }
 
     func makeMainTabBarVC() -> UIViewController {

@@ -45,7 +45,7 @@ class DashboardViewController: UITableViewController {
     /// "승인대기/처리 화면"으로 가는 버튼 – 안드로이드 btn_approval_product 대응
     @IBOutlet weak var btnApprovalProduct: UIButton!
 
-    /// 새매물 등록하기 버튼 하나만 노출시 spaceView 를 노출 시켜 1/2 버튼으로 보이게 한ㄷ
+    /// 새매물 등록하기 버튼 하나만 노출시 spaceView 를 노출 시켜 1/2 버튼으로 보이게 한다.
     @IBOutlet weak var spaceView: UIView!
 
     private var loadingView: UIView!
@@ -56,7 +56,7 @@ class DashboardViewController: UITableViewController {
     
     /// 안드로이드 AppService와 동일 역할의 서비스 (이미 프로젝트에 구현해둔 것 사용)
     private let appService = AppServiceProvider.shared
-    
+    weak var coordinator: AppCoordinator?
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -211,7 +211,7 @@ class DashboardViewController: UITableViewController {
             navigationController?.pushViewController(vc, animated: true)
         }
         */
-        print("더보기 탭 → 상품 목록 화면으로 이동 TODO")
+        coordinator?.showProductList()
     }
     
     @objc private func didTapAddProduct() {
@@ -228,6 +228,7 @@ class DashboardViewController: UITableViewController {
     @objc private func didTapApprovalProduct() {
         // 안드로이드: 승인/처리 화면(MainActivity)로 이동
         // TODO: 실제 iOS 승인/처리 화면으로 이동하도록 구현
+        coordinator?.showProductList()
         print("승인/처리 화면 이동 TODO")
     }
     
