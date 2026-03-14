@@ -75,12 +75,21 @@ final class MenuListViewController: UITableViewController {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            avatar.contentMode = .scaleAspectFit
-            avatar.tintColor = .label
+            avatar.contentMode = .scaleAspectFill
+            avatar.clipsToBounds = true
+            avatar.layer.cornerRadius = 30
+            avatar.backgroundColor = .systemGray6
+            avatar.tintColor = .systemGray2
             
-            nameLabel.text = "SooHyun"
+            nameLabel.text = LoginInfoUtil.getUserNm()
             nameLabel.font = .boldSystemFont(ofSize: 20)
-            subLabel.text = "soohyoun@example.com"
+            subLabel.text = LoginInfoUtil.getUserId()
+            
+            if let localImage = ProfileImageUtil.getLocalProfileImage() {
+                avatar.image = localImage
+            } else {
+                avatar.image = UIImage(systemName: "person.fill")
+            }
             subLabel.textColor = .secondaryLabel
             subLabel.font = .systemFont(ofSize: 13)
             
@@ -98,7 +107,7 @@ final class MenuListViewController: UITableViewController {
                 vstack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
                 vstack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
                 vstack.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-                avatar.heightAnchor.constraint(equalToConstant: 40),
+                avatar.heightAnchor.constraint(equalToConstant: 60),
                 avatar.widthAnchor.constraint(equalTo: avatar.heightAnchor)
             ])
         }

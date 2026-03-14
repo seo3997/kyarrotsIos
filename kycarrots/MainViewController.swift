@@ -27,6 +27,32 @@ final class MainViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupProfileButton()
+    }
+    
+    private func setupProfileButton() {
+        let avatarView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        avatarView.contentMode = .scaleAspectFill
+        avatarView.layer.cornerRadius = 20
+        avatarView.clipsToBounds = true
+        avatarView.backgroundColor = .systemGray6
+        avatarView.tintColor = .systemGray2
+        
+        if let localImage = ProfileImageUtil.getLocalProfileImage() {
+            avatarView.image = localImage
+        } else {
+            avatarView.image = UIImage(systemName: "person.fill")
+        }
+        
+        let container = UIView(frame: avatarView.frame)
+        container.addSubview(avatarView)
+        
+        // 클릭 시 특별한 동작이 필요 없다면 그냥 커스텀 뷰로 설정
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: container)
+    }
 
     @objc private func didTapHamburger() {
         if let menu = SideMenuManager.default.leftMenuNavigationController {

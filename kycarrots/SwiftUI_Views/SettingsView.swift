@@ -165,6 +165,15 @@ class SettingsViewModel: ObservableObject {
         }
     }
     
+    func togglePasswordChange() {
+        showPasswordChange.toggle()
+        if showPasswordChange {
+            currentPw = ""
+            newPw = ""
+            confirmPw = ""
+        }
+    }
+    
     private func loadTransferable(from item: PhotosPickerItem?) {
         guard let item = item else { return }
         item.loadTransferable(type: Data.self) { result in
@@ -183,21 +192,17 @@ class SettingsViewModel: ObservableObject {
     }
     
     private func saveLocalProfileImage(data: Data) {
-        let url = getProfileImageUrl()
+        let url = ProfileImageUtil.getProfileImageUrl()
         try? data.write(to: url)
     }
     
     private func loadLocalProfileImage() {
-        let url = getProfileImageUrl()
-        if let data = try? Data(contentsOf: url), let uiImage = UIImage(data: data) {
+        if let uiImage = ProfileImageUtil.getLocalProfileImage() {
             self.profileImage = Image(uiImage: uiImage)
         }
     }
     
-    private func getProfileImageUrl() -> URL {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("profile_image.jpg")
-    }
+
     
     func logout() {
         LoginInfoUtil.clearLoginInfo()
@@ -332,7 +337,7 @@ struct SettingsView: View {
                         
                         Button(action: {
                             withAnimation {
-                                viewModel.showPasswordChange.toggle()
+                                viewModel.togglePasswordChange()
                             }
                         }) {
                             HStack {

@@ -67,6 +67,10 @@ struct LoginInfoUtil {
         return defaults.string(forKey: KEY_LOGIN_CD) ?? ""
     }
 
+    static func getUserNm() -> String {
+        return defaults.string(forKey: KEY_NM) ?? ""
+    }
+
     // Android getUserSocialId()
     static func getUserSocialId() -> String {
         return defaults.string(forKey: KEY_SOCIAL_ID) ?? ""
