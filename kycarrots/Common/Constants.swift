@@ -31,7 +31,7 @@ struct Constants {
         case .LOCAL:
             return "http://10.133.36.8:9000/"
         case .DEV:
-            return "http://52.231.229.156:9000/"
+            return "http://www.kycarrots.com:9000/"
         case .PROD:
             return "http://52.231.229.156:9000/"
         }
@@ -43,7 +43,7 @@ struct Constants {
         case .LOCAL:
             return "ws://10.133.36.8:9000/chat-ws?userId="
         case .DEV:
-            return "ws://52.231.229.156:9000/chat-ws?userId="
+            return "ws://www.kycarrots.com:9000/chat-ws?userId="
         case .PROD:
             return "ws://52.231.229.156:9000/chat-ws?userId="
         }

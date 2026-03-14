@@ -55,6 +55,8 @@ enum AdApiEndpoint: Endpoint {
     case checkEmailDuplicate(email: String)
     case registerUser(user: OpUserVO)
     case getUserInfoByToken(token: String)
+    case updateUser(token: String, user: OpUserVO)
+    case changePassword(token: String, request: PasswordChangeRequest)
 
     // 대시보드 / 최근 본 상품
     case getProductDashboard(token: String)
@@ -131,6 +133,10 @@ enum AdApiEndpoint: Endpoint {
             return "api/members/register"
         case .getUserInfoByToken:
             return "api/members/userinfo"
+        case .updateUser:
+            return "api/members/update"
+        case .changePassword:
+            return "api/members/change-password"
 
         case .getProductDashboard:
             return "api/product/dashboard"
@@ -283,6 +289,12 @@ enum AdApiEndpoint: Endpoint {
         case let .getUserInfoByToken(token):
             return ["token": token]
 
+        case let .updateUser(token, _):
+            return ["token": token]
+
+        case let .changePassword(token, _):
+            return ["token": token]
+
         default:
             return nil
         }
@@ -312,6 +324,12 @@ enum AdApiEndpoint: Endpoint {
         // JSON Body 사용하는 것들
         case let .registerUser(user):
             return user
+
+        case let .updateUser(_, user):
+            return user
+            
+        case let .changePassword(_, request):
+            return request
 
         case let .registerPushToken(request):
             return request

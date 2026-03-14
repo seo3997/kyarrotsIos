@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 enum MenuItemType {
     case dashboard
@@ -192,7 +193,7 @@ final class MenuListViewController: UITableViewController {
                     }
                 }
             case .settings:
-                let vc = SettingsViewController()
+                let vc = UIHostingController(rootView: SettingsView())
                 vc.title = selected.title
                 nav.pushViewController(vc, animated: true)
                 

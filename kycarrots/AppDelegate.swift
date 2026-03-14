@@ -111,7 +111,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         print("🔥userNotificationCenter  [PUSH] willPresent (foreground) userInfo:", userInfo)
 
         savePushToLocalDb(userInfo: userInfo)
-        completionHandler([.banner, .sound, .badge])
+        
+        let pushEnabled = UserDefaults.standard.object(forKey: "push_enabled") as? Bool ?? true
+        if pushEnabled {
+            completionHandler([.banner, .sound, .badge])
+        } else {
+            completionHandler([])
+        }
     }
 
     func userNotificationCenter(

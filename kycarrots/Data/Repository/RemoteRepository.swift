@@ -164,6 +164,20 @@ final class RemoteRepository {
         )
     }
 
+    func updateUser(token: String, user: OpUserVO) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.updateUser(token: token, user: user),
+            as: SimpleResultResponse.self
+        )
+    }
+
+    func changePassword(token: String, request: PasswordChangeRequest) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.changePassword(token: token, request: request),
+            as: SimpleResultResponse.self
+        )
+    }
+
     // MARK: - 대시보드 / 최근 본 상품
     func getProductDashboard(token: String) async throws -> [String: Int] {
         try await api.request(

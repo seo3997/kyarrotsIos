@@ -127,6 +127,19 @@ final class AppService {
         try? await repo.getUserInfoByToken(token: token)
     }
 
+    func updateUser(token: String, user: OpUserVO) async -> Bool {
+        (try? await repo.updateUser(token: token, user: user).result) ?? false
+    }
+
+    func changePassword(token: String, request: PasswordChangeRequest) async -> (Bool, String) {
+        do {
+            let res = try await repo.changePassword(token: token, request: request)
+            return (res.result, res.message ?? "")
+        } catch {
+            return (false, error.localizedDescription)
+        }
+    }
+
     // 대시보드
     func getProductDashboard(token: String) async throws -> [String: Int] {
         try await repo.getProductDashboard(token: token)
