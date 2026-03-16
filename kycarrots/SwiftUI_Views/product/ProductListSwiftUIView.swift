@@ -103,6 +103,7 @@ struct ProductListSwiftUIView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김 (사이드 메뉴만 표시)
         .onAppear {
             viewModel.fetchProducts(isRefresh: true)
             viewModel.fetchUnreadCount()

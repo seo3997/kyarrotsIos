@@ -168,6 +168,7 @@ struct DashboardSwiftUIView: View {
                 } + [.cancel(Text("취소"))]
             )
         }
+        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
         .onAppear {
             viewModel.fetchDashboardData()
             viewModel.fetchUnreadCount()

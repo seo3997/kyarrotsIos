@@ -146,6 +146,7 @@ final class AppCoordinator {
         
         let hostingVC = UIHostingController(rootView: rootView)
         hostingVC.navigationItem.title = "내 등록 매물"
+        hostingVC.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가 (뒤로가기 숨김)
         nav.pushViewController(hostingVC, animated: true)
     }
     
