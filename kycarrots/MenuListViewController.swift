@@ -193,13 +193,11 @@ final class MenuListViewController: UITableViewController {
                     // 판매자/도매업자: 관리자 상품리스트 (SwiftUI로 변경)
                     var rootView = ProductListSwiftUIView()
                     rootView.onSelectProduct = { item in
-                        let sb = UIStoryboard(name: "Main", bundle: nil)
-                        if let vc = sb.instantiateViewController(withIdentifier: "ProductDetailVC") as? ProductDetailViewController {
-                            vc.productId = Int64(item.productId ?? "") ?? 0
-                            vc.productUserId = item.userId ?? ""
-                            vc.productTitle = item.title ?? ""
-                            nav.pushViewController(vc, animated: true)
-                        }
+                        AppCoordinator.shared?.showProductDetail(
+                            pid: Int64(item.productId ?? "") ?? 0,
+                            userId: item.userId ?? "",
+                            title: item.title ?? ""
+                        )
                     }
                     rootView.onAddProduct = {
                         let vc = MakeAdMainViewController(service: AppServiceProvider.shared)
@@ -218,14 +216,11 @@ final class MenuListViewController: UITableViewController {
                     // 나머지 (ROLE_BUYER 등): 메인 탭바 컨트롤러 -> SwiftUI로 변경
                     var rootView = MainTabView()
                     rootView.onSelectProduct = { item in
-                        // ProductDetailVC는 아직 UIKit이므로 UINavigationController를 통해 push
-                        let sb = UIStoryboard(name: "Main", bundle: nil)
-                        if let vc = sb.instantiateViewController(withIdentifier: "ProductDetailVC") as? ProductDetailViewController {
-                            vc.productId = Int64(item.productId ?? "") ?? 0
-                            vc.productUserId = item.userId ?? ""
-                            vc.productTitle = item.title ?? ""
-                            nav.pushViewController(vc, animated: true)
-                        }
+                        AppCoordinator.shared?.showProductDetail(
+                            pid: Int64(item.productId ?? "") ?? 0,
+                            userId: item.userId ?? "",
+                            title: item.title ?? ""
+                        )
                     }
                     let vc = UIHostingController(rootView: rootView)
                     vc.navigationItem.title = "상품리스트"

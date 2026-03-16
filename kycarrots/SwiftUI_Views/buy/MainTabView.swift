@@ -38,6 +38,7 @@ struct MainTabView: View {
                 }
             }
         }
+        .navigationBarHidden(false) // ✅ 네비게이션 바 다시 표시
         .onAppear {
             let appearance = UITabBarAppearance()
             appearance.configureWithOpaqueBackground()

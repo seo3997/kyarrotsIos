@@ -3,6 +3,12 @@ import SideMenu
 import SwiftUI
 
 final class AppCoordinator {
+    static var shared: AppCoordinator? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let delegate = scene.delegate as? SceneDelegate else { return nil }
+        return delegate.appCoordinator
+    }
+    
     private let window: UIWindow
     private let nav = UINavigationController()
 
@@ -93,13 +99,8 @@ final class AppCoordinator {
     }
 
     func showProductDetail(pid: Int64, userId: String, title: String) {
-        let sb = UIStoryboard(name: "Main", bundle: nil)
-        if let vc = sb.instantiateViewController(withIdentifier: "ProductDetailVC") as? ProductDetailViewController {
-            vc.productId = pid
-            vc.productUserId = userId
-            vc.productTitle = title
-            nav.pushViewController(vc, animated: true)
-        }
+        let vc = makeProductDetailVC(productId: pid, userId: userId, title: title)
+        nav.pushViewController(vc, animated: true)
     }
 
     func showIntro(launchDeepLink: PushDeepLink? = nil, animated: Bool = true) {
@@ -191,20 +192,67 @@ private extension AppCoordinator {
               let pid = Int64(productIdStr), pid > 0 else {
             return nil
         }
+        return makeProductDetailVC(productId: pid, userId: deepLink.sellerId ?? "0", title: deepLink.msg ?? "")
+    }
 
-        guard let detail = storyboard.instantiateViewController(
-            withIdentifier: "ProductDetailVC"
-        ) as? ProductDetailViewController else {
-            assertionFailure("ProductDetailVC not found in storyboard")
-            return nil
+    func makeProductDetailVC(productId: Int64, userId: String, title: String) -> UIViewController {
+        let viewModel = ProductDetailViewModel(productId: productId)
+        var rootView = ProductDetailSwiftUIView(viewModel: viewModel) { [weak self] pid in
+            // Handle Edit
+            let vc = MakeAdMainViewController(service: AppServiceProvider.shared, productId: String(pid))
+            self?.nav.pushViewController(vc, animated: true)
+        } onOpenChat: { [weak self] room in
+            // Handle Open Chat
+            self?.openChat(roomId: room.roomId, buyerId: room.buyerId, sellerId: room.sellerId, productId: String(room.productId))
+        } onShowBuyerSelection: { [weak self] rooms in
+            // Show Buyer Selection Action Sheet
+            let alert = UIAlertController(title: "구매자를 선택하세요", message: nil, preferredStyle: .actionSheet)
+            for (i, r) in rooms.enumerated() {
+                alert.addAction(UIAlertAction(title: "구매자 \(i+1): \(r.buyerId)", style: .default) { _ in
+                    self?.openChat(roomId: r.roomId, buyerId: r.buyerId, sellerId: r.sellerId, productId: String(r.productId))
+                })
+            }
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            self?.nav.present(alert, animated: true)
+        } onShowBuyerPickSheet: { [weak self] (buyers, onPick) in
+            // Show Buyer Pick for Completion
+            let alert = UIAlertController(title: "판매완료 처리 — 구매자 선택", message: nil, preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "선택 안함", style: .default) { _ in onPick(nil) })
+            buyers.forEach { b in
+                alert.addAction(UIAlertAction(title: "\(b.buyerId)/\(b.buyerNm)", style: .default) { _ in onPick(b) })
+            }
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            self?.nav.present(alert, animated: true)
+        } onAskRejectReason: { [weak self] onDone in
+            // Ask Reject Reason Alert
+            let alert = UIAlertController(title: "반려 사유 입력", message: nil, preferredStyle: .alert)
+            alert.addTextField { tf in tf.placeholder = "반려 사유를 입력하세요" }
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in
+                let reason = alert.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                onDone(reason)
+            })
+            self?.nav.present(alert, animated: true)
+        } onShowAlert: { [weak self] (title, message) in
+            let a = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            a.addAction(UIAlertAction(title: "확인", style: .default))
+            self?.nav.present(a, animated: true)
         }
 
-        detail.productId = pid
-        detail.productUserId = deepLink.sellerId ?? "0"
-        detail.pushType = deepLink.type.rawValue
-        detail.pushMsg = deepLink.msg
+        let vc = UIHostingController(rootView: rootView)
+        vc.navigationItem.title = title.isEmpty ? "상품 상세" : title
+        return vc
+    }
 
-        return detail
+    private func openChat(roomId: String, buyerId: String, sellerId: String, productId: String) {
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = sb.instantiateViewController(withIdentifier: "ChatVC") as? ChatViewController else { return }
+        vc.roomId = roomId
+        vc.buyerId = buyerId
+        vc.sellerId = sellerId
+        vc.productId = productId
+        vc.currentUserId = LoginInfoUtil.getUserId()
+        nav.pushViewController(vc, animated: true)
     }
 
     func makeDashboardVC() -> UIViewController {
