@@ -195,11 +195,21 @@ final class MenuListViewController: UITableViewController {
                     vc.title = selected.title
                     nav.pushViewController(vc, animated: true)
                 } else {
-                    // 나머지 (ROLE_BUYER 등): 메인 탭바 컨트롤러
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    if let mainTabVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarVC") as? MainTabBarController {
-                            nav.pushViewController(mainTabVC, animated: true)
+                    // 나머지 (ROLE_BUYER 등): 메인 탭바 컨트롤러 -> SwiftUI로 변경
+                    var rootView = MainTabView()
+                    rootView.onSelectProduct = { item in
+                        // ProductDetailVC는 아직 UIKit이므로 UINavigationController를 통해 push
+                        let sb = UIStoryboard(name: "Main", bundle: nil)
+                        if let vc = sb.instantiateViewController(withIdentifier: "ProductDetailVC") as? ProductDetailViewController {
+                            vc.productId = Int64(item.productId ?? "") ?? 0
+                            vc.productUserId = item.userId ?? ""
+                            vc.productTitle = item.title ?? ""
+                            nav.pushViewController(vc, animated: true)
+                        }
                     }
+                    let vc = UIHostingController(rootView: rootView)
+                    vc.navigationItem.title = "상품리스트"
+                    nav.pushViewController(vc, animated: true)
                 }
             case .settings:
                 let vc = UIHostingController(rootView: SettingsView())

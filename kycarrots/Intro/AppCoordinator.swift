@@ -1,5 +1,6 @@
 import UIKit
 import SideMenu
+import SwiftUI
 
 final class AppCoordinator {
     private let window: UIWindow
@@ -88,6 +89,16 @@ final class AppCoordinator {
             if let detail = makeProductDetailVC(from: deepLink) {
                 nav.pushViewController(detail, animated: true)
             }
+        }
+    }
+
+    func showProductDetail(pid: Int64, userId: String, title: String) {
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        if let vc = sb.instantiateViewController(withIdentifier: "ProductDetailVC") as? ProductDetailViewController {
+            vc.productId = pid
+            vc.productUserId = userId
+            vc.productTitle = title
+            nav.pushViewController(vc, animated: true)
         }
     }
 
@@ -195,9 +206,14 @@ private extension AppCoordinator {
     }
 
     func makeMainTabBarVC() -> UIViewController {
-        if let vc = storyboard.instantiateViewController(withIdentifier: "MainTabBarVC") as? MainTabBarController {
-            return vc
+        var rootView = MainTabView()
+        rootView.onSelectProduct = { [weak self] item in
+            guard let self = self else { return }
+            let pid = Int64(item.productId ?? "") ?? 0
+            self.showProductDetail(pid: pid, userId: item.userId ?? "", title: item.title ?? "")
         }
-        return MainTabBarController()
+        let hostingVC = UIHostingController(rootView: rootView)
+        hostingVC.navigationItem.title = "상품리스트"
+        return hostingVC
     }
 }
