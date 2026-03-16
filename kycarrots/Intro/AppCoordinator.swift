@@ -207,14 +207,30 @@ private extension AppCoordinator {
     }
 
     func makeDashboardVC() -> UIViewController {
-        guard let vc = storyboard.instantiateViewController(
-              withIdentifier: "DashboardVC"
-          ) as? DashboardViewController else {
-              fatalError("DashboardVC not found in storyboard")
-          }
-
-          vc.coordinator = self   // ✅ 반드시 instantiate 직후 주입
-          return vc
+        var rootView = DashboardSwiftUIView()
+        rootView.onShowNotifications = { [weak self] in
+            let vc = NotificationListViewController()
+            self?.nav.pushViewController(vc, animated: true)
+        }
+        rootView.onAddProduct = { [weak self] in
+            let vc = MakeAdMainViewController(service: AppServiceProvider.shared)
+            self?.nav.pushViewController(vc, animated: true)
+        }
+        rootView.onSelectProduct = { [weak self] item in
+            let pid = Int64(item.productId) ?? 0
+            self?.showProductDetail(pid: pid, userId: item.userId, title: item.title)
+        }
+        rootView.onShowMore = { [weak self] in
+            self?.showProductList()
+        }
+        rootView.onShowApproval = { [weak self] in
+            self?.showProductList()
+        }
+        
+        let vc = UIHostingController(rootView: rootView)
+        vc.navigationItem.title = "대시보드"
+        vc.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가
+        return vc
     }
 
     func makeMainTabBarVC() -> UIViewController {
@@ -226,6 +242,7 @@ private extension AppCoordinator {
         }
         let hostingVC = UIHostingController(rootView: rootView)
         hostingVC.navigationItem.title = "상품리스트"
+        hostingVC.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가
         return hostingVC
     }
 }

@@ -212,6 +212,7 @@ final class MenuListViewController: UITableViewController {
                     
                     let vc = UIHostingController(rootView: rootView)
                     vc.navigationItem.title = "내 등록 매물"
+                    vc.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가
                     nav.pushViewController(vc, animated: true)
                 } else {
                     // 나머지 (ROLE_BUYER 등): 메인 탭바 컨트롤러 -> SwiftUI로 변경
@@ -228,6 +229,7 @@ final class MenuListViewController: UITableViewController {
                     }
                     let vc = UIHostingController(rootView: rootView)
                     vc.navigationItem.title = "상품리스트"
+                    vc.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가
                     nav.pushViewController(vc, animated: true)
                 }
             case .settings:
