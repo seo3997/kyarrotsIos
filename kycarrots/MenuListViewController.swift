@@ -190,9 +190,28 @@ final class MenuListViewController: UITableViewController {
             case .products:
                 // 권한에 따른 분기 처리 (Android applyMenuForRole 대응)
                 if LoginInfoUtil.getMemberCode() == "ROLE_SELL" || LoginInfoUtil.getMemberCode() == "ROLE_PROJ" {
-                    // 판매자/도매업자: 기존 상품리스트 뷰
-                    let vc = ProductListViewController()
-                    vc.title = selected.title
+                    // 판매자/도매업자: 관리자 상품리스트 (SwiftUI로 변경)
+                    var rootView = ProductListSwiftUIView()
+                    rootView.onSelectProduct = { item in
+                        let sb = UIStoryboard(name: "Main", bundle: nil)
+                        if let vc = sb.instantiateViewController(withIdentifier: "ProductDetailVC") as? ProductDetailViewController {
+                            vc.productId = Int64(item.productId ?? "") ?? 0
+                            vc.productUserId = item.userId ?? ""
+                            vc.productTitle = item.title ?? ""
+                            nav.pushViewController(vc, animated: true)
+                        }
+                    }
+                    rootView.onAddProduct = {
+                        let vc = MakeAdMainViewController(service: AppServiceProvider.shared)
+                        nav.pushViewController(vc, animated: true)
+                    }
+                    rootView.onShowNotifications = {
+                        let vc = NotificationListViewController()
+                        nav.pushViewController(vc, animated: true)
+                    }
+                    
+                    let vc = UIHostingController(rootView: rootView)
+                    vc.navigationItem.title = "내 등록 매물"
                     nav.pushViewController(vc, animated: true)
                 } else {
                     // 나머지 (ROLE_BUYER 등): 메인 탭바 컨트롤러 -> SwiftUI로 변경

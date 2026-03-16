@@ -127,14 +127,26 @@ final class AppCoordinator {
     }
     
     func showProductList() {
-        /*
-        let sb = UIStoryboard(name: "Main", bundle: nil)
-        let vc = sb.instantiateViewController(
-            withIdentifier: "ProductListVC"
-        )
-        */
-        let vc = ProductListViewController()
-        nav.pushViewController(vc, animated: true)
+        var rootView = ProductListSwiftUIView()
+        rootView.onSelectProduct = { [weak self] item in
+            guard let self = self else { return }
+            let pid = Int64(item.productId ?? "") ?? 0
+            self.showProductDetail(pid: pid, userId: item.userId ?? "", title: item.title ?? "")
+        }
+        rootView.onAddProduct = { [weak self] in
+            guard let self = self else { return }
+            let vc = MakeAdMainViewController(service: AppServiceProvider.shared)
+            self.nav.pushViewController(vc, animated: true)
+        }
+        rootView.onShowNotifications = { [weak self] in
+            guard let self = self else { return }
+            let vc = NotificationListViewController()
+            self.nav.pushViewController(vc, animated: true)
+        }
+        
+        let hostingVC = UIHostingController(rootView: rootView)
+        hostingVC.navigationItem.title = "내 등록 매물"
+        nav.pushViewController(hostingVC, animated: true)
     }
     
 }

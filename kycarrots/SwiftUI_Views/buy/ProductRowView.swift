@@ -41,8 +41,8 @@ struct ProductRowView: View {
                 
                 Spacer()
                 
-                if let price = item.price {
-                    Text("\(price)원")
+                if let priceString = item.price, let priceVal = Double(priceString) {
+                    Text("\(formattedPrice(priceVal))원")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.blue)
                 }
@@ -57,5 +57,11 @@ struct ProductRowView: View {
                 .padding(.top, 30)
         }
         .padding(.vertical, 8)
+    }
+    
+    private func formattedPrice(_ price: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: Int(price))) ?? "0"
     }
 }
