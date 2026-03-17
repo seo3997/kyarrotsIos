@@ -203,17 +203,7 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func membershipButtonTapped(_ sender: UIButton) {
-        let sb = UIStoryboard(name: "Main", bundle: nil)
-        
-        guard let vc = sb.instantiateViewController(
-            withIdentifier: "TermsAgreeVC"
-        ) as? TermsAgreeViewController else {
-            assertionFailure("TermsAgreeVC not found in storyboard")
-            return
-        }
-        print("membershipButtonTapped coordinator is nil? ->", coordinator == nil)
-        vc.coordinator = self.coordinator
-        navigationController?.pushViewController(vc, animated: true)
+        coordinator?.showTermsAgree()
     }
     
     @IBAction func findIdPwdButtonTapped(_ sender: UIButton) {

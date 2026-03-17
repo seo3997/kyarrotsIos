@@ -149,6 +149,38 @@ final class AppCoordinator {
         nav.pushViewController(hostingVC, animated: true)
     }
 
+    func showMembership() {
+        let viewModel = MembershipViewModel(service: AppServiceProvider.shared)
+        let rootView = MembershipSwiftUIView(viewModel: viewModel) { [weak self] in
+            self?.showIntro(launchDeepLink: nil, animated: true)
+        }
+        let vc = UIHostingController(rootView: rootView)
+        // vc.navigationItem.title = "회원가입" // SwiftUI internal title is used
+        nav.pushViewController(vc, animated: true)
+    }
+
+    func showTermsAgree() {
+        let rootView = TermsAgreeSwiftUIView(
+            onNext: { [weak self] in
+                self?.showMembership()
+            },
+            onCancel: { [weak self] in
+                self?.nav.popViewController(animated: true)
+            },
+            onShowZoom: { [weak self] title, url in
+                self?.showTermsZoom(title: title, url: URL(string: url))
+            }
+        )
+        let vc = UIHostingController(rootView: rootView)
+        nav.pushViewController(vc, animated: true)
+    }
+
+    func showTermsZoom(title: String, url: URL?) {
+        let rootView = TermsZoomSwiftUIView(title: title, url: url, html: nil)
+        let vc = UIHostingController(rootView: rootView)
+        nav.pushViewController(vc, animated: true)
+    }
+
     func showNotificationList() {
         let viewModel = NotificationListViewModel()
         var rootView = NotificationListSwiftUIView(viewModel: viewModel) { [weak self] item in
