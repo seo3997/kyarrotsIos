@@ -204,8 +204,7 @@ final class MenuListViewController: UITableViewController {
                         nav.pushViewController(vc, animated: true)
                     }
                     rootView.onShowNotifications = {
-                        let vc = NotificationListViewController()
-                        nav.pushViewController(vc, animated: true)
+                        AppCoordinator.shared?.showNotificationList()
                     }
                     
                     let vc = UIHostingController(rootView: rootView)
@@ -273,20 +272,7 @@ final class MenuListViewController: UITableViewController {
         
         var rootView = WebSwiftUIView(urlString: urlString, title: title)
         rootView.onShowNotifications = {
-            guard
-                let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                let sceneDelegate = scene.delegate as? SceneDelegate,
-                let window = sceneDelegate.window,
-                var topController = window.rootViewController
-            else { return }
-            
-            while let presented = topController.presentedViewController {
-                topController = presented
-            }
-            
-            let currentNav = topController as? UINavigationController ?? topController.navigationController
-            let notiVC = NotificationListViewController()
-            currentNav?.pushViewController(notiVC, animated: true)
+            AppCoordinator.shared?.showNotificationList()
         }
         let vc = UIHostingController(rootView: rootView)
         vc.addLeftMenuButton()

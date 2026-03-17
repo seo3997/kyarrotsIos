@@ -59,3 +59,8 @@ PurchaseHistoryViewController.swift,PurchaseHistoryView.swift
    WebViewController.swift → WebSwiftUIView.swift
    파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/ 폴더 내에 위치시킨다.
    테스트한후에 기존 WebViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.
+
+7. Noti 폴드 swiftUi 로 변경
+   NotificationListViewController.swift → NotificationListSwiftUIView.swift
+   파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/ 폴더 내에 위치시킨다.
+   테스트한후에 기존 NotificationListViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.

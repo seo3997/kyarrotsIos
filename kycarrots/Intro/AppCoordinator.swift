@@ -140,15 +140,43 @@ final class AppCoordinator {
             self.nav.pushViewController(vc, animated: true)
         }
         rootView.onShowNotifications = { [weak self] in
-            guard let self = self else { return }
-            let vc = NotificationListViewController()
-            self.nav.pushViewController(vc, animated: true)
+            self?.showNotificationList()
         }
         
         let hostingVC = UIHostingController(rootView: rootView)
         hostingVC.navigationItem.title = "내 등록 매물"
         hostingVC.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가 (뒤로가기 숨김)
         nav.pushViewController(hostingVC, animated: true)
+    }
+
+    func showNotificationList() {
+        let viewModel = NotificationListViewModel()
+        var rootView = NotificationListSwiftUIView(viewModel: viewModel) { [weak self] item in
+            guard let self = self else { return }
+            
+            switch item.type {
+            case NotifType.CHAT:
+                if let roomId = item.roomId, !roomId.isEmpty {
+                    // roomId에서 나머지 정보 추출 (productId_buyerId_sellerId 형태라면)
+                    let components = roomId.components(separatedBy: "_")
+                    if components.count >= 3 {
+                        self.openChat(roomId: roomId, buyerId: components[1], sellerId: components[2], productId: components[0])
+                    }
+                }
+            case NotifType.PRODUCT_REGISTERED, NotifType.PRODUCT_APPROVED, NotifType.PRODUCT_REJECTED, "PRODUCT":
+                if let pid = item.productId {
+                    self.showProductDetail(pid: pid, userId: item.sellerId ?? "", title: "상품 상세")
+                }
+            default:
+                if let deeplink = item.deeplink, let url = URL(string: deeplink) {
+                    UIApplication.shared.open(url)
+                }
+            }
+        }
+        
+        let vc = UIHostingController(rootView: rootView)
+        vc.navigationItem.title = "알림 리스트"
+        nav.pushViewController(vc, animated: true)
     }
     
 }
@@ -258,8 +286,7 @@ private extension AppCoordinator {
     func makeDashboardVC() -> UIViewController {
         var rootView = DashboardSwiftUIView()
         rootView.onShowNotifications = { [weak self] in
-            let vc = NotificationListViewController()
-            self?.nav.pushViewController(vc, animated: true)
+            self?.showNotificationList()
         }
         rootView.onAddProduct = { [weak self] in
             let vc = MakeAdMainViewController(service: AppServiceProvider.shared)

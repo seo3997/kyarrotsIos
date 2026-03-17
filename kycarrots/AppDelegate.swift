@@ -149,21 +149,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     // MARK: - 알림 리스트 화면 열기
     private func openNotificationList() {
-        let vc = NotificationListViewController()
-
-        guard
-            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-            let window = scene.windows.first,
-            let root = window.rootViewController
-        else { return }
-
-        if let nav = root as? UINavigationController {
-            nav.pushViewController(vc, animated: true)
-        } else {
-            let nav = UINavigationController(rootViewController: vc)
-            window.rootViewController = nav
-            window.makeKeyAndVisible()
-        }
+        AppCoordinator.shared?.showNotificationList()
     }
 
     // MARK: - UISceneSession Lifecycle
