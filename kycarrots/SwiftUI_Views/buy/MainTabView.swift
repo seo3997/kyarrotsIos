@@ -27,17 +27,7 @@ struct MainTabView: View {
         }
         .accentColor(.blue)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    if let menuNav = SideMenuManager.default.leftMenuNavigationController {
-                        UIApplication.shared.windows.first?.rootViewController?.present(menuNav, animated: true)
-                    }
-                }) {
-                    Image(systemName: "line.3.horizontal")
-                }
-            }
-        }
+        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
         .navigationBarHidden(false) // ✅ 네비게이션 바 다시 표시
         .onAppear {
             let appearance = UITabBarAppearance()

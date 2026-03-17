@@ -234,33 +234,20 @@ final class MenuListViewController: UITableViewController {
                 
             case .notice:
                 print("*****notice******")
-                self.openWebMenu("notice", loginNo: loginNo)
-                /*
-                 let vc = NoticeViewController()
-                 vc.title = selected.title
-                 nav.pushViewController(vc, animated: true)
-                 */
+                self.openWebMenu("notice", loginNo: loginNo, nav: nav)
+                
             case .inquiry:
                 print("*****inquiry******")
-                self.openWebMenu("discuss", loginNo: loginNo)
-                /*
-                 let vc = InquiryViewController()
-                 vc.title = selected.title
-                 nav.pushViewController(vc, animated: true)
-                 */
+                self.openWebMenu("discuss", loginNo: loginNo, nav: nav)
+                
             case .policy:
                 print("*****inquiry******")
-                self.openWebMenu("forum", loginNo: loginNo)
-                /*
-                 let vc = PolicyViewController()
-                 vc.title = selected.title
-                 nav.pushViewController(vc, animated: true)
-                 */
+                self.openWebMenu("forum", loginNo: loginNo, nav: nav)
             }
         }
     }
     
-    func openWebMenu(_ type: String, loginNo: String) {
+    func openWebMenu(_ type: String, loginNo: String, nav: UINavigationController) {
         let urlString: String
         let title: String
         
@@ -284,18 +271,25 @@ final class MenuListViewController: UITableViewController {
             return   // 잘못된 type이면 아무 것도 안 함
         }
         
-        let vc = WebViewController.instantiate(urlString: urlString, title: title)
-
-           // 기존 root Nav 에 push (ProductList랑 동일 패턴)
-           dismiss(animated: true) {
-               guard
-                   let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let sceneDelegate = scene.delegate as? SceneDelegate,
-                   let window = sceneDelegate.window,
-                   let nav = window.rootViewController as? UINavigationController
-               else { return }
-
-               nav.pushViewController(vc, animated: true)
-           }
+        var rootView = WebSwiftUIView(urlString: urlString, title: title)
+        rootView.onShowNotifications = {
+            guard
+                let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                let sceneDelegate = scene.delegate as? SceneDelegate,
+                let window = sceneDelegate.window,
+                var topController = window.rootViewController
+            else { return }
+            
+            while let presented = topController.presentedViewController {
+                topController = presented
+            }
+            
+            let currentNav = topController as? UINavigationController ?? topController.navigationController
+            let notiVC = NotificationListViewController()
+            currentNav?.pushViewController(notiVC, animated: true)
+        }
+        let vc = UIHostingController(rootView: rootView)
+        vc.addLeftMenuButton()
+        nav.pushViewController(vc, animated: true)
     }
 }

@@ -19,7 +19,7 @@
    참조: UI 레이아웃 및 컴포넌트 구성은 기존 Main.storyboard의 디자인을 계승함.
 
 2-1 기술 요구 사항 및 구조
-파일 배치: 모든 신규 SwiftUI 파일은 /SwiftUI_Views/buy/ 폴더 내에 위치시킨다.
+파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/ 폴더 내에 위치시킨다.
 아키텍처:
 각 뷰는 독립적인 SwiftUI View로 구현한다.
 데이터 바인딩이 필요한 경우 ObservableObject 패턴을 사용하여 비즈니스 로직과 UI를 분리한다.
@@ -39,3 +39,23 @@ MainTabBarController.swift,MainTabView.swift (TabView 구현)
 HomeViewController.swift,HomeView.swift
 InterestProductViewController.swift,InterestProductView.swift
 PurchaseHistoryViewController.swift,PurchaseHistoryView.swift
+
+3. 관리자 상품리스트 swiftUi 로 변경
+   ProductListViewController.swift → ProductListSwiftUIView.swift
+   파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ 폴더 내에 위치시킨다.
+   테스트한후에 기존 ProductListViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.
+
+4. 대시보드 swiftUi 로 변경
+   DashboardViewController.swift → DashboardSwiftUIView.swift
+   파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/ 폴더 내에 위치시킨다.
+   테스트한후에 기존 DashboardViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.
+
+5. 상풍상세 화면 swiftUi 로 변경
+   ProductDetailViewController.swift → ProductDetailSwiftUIView.swift
+   파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ 폴더 내에 위치시킨다.
+   테스트한후에 기존 ProductDetailViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.
+
+6. 웹뷰 swiftUi 로 변경
+   WebViewController.swift → WebSwiftUIView.swift
+   파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/ 폴더 내에 위치시킨다.
+   테스트한후에 기존 WebViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.
