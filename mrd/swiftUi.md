@@ -64,3 +64,13 @@ PurchaseHistoryViewController.swift,PurchaseHistoryView.swift
    NotificationListViewController.swift → NotificationListSwiftUIView.swift
    파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/ 폴더 내에 위치시킨다.
    테스트한후에 기존 NotificationListViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.
+
+8. membership 폴더 swiftUi 로 변경
+   MembershipViewController.swift → MembershipSwiftUIView.swift
+   파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/ 폴더 내에 위치시킨다.
+   테스트한후에 기존 MembershipViewController.swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.
+
+9. Chat 폴더 swiftUi 로 변경
+   Chat 폴더내의 파일들을 swiftUi 로 변경
+   파일 배치: 모든 신규 SwiftUI 파일은 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ 폴더 내에 위치시킨다.
+   테스트한후에 기존 swift 파일은 삭제할 예정인데 내가 삭제 하라고 할때까지 유지한다.

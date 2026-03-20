@@ -311,6 +311,7 @@ private extension AppCoordinator {
         )
         let rootView = ChatSwiftUIView(viewModel: viewModel)
         let vc = UIHostingController(rootView: rootView)
+        vc.navigationItem.title = viewModel.otherId
         nav.pushViewController(vc, animated: true)
     }
 

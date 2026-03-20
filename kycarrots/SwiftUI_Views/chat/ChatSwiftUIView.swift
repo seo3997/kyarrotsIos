@@ -9,34 +9,61 @@ struct ChatSwiftUIView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // MARK: - Message List
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(spacing: 12) {
-                        // Spacer at top if few messages
-                        Spacer()
-                            .frame(minHeight: 0, maxHeight: .infinity)
-                        
-                        ForEach(viewModel.chatMessages.indices, id: \.self) { index in
-                            let msg = viewModel.chatMessages[index]
-                            ChatBubbleView(message: msg)
-                                .id(index)
-                        }
-                        
-                        // Reference for scrolling to bottom
-                        Color.clear
-                            .frame(height: 1)
-                            .id("bottom")
-                    }
-                    .padding()
+            // MARK: - Custom Header (Matches Android Activity Bar)
+            HStack {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.primary)
                 }
-                .onChange(of: viewModel.chatMessages.count) { _ in
-                    withAnimation {
+                .padding(.leading, 12)
+                
+                Spacer()
+                
+                Text(viewModel.otherId)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                // Placeholder to keep title centered
+                Color.clear
+                    .frame(width: 44, height: 44)
+            }
+            .frame(height: 56)
+            .background(Color(UIColor.systemBackground))
+            .shadow(color: Color.black.opacity(0.1), radius: 1, x: 0, y: 1)
+            
+            // MARK: - Message List
+            GeometryReader { geometry in
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            // Spacer at top to push content down if list is short
+                            Spacer(minLength: 0)
+                            
+                            ForEach(viewModel.chatMessages.indices, id: \.self) { index in
+                                let msg = viewModel.chatMessages[index]
+                                ChatBubbleView(message: msg)
+                                    .id(index)
+                            }
+                            
+                            // Reference for scrolling to bottom
+                            Color.clear
+                                .frame(height: 1)
+                                .id("bottom")
+                        }
+                        .padding()
+                        .frame(minHeight: geometry.size.height)
+                    }
+                    .onChange(of: viewModel.chatMessages.count) { _ in
+                        withAnimation {
+                            proxy.scrollTo("bottom", anchor: .bottom)
+                        }
+                    }
+                    .onAppear {
                         proxy.scrollTo("bottom", anchor: .bottom)
                     }
-                }
-                .onAppear {
-                    proxy.scrollTo("bottom", anchor: .bottom)
                 }
             }
             
@@ -69,16 +96,7 @@ struct ChatSwiftUIView: View {
             .padding(.bottom, 8)
             .background(Color(UIColor.systemBackground))
         }
-        .navigationTitle("\(viewModel.otherId) 님과의 대화")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.primary)
-                }
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)   // ✅ Hide system bar
         .task {
             viewModel.connect()
             await viewModel.loadHistory()

@@ -288,7 +288,8 @@ class LoginViewController: UIViewController {
                     loginNm: response.loginNm ?? "",
                     loginCd: "PWD",
                     loginSocialId: "",
-                    branchId: String(response.branchInfo?.branchId ?? 0)
+                    branchId: String(response.branchInfo?.branchId ?? 0),
+                    branchNm: response.branchInfo?.branchName ?? ""
                 )
                 
                 if let token = response.token {

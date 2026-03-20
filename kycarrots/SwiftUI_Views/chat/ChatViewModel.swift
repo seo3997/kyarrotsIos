@@ -21,14 +21,29 @@ final class ChatViewModel: ObservableObject {
         self.roomId = roomId
         self.currentUserId = currentUserId
         
-        // resolve otherId
-        if currentUserId == buyerId {
-            self.otherId = branchId
-        } else if currentUserId == branchId {
-            self.otherId = buyerId
+        // resolve otherId (Match Android resolveOtherId logic)
+        let memberCode = LoginInfoUtil.getMemberCode()
+        let branchName = LoginInfoUtil.getBranchName()
+        print("🔍 ChatViewModel init - role: \(memberCode), branchName: '\(branchName)', branchId: '\(branchId)'")
+        
+        let resolvedName: String
+        
+        if memberCode == Constants.ROLE_PUB {
+            resolvedName = branchName.isEmpty ? "지점" : branchName
+        } else if memberCode == Constants.ROLE_PROJ {
+            if branchId == Constants.CENTER_BRANCH_ID {
+                resolvedName = "본사"
+            } else {
+                resolvedName = buyerId
+            }
+        } else if memberCode == Constants.ROLE_SELL {
+            resolvedName = "\(buyerId) 지점"
         } else {
-            self.otherId = buyerId // fallback
+            resolvedName = buyerId // fallback
         }
+        
+        // Match Android title format
+        self.otherId = "\(resolvedName)  님과의 대화"
         
         bindStomp()
     }

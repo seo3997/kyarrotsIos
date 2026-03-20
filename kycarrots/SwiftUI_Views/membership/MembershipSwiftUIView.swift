@@ -125,7 +125,8 @@ class MembershipViewModel: ObservableObject {
                 loginNm: res.loginNm ?? "",
                 loginCd: res.loginCd ?? "",
                 loginSocialId: res.loginSocialId ?? "",
-                branchId: String(res.branchInfo?.branchId ?? 0)
+                branchId: String(res.branchInfo?.branchId ?? 0),
+                branchNm: res.branchInfo?.branchName ?? ""
             )
             isLoading = false
             showToast(message: "회원가입 성공!")

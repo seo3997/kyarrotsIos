@@ -280,7 +280,8 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
                     loginNm: body.loginNm ?? "",
                     loginCd: body.loginCd ?? "",
                     loginSocialId: body.loginSocialId ?? "",
-                    branchId: String(body.branchInfo?.branchId ?? 0)
+                    branchId: String(body.branchInfo?.branchId ?? 0),
+                    branchNm: body.branchInfo?.branchName ?? ""
                 )
                 self.coordinator?.showIntro(launchDeepLink: self.pendingDeepLink, animated: true)
                 self.toast("소셜계정 링크 성공!!!")
@@ -369,7 +370,8 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
                     loginNm: res.loginNm ?? "",          // login_nm
                     loginCd: res.loginCd ?? "",          // login_cd
                     loginSocialId: res.loginSocialId ?? "", // login_social_id
-                    branchId: String(res.branchInfo?.branchId ?? 0)
+                    branchId: String(res.branchInfo?.branchId ?? 0),
+                    branchNm: res.branchInfo?.branchName ?? ""
                 )
                 coordinator?.showIntro(launchDeepLink: pendingDeepLink, animated: true)
                 toast("회원가입 성공!")
