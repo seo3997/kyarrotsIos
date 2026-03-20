@@ -217,9 +217,9 @@ final class RemoteRepository {
     }
 
     // MARK: - 채팅
-    func createOrGetChatRoom(productId: String, buyerId: String, sellerId: String) async throws -> ChatRoomResponse {
+    func createOrGetChatRoom(productId: String, buyerId: String, branchId: String) async throws -> ChatRoomResponse {
         try await api.request(
-            AdApiEndpoint.createOrGetChatRoom(productId: productId, buyerId: buyerId, sellerId: sellerId),
+            AdApiEndpoint.createOrGetChatRoom(productId: productId, buyerId: buyerId, branchId: branchId),
             as: ChatRoomResponse.self
         )
     }
@@ -238,9 +238,9 @@ final class RemoteRepository {
         )
     }
 
-    func getChatBuyers(productId: Int64, sellerId: String) async throws -> [ChatBuyerDto] {
+    func getChatBuyers(productId: Int64, branchId: String) async throws -> [ChatBuyerDto] {
         try await api.request(
-            AdApiEndpoint.getChatBuyers(productId: productId, sellerId: sellerId),
+            AdApiEndpoint.getChatBuyers(productId: productId, branchId: branchId),
             as: [ChatBuyerDto].self
         )
     }

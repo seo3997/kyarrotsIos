@@ -53,11 +53,7 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
     private var selectedTownCode: String = ""
 
     private lazy var roleMap: [String: String] = {
-        if Constants.SYSTEM_TYPE == 1 {
-            return ["판매자":"ROLE_SELL", "구매자":"ROLE_PUB"]
-        } else {
-            return ["판매자":"ROLE_SELL", "센터관리":"ROLE_PROJ", "구매자":"ROLE_PUB"]
-        }
+        return ["판매자":"ROLE_SELL", "센터관리":"ROLE_PROJ", "구매자":"ROLE_PUB"]
     }()
     private var selectedRoleCode: String = ""
 
@@ -283,7 +279,8 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
                     memberCode: body.memberCode ?? "",
                     loginNm: body.loginNm ?? "",
                     loginCd: body.loginCd ?? "",
-                    loginSocialId: body.loginSocialId ?? ""
+                    loginSocialId: body.loginSocialId ?? "",
+                    branchId: String(body.branchInfo?.branchId ?? 0)
                 )
                 self.coordinator?.showIntro(launchDeepLink: self.pendingDeepLink, animated: true)
                 self.toast("소셜계정 링크 성공!!!")
@@ -371,7 +368,8 @@ final class OnboardingViewController: UIViewController, UITextFieldDelegate {
                     memberCode: res.memberCode ?? "",   // member_code
                     loginNm: res.loginNm ?? "",          // login_nm
                     loginCd: res.loginCd ?? "",          // login_cd
-                    loginSocialId: res.loginSocialId ?? "" // login_social_id
+                    loginSocialId: res.loginSocialId ?? "", // login_social_id
+                    branchId: String(res.branchInfo?.branchId ?? 0)
                 )
                 coordinator?.showIntro(launchDeepLink: pendingDeepLink, animated: true)
                 toast("회원가입 성공!")

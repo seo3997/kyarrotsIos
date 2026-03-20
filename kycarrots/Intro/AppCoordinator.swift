@@ -192,7 +192,7 @@ final class AppCoordinator {
                     // roomId에서 나머지 정보 추출 (productId_buyerId_sellerId 형태라면)
                     let components = roomId.components(separatedBy: "_")
                     if components.count >= 3 {
-                        self.openChat(roomId: roomId, buyerId: components[1], sellerId: components[2], productId: components[0])
+                        self.openChat(roomId: roomId, buyerId: components[1], branchId: components[2], productId: components[0])
                     }
                 }
             case NotifType.PRODUCT_REGISTERED, NotifType.PRODUCT_APPROVED, NotifType.PRODUCT_REJECTED, "PRODUCT":
@@ -223,28 +223,23 @@ private extension AppCoordinator {
     func makeChatVC(from deepLink: PushDeepLink) -> UIViewController? {
         guard let roomId = deepLink.roomId, !roomId.isEmpty,
               let buyerId = deepLink.buyerId, !buyerId.isEmpty,
-              let sellerId = deepLink.sellerId, !sellerId.isEmpty,
+              let branchId = deepLink.sellerId, !branchId.isEmpty,
               let productId = deepLink.productId, !productId.isEmpty else {
             return nil
         }
 
-        guard let chat = storyboard.instantiateViewController(
-            withIdentifier: "ChatVC"
-        ) as? ChatViewController else {
-            assertionFailure("ChatVC not found in storyboard")
-            return nil
-        }
-
-        chat.roomId = roomId
-        chat.buyerId = buyerId
-        chat.sellerId = sellerId
-        chat.productId = productId
-
         let myId = LoginInfoUtil.getUserId()
         if myId.isEmpty { return nil }
-        chat.currentUserId = myId
 
-        return chat
+        let viewModel = ChatViewModel(
+            roomId: roomId,
+            currentUserId: myId,
+            buyerId: buyerId,
+            branchId: branchId
+        )
+        let rootView = ChatSwiftUIView(viewModel: viewModel)
+        let vc = UIHostingController(rootView: rootView)
+        return vc
     }
 
     func makeProductDetailVC(from deepLink: PushDeepLink) -> UIViewController? {
@@ -263,13 +258,13 @@ private extension AppCoordinator {
             self?.nav.pushViewController(vc, animated: true)
         } onOpenChat: { [weak self] room in
             // Handle Open Chat
-            self?.openChat(roomId: room.roomId, buyerId: room.buyerId, sellerId: room.sellerId, productId: String(room.productId))
+            self?.openChat(roomId: room.roomId, buyerId: room.buyerId, branchId: room.branchId, productId: String(room.productId))
         } onShowBuyerSelection: { [weak self] rooms in
             // Show Buyer Selection Action Sheet
             let alert = UIAlertController(title: "구매자를 선택하세요", message: nil, preferredStyle: .actionSheet)
             for (i, r) in rooms.enumerated() {
                 alert.addAction(UIAlertAction(title: "구매자 \(i+1): \(r.buyerId)", style: .default) { _ in
-                    self?.openChat(roomId: r.roomId, buyerId: r.buyerId, sellerId: r.sellerId, productId: String(r.productId))
+                    self?.openChat(roomId: r.roomId, buyerId: r.buyerId, branchId: r.branchId, productId: String(r.productId))
                 })
             }
             alert.addAction(UIAlertAction(title: "취소", style: .cancel))
@@ -304,14 +299,18 @@ private extension AppCoordinator {
         return vc
     }
 
-    private func openChat(roomId: String, buyerId: String, sellerId: String, productId: String) {
-        let sb = UIStoryboard(name: "Main", bundle: nil)
-        guard let vc = sb.instantiateViewController(withIdentifier: "ChatVC") as? ChatViewController else { return }
-        vc.roomId = roomId
-        vc.buyerId = buyerId
-        vc.sellerId = sellerId
-        vc.productId = productId
-        vc.currentUserId = LoginInfoUtil.getUserId()
+    private func openChat(roomId: String, buyerId: String, branchId: String, productId: String) {
+        let myId = LoginInfoUtil.getUserId()
+        if myId.isEmpty { return }
+
+        let viewModel = ChatViewModel(
+            roomId: roomId,
+            currentUserId: myId,
+            buyerId: buyerId,
+            branchId: branchId
+        )
+        let rootView = ChatSwiftUIView(viewModel: viewModel)
+        let vc = UIHostingController(rootView: rootView)
         nav.pushViewController(vc, animated: true)
     }
 

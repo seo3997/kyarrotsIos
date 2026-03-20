@@ -14,6 +14,7 @@ struct ProductDetailSwiftUIView: View {
     var onShowAlert: (String, String) -> Void
     
     @State private var showingStatusPicker = false
+    @State private var showingChatTypePicker = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -66,6 +67,9 @@ struct ProductDetailSwiftUIView: View {
         }
         .confirmationDialog("상태 변경", isPresented: $showingStatusPicker, titleVisibility: .visible) {
             statusPickerButtons
+        }
+        .confirmationDialog("채팅 대상 선택", isPresented: $showingChatTypePicker, titleVisibility: .visible) {
+            chatTypePickerButtons
         }
     }
     
@@ -302,6 +306,30 @@ struct ProductDetailSwiftUIView: View {
             Button("취소", role: .cancel) {}
         }
     }
+
+    private var chatTypePickerButtons: some View {
+        Group {
+            Button("구매자와 채팅") {
+                let myBranchId = LoginInfoUtil.getBranchId()
+                Task {
+                    let rooms = await viewModel.getUserChatRooms(branchId: myBranchId)
+                    if rooms.isEmpty { onShowAlert("안내", "채팅 요청이 없습니다") }
+                    else if rooms.count == 1, let room = rooms.first { onOpenChat(room) }
+                    else { onShowBuyerSelection(rooms) }
+                }
+            }
+            Button("본사와 채팅") {
+                let myBranchId = LoginInfoUtil.getBranchId()
+                let centerBranchId = Constants.CENTER_BRANCH_ID
+                Task {
+                    if let room = await viewModel.createOrGetChatRoom(buyerId: myBranchId, branchId: centerBranchId) {
+                        onOpenChat(room)
+                    }
+                }
+            }
+            Button("취소", role: .cancel) {}
+        }
+    }
     
     // MARK: - Logic & Helpers
     
@@ -378,29 +406,36 @@ struct ProductDetailSwiftUIView: View {
     }
     
     private func handleChatTap() {
-        let systemType = Constants.SYSTEM_TYPE
         let memberCode = LoginInfoUtil.getMemberCode()
-        if systemType == 1 { handleChatSystemType1(memberCode: memberCode) }
-        else { handleChatSystemType2(memberCode: memberCode) }
-    }
-    
-    private func handleChatSystemType1(memberCode: String) {
-        let isBuyer = (memberCode == Constants.ROLE_PUB)
-        if isBuyer {
-            Task { if let room = await viewModel.createOrGetChatRoom() { onOpenChat(room) } }
-        } else {
-            Task {
-                let rooms = await viewModel.getUserChatRooms()
-                if rooms.isEmpty { onShowAlert("안내", "이 상품에 대한 채팅 요청이 없습니다") }
-                else if rooms.count == 1, let room = rooms.first { onOpenChat(room) }
-                else { onShowBuyerSelection(rooms) }
-            }
-        }
+        handleChatSystemType2(memberCode: memberCode)
     }
     
     private func handleChatSystemType2(memberCode: String) {
-        if memberCode == Constants.ROLE_PUB || memberCode == Constants.ROLE_SELL || memberCode == Constants.ROLE_PROJ {
-            handleChatSystemType1(memberCode: memberCode)
+        let myId = LoginInfoUtil.getUserId()
+        let myBranchId = LoginInfoUtil.getBranchId()
+        let centerBranchId = Constants.CENTER_BRANCH_ID
+
+        switch memberCode {
+        case Constants.ROLE_PUB:
+            // 구매자 -> 본인 지점
+            Task {
+                if let room = await viewModel.createOrGetChatRoom(buyerId: myId, branchId: myBranchId) {
+                    onOpenChat(room)
+                }
+            }
+        case Constants.ROLE_SELL:
+            // 본사 -> 지점들
+            Task {
+                let rooms = await viewModel.getUserChatRooms(branchId: centerBranchId)
+                if rooms.isEmpty { onShowAlert("안내", "채팅 요청이 없습니다") }
+                else if rooms.count == 1, let room = rooms.first { onOpenChat(room) }
+                else { onShowBuyerSelection(rooms) }
+            }
+        case Constants.ROLE_PROJ:
+            // 지점은 선택창 띄우기
+            showingChatTypePicker = true
+        default:
+            break
         }
     }
     

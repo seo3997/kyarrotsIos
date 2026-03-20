@@ -47,7 +47,7 @@ enum AdApiEndpoint: Endpoint {
     case findEmail(name: String, phone: String)
 
     // 채팅
-    case createOrGetChatRoom(productId: String, buyerId: String, sellerId: String)
+    case createOrGetChatRoom(productId: String, buyerId: String, branchId: String)
     case getUserChatRooms(productId: String, userId: String)
     case getChatMessages(roomId: String)
 
@@ -74,7 +74,7 @@ enum AdApiEndpoint: Endpoint {
     case getPurchaseItems(token: String, pageNo: Int)
 
     // 채팅 구매자 / 구매 생성
-    case getChatBuyers(productId: Int64, sellerId: String)
+    case getChatBuyers(productId: Int64, branchId: String)
     case createPurchase(body: PurchaseHistoryRequest)
 
     // 도매상(중간센터)
@@ -230,11 +230,11 @@ enum AdApiEndpoint: Endpoint {
             return ["nm": name, "hp": phone]
 
         // 채팅 관련
-        case let .createOrGetChatRoom(productId, buyerId, sellerId):
+        case let .createOrGetChatRoom(productId, buyerId, branchId):
             return [
                 "productId": productId,
                 "buyerId": buyerId,
-                "sellerId": sellerId
+                "branchId": branchId
             ]
 
         // 로그인 (Android @FormUrlEncoded @Field 그대로 매핑)
@@ -263,10 +263,10 @@ enum AdApiEndpoint: Endpoint {
         case let .updateProductStatus(token, _):
             return ["token": token]
 
-        case let .getChatBuyers(productId, sellerId):
+        case let .getChatBuyers(productId, branchId):
             return [
                 "productId": String(productId),
-                "sellerId": sellerId
+                "branchId": branchId
             ]
 
         // 도매상

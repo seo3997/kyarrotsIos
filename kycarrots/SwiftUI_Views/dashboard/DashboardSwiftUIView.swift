@@ -62,18 +62,16 @@ struct DashboardSwiftUIView: View {
                             }
                         }
                         
-                        if Constants.SYSTEM_TYPE == 2 {
-                            Button(action: {
-                                onShowApproval?()
-                            }) {
-                                Text("승인/처리 화면")
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.gray.opacity(0.1))
-                                    .foregroundColor(.primary)
-                                    .cornerRadius(8)
-                            }
+                        Button(action: {
+                            onShowApproval?()
+                        }) {
+                            Text("승인/처리 화면")
+                                .font(.system(size: 15, weight: .semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.gray.opacity(0.1))
+                                .foregroundColor(.primary)
+                                .cornerRadius(8)
                         }
                     }
                     .padding(.horizontal)

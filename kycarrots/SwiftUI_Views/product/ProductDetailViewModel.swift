@@ -16,7 +16,6 @@ class ProductDetailViewModel: ObservableObject {
     
     // Member Info
     private let memberCode = LoginInfoUtil.getMemberCode()
-    private let systemType = Constants.SYSTEM_TYPE
     
     init(productId: Int64) {
         self.productId = productId
@@ -53,8 +52,8 @@ class ProductDetailViewModel: ObservableObject {
         }
         
         // Hide if readonly conditions met
-        if systemType == 2 && memberCode == Constants.ROLE_SELL && currentStatus == "0" { return }
-        if systemType == 2 && memberCode == Constants.ROLE_PROJ && currentStatus == "98" { return }
+        if memberCode == Constants.ROLE_SELL && currentStatus == "0" { return }
+        if memberCode == Constants.ROLE_PROJ && currentStatus == "98" { return }
 
         Task {
             do {
@@ -62,12 +61,10 @@ class ProductDetailViewModel: ObservableObject {
                 await MainActor.run {
                     self.statusOptions = list.filter { item in
                         let idx = item.strIdx
-                        switch (systemType, memberCode) {
-                        case (1, Constants.ROLE_SELL):
-                            return ["1","10","99"].contains(idx) || idx == currentStatus
-                        case (2, Constants.ROLE_PROJ):
+                        switch memberCode {
+                        case Constants.ROLE_PROJ:
                             return ["0","1","10","98","99"].contains(idx) || idx == currentStatus
-                        case (2, Constants.ROLE_SELL):
+                        case Constants.ROLE_SELL:
                             return ["0","98"].contains(idx) || idx == currentStatus
                         default:
                             return false
@@ -127,7 +124,7 @@ class ProductDetailViewModel: ObservableObject {
                 saleStatus: code,
                 updusrNo: 0,
                 rejectReason: rejectReason,
-                systemType: String(systemType)
+                systemType: "2"
             )
             
             let success = try await AppServiceProvider.shared.updateProductStatus(token: token, product: item)
@@ -148,44 +145,32 @@ class ProductDetailViewModel: ObservableObject {
         }
     }
     
-    func getChatBuyers() async -> [ChatBuyerDto] {
+    func getChatBuyers(branchId: String? = nil) async -> [ChatBuyerDto] {
         do {
-            let sellerId = resolveSellerId()
-            return try await AppServiceProvider.shared.getChatBuyers(productId: productId, sellerId: sellerId)
+            let targetBranchId = branchId ?? LoginInfoUtil.getBranchId()
+            return try await AppServiceProvider.shared.getChatBuyers(productId: productId, branchId: targetBranchId)
         } catch {
             return []
         }
     }
     
-    func createOrGetChatRoom() async -> ChatRoomResponse? {
-        let myId = LoginInfoUtil.getUserId()
-        let sellerId = resolveSellerId()
+    func createOrGetChatRoom(buyerId: String, branchId: String) async -> ChatRoomResponse? {
         let pid = String(productId)
-        
         do {
-            return try await AppServiceProvider.shared.createOrGetChatRoom(productId: pid, buyerId: myId, sellerId: sellerId)
+            return try await AppServiceProvider.shared.createOrGetChatRoom(productId: pid, buyerId: buyerId, branchId: branchId)
         } catch {
             return nil
         }
     }
     
-    func getUserChatRooms() async -> [ChatRoomResponse] {
-        let sellerId = resolveSellerId()
+    func getUserChatRooms(branchId: String? = nil) async -> [ChatRoomResponse] {
+        let targetBranchId = branchId ?? LoginInfoUtil.getBranchId()
         let pid = String(productId)
-        
         do {
-            return try await AppServiceProvider.shared.getUserChatRooms(productId: pid, userId: sellerId)
+            return try await AppServiceProvider.shared.getUserChatRooms(productId: pid, userId: targetBranchId)
         } catch {
             return []
         }
     }
     
-    private func resolveSellerId() -> String {
-        guard let detail = productDetail else { return "" }
-        switch systemType {
-        case 1: return detail.product.userId ?? ""
-        case 2: return detail.product.wholesalerId ?? ""
-        default: return detail.product.userId ?? ""
-        }
-    }
 }

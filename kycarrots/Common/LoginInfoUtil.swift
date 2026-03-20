@@ -19,6 +19,7 @@ struct LoginInfoUtil {
     static let KEY_IS_LOGIN    = "IsLogin"
     static let KEY_LOGIN_CD    = "LogIn_CD"
     static let KEY_SOCIAL_ID   = "LogIn_SOCIAL_ID"
+    static let KEY_BRANCH_ID    = "LogIn_BRANCH_ID"
 
     private static let defaults = UserDefaults.standard
 
@@ -30,7 +31,8 @@ struct LoginInfoUtil {
         memberCode: String,
         loginNm: String,
         loginCd: String,
-        loginSocialId: String
+        loginSocialId: String,
+        branchId: String
     ) {
         defaults.set(email,        forKey: KEY_ID)
         defaults.set(loginNo,      forKey: KEY_NO)
@@ -40,6 +42,7 @@ struct LoginInfoUtil {
         defaults.set(true,         forKey: KEY_IS_LOGIN)
         defaults.set(loginCd,      forKey: KEY_LOGIN_CD)
         defaults.set(loginSocialId,forKey: KEY_SOCIAL_ID)
+        defaults.set(branchId,     forKey: KEY_BRANCH_ID)
     }
 
     // Android getUserId()
@@ -76,6 +79,10 @@ struct LoginInfoUtil {
         return defaults.string(forKey: KEY_SOCIAL_ID) ?? ""
     }
 
+    static func getBranchId() -> String {
+        return defaults.string(forKey: KEY_BRANCH_ID) ?? "0"
+    }
+
     // Android isLoggedIn()
     static func isLoggedIn() -> Bool {
         return defaults.bool(forKey: KEY_IS_LOGIN)
@@ -101,7 +108,8 @@ struct LoginInfoUtil {
                memberCode: login.memberCode ?? "",
                loginNm: login.loginNm ?? "",
                loginCd: login.loginCd ?? "",
-               loginSocialId: login.loginSocialId ?? ""
+               loginSocialId: login.loginSocialId ?? "",
+               branchId: String(login.branchInfo?.branchId ?? 0)
            )
     }
 }

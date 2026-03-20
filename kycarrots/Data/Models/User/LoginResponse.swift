@@ -22,6 +22,7 @@ struct LoginResponse: Decodable {
     let loginCd: String?
     let loginSocialId: String?
     let loginPwd: String?
+    let branchInfo: BranchInfoVo?
 
     enum CodingKeys: String, CodingKey {
         case resultCode      = "resultCode"
@@ -37,5 +38,6 @@ struct LoginResponse: Decodable {
         case loginCd         = "login_cd"
         case loginSocialId   = "login_social_id"
         case loginPwd        = "login_pwd"
+        case branchInfo      = "branch_info"
     }
 }

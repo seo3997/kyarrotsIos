@@ -25,13 +25,7 @@ class MembershipViewModel: ObservableObject {
     @Published var showToast = false
     
     let phoneFirstOptions = ["010", "011", "016", "017", "018", "019"]
-    let roleOptions: [String: String] = {
-        if Constants.SYSTEM_TYPE == 1 {
-            return ["판매자": "ROLE_SELL", "구매자": "ROLE_PUB"]
-        } else {
-            return ["판매자": "ROLE_SELL", "센터관리": "ROLE_PROJ", "구매자": "ROLE_PUB"]
-        }
-    }()
+    let roleOptions: [String: String] = ["판매자": "ROLE_SELL", "센터관리": "ROLE_PROJ", "구매자": "ROLE_PUB"]
     
     private let service: AppService
     private var cancellables = Set<AnyCancellable>()
@@ -130,7 +124,8 @@ class MembershipViewModel: ObservableObject {
                 memberCode: res.memberCode ?? "",
                 loginNm: res.loginNm ?? "",
                 loginCd: res.loginCd ?? "",
-                loginSocialId: res.loginSocialId ?? ""
+                loginSocialId: res.loginSocialId ?? "",
+                branchId: String(res.branchInfo?.branchId ?? 0)
             )
             isLoading = false
             showToast(message: "회원가입 성공!")

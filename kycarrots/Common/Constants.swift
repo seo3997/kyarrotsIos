@@ -53,9 +53,8 @@ struct Constants {
           URL(string: WS_URL + userId)!
     }
     
-    // MARK: - SYSTEM TYPE
-    /// Android: const val SYSTEM_TYPE = 2
-    static let SYSTEM_TYPE = 2   // 1: 직거래, 2: 중간센터
+    // MARK: - CENTER BRANCH ID
+    static let CENTER_BRANCH_ID = "2"   // 본사 지점 ID
 
     // MARK: - ROLE CODE
     static let ROLE_PUB  = "ROLE_PUB"

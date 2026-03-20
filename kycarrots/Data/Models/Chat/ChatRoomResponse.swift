@@ -8,11 +8,20 @@
 
 import Foundation
 
-struct ChatRoomResponse: Decodable {
+struct ChatRoomResponse: Codable {
     let id: Int64
     let roomId: String
     let buyerId: String
-    let sellerId: String
+    let branchId: String
     let productId: Int64
     let createdAt: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case roomId
+        case buyerId
+        case branchId
+        case productId
+        case createdAt = "created_at"
+    }
 }

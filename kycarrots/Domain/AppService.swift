@@ -168,9 +168,9 @@ final class AppService {
     }
 
     // 채팅
-    func createOrGetChatRoom(productId: String, buyerId: String, sellerId: String)
+    func createOrGetChatRoom(productId: String, buyerId: String, branchId: String)
     async -> ChatRoomResponse? {
-        try? await repo.createOrGetChatRoom(productId: productId, buyerId: buyerId, sellerId: sellerId)
+        try? await repo.createOrGetChatRoom(productId: productId, buyerId: buyerId, branchId: branchId)
     }
 
     func getUserChatRooms(productId: String, userId: String)
@@ -182,8 +182,8 @@ final class AppService {
         (try? await repo.getChatMessages(roomId: roomId)) ?? []
     }
 
-    func getChatBuyers(productId: Int64, sellerId: String) async -> [ChatBuyerDto] {
-        (try? await repo.getChatBuyers(productId: productId, sellerId: sellerId)) ?? []
+    func getChatBuyers(productId: Int64, branchId: String) async -> [ChatBuyerDto] {
+        (try? await repo.getChatBuyers(productId: productId, branchId: branchId)) ?? []
     }
 
     // 도매상

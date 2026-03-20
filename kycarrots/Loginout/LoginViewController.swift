@@ -244,11 +244,9 @@ class LoginViewController: UIViewController {
             return
         }
         
-        // 4) 직거래앱 + 센터 로그인 방지
-        if memberCode == Constants.ROLE_PROJ && Constants.SYSTEM_TYPE == 1 {
-            showAlert(message: "직거래앱은 센터로 로그인 할 수 없습니다.")
-            return
-        }
+        // 4) 직거래앱 + 센터 로그인 방지 (System Type 2 전용이므로 이 체크는 불필요하거나 항상 통과)
+        // 기존: if memberCode == Constants.ROLE_PROJ && Constants.SYSTEM_TYPE == 1 { ... }
+        // 로직 삭제
         
         // 5) 서버 로그인 호출
         startLoading()
@@ -289,7 +287,8 @@ class LoginViewController: UIViewController {
                     memberCode: response.memberCode ?? "",
                     loginNm: response.loginNm ?? "",
                     loginCd: "PWD",
-                    loginSocialId: ""
+                    loginSocialId: "",
+                    branchId: String(response.branchInfo?.branchId ?? 0)
                 )
                 
                 if let token = response.token {
@@ -429,15 +428,7 @@ class LoginViewController: UIViewController {
                         // self.service.saveJwt(jwt)
                         
                         // ✅ Android: LoginInfoUtil.saveLoginInfo(...) 동일 역할
-                        LoginInfoUtil.saveLoginInfo(
-                            email: auth.loginId ?? "",                  // 서버가 loginId 주면 그걸 우선
-                            loginNo: auth.loginIdx ?? "",
-                            password: auth.loginPwd ?? "",              // 소셜이면 보통 ""
-                            memberCode: auth.memberCode ?? "",
-                            loginNm: auth.loginNm ?? "",
-                            loginCd: auth.loginCd ?? "KAKAO",
-                            loginSocialId: auth.loginSocialId ?? ""
-                        )
+                        LoginInfoUtil.saveLoginInfo(auth)
                         
                         // ✅ Android: IntroActivity로 이동
                         self.coordinator?.showIntro(

@@ -229,13 +229,9 @@ final class MakeAdPreviewViewController: UIViewController {
     private func buildUploadPayload(from d: MakeAdDraft) -> (ProductVo, [ProductImageVo], [Data]) {
         let userId = LoginInfoUtil.getUserId()
         let userNo = LoginInfoUtil.getUserNo()
-        let systemType = String(Constants.SYSTEM_TYPE)
+        let systemType = "2"   // 고정 (중간센터 방식)
 
-        
-        let saleStatus: String = {
-            if systemType == "1" { return "1" }   // 판매중
-            return "0"                            // 승인요청(또는 기본)
-        }()
+        let saleStatus: String = "0"                            // 승인요청(또는 기본)
 
         let product = ProductVo(
             productId: d.productId,
