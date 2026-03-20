@@ -57,4 +57,14 @@ extension UIViewController {
        @objc private func _dismissKeyboard() {
            view.endEditing(true)
        }
+    
+    /// 사이드 메뉴 제스처 활성/비활성
+    func setSideMenuEnabled(_ isEnabled: Bool) {
+        // 사이드 메뉴가 열리는 제스처 비활성화
+        navigationController?.view.gestureRecognizers?.forEach {
+            if $0 is UIScreenEdgePanGestureRecognizer || $0.description.contains("SideMenu") {
+                $0.isEnabled = isEnabled
+            }
+        }
+    }
 }

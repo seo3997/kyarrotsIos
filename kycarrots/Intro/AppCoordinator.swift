@@ -56,17 +56,45 @@ final class AppCoordinator {
     }
 
     func showLogin(pendingDeepLink: PushDeepLink?) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-
-        guard let vc = storyboard.instantiateViewController(
-            withIdentifier: "LoginVC"
-        ) as? LoginViewController else {
-            assertionFailure("LoginVC not found in storyboard")
-            return
+        let viewModel = LoginViewModel(service: AppServiceProvider.shared)
+        viewModel.onLoginSuccess = { [weak self] in
+            self?.showIntro(launchDeepLink: pendingDeepLink, animated: true)
         }
-        vc.coordinator = self               
-        vc.pendingDeepLink = pendingDeepLink
+        viewModel.onShowOnboarding = { [weak self] provider, pid, name, email, url in
+            self?.showOnboarding(provider: provider, pid: pid, name: name, email: email, url: url, pending: pendingDeepLink)
+        }
+        viewModel.onShowMembership = { [weak self] in
+            self?.showTermsAgree()
+        }
+        viewModel.onShowFindAccount = { [weak self] in
+            self?.showFindAccount()
+        }
+        
+        let rootView = LoginSwiftUIView(viewModel: viewModel)
+        let vc = SideMenuRestrictedHostingController(rootView: rootView)
         nav.setViewControllers([vc], animated: true)
+    }
+
+    func showOnboarding(provider: String, pid: String, name: String, email: String, url: String, pending: PushDeepLink?) {
+        let viewModel = OnboardingViewModel(
+            service: AppServiceProvider.shared,
+            provider: provider,
+            providerUserId: pid,
+            presetEmail: email,
+            presetNickname: name
+        )
+        let rootView = OnboardingSwiftUIView(viewModel: viewModel) { [weak self] in
+            self?.showIntro(launchDeepLink: pending, animated: true)
+        }
+        let vc = SideMenuRestrictedHostingController(rootView: rootView)
+        nav.pushViewController(vc, animated: true)
+    }
+
+    func showFindAccount() {
+        let viewModel = FindAccountViewModel(service: AppServiceProvider.shared)
+        let rootView = FindAccountSwiftUIView(viewModel: viewModel)
+        let vc = SideMenuRestrictedHostingController(rootView: rootView)
+        nav.pushViewController(vc, animated: true)
     }
 
     func showHome(memberCode: String, deepLink: PushDeepLink?) {
