@@ -3,7 +3,7 @@ import SwiftUI
 struct ProductListSwiftUIView: View {
     @StateObject private var viewModel = ProductListViewModel()
     var onSelectProduct: ((AdItem) -> Void)?
-    var onAddProduct: (() -> Void)?
+    var onAddProduct: (() -> Void)? // 나중에 다시 사용할 수 있도록 유지
     var onShowNotifications: (() -> Void)?
     
     var body: some View {
@@ -60,7 +60,7 @@ struct ProductListSwiftUIView: View {
                 }
             }
             
-            // Floating Action Button
+            /* ✅ 새상품 등록 버튼 (필요시 주석 해제하여 사용)
             VStack {
                 Spacer()
                 HStack {
@@ -80,6 +80,7 @@ struct ProductListSwiftUIView: View {
                     .padding(.bottom, 40)
                 }
             }
+            */
         }
         .navigationTitle("내 등록 매물")
         .toolbar {
