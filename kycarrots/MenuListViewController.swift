@@ -8,6 +8,7 @@ enum MenuItemType {
     case notice
     case inquiry
     case policy
+    case orderManagement
 }
 
 struct MenuItem {
@@ -36,8 +37,9 @@ final class MenuListViewController: UITableViewController {
         // 1. 권한별 메인 메뉴 구성
         switch userRole {
         case "ROLE_SELL", "ROLE_PROJ":
-            // 판매자 및 도매업자는 대시보드 포함
+            // 판매자 및 도매업자는 대시보드 및 주문관리 포함
             section0.append(.init(icon: "house", title: "대시보드", type: .dashboard))
+            section0.append(.init(icon: "cart", title: "주문관리", type: .orderManagement))
             section0.append(.init(icon: "square.grid.2x2", title: "상품리스트", type: .products))
             section0.append(.init(icon: "gearshape", title: "설정", type: .settings))
             
@@ -229,6 +231,12 @@ final class MenuListViewController: UITableViewController {
             case .settings:
                 let vc = UIHostingController(rootView: SettingsView())
                 vc.title = selected.title
+                nav.pushViewController(vc, animated: true)
+                
+            case .orderManagement:
+                let vc = UIHostingController(rootView: OrderManagementView())
+                vc.navigationItem.title = "주문관리"
+                vc.addLeftMenuButton()
                 nav.pushViewController(vc, animated: true)
                 
             case .notice:

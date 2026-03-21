@@ -136,15 +136,22 @@ struct DashboardSwiftUIView: View {
                         if viewModel.recentProducts.isEmpty && !viewModel.isLoading {
                             EmptyListView(message: "최근 매물이 없습니다.")
                         } else {
-                            VStack(spacing: 12) {
-                                ForEach(viewModel.recentProducts, id: \.productId) { item in
+                            VStack(spacing: 0) {
+                                ForEach(0..<viewModel.recentProducts.count, id: \.self) { index in
+                                    let item = viewModel.recentProducts[index]
                                     RecentProductRowView(item: item) {
                                         self.onSelectProduct?(item)
+                                    }
+                                    if index < viewModel.recentProducts.count - 1 {
+                                        Divider().padding(.vertical, 8)
                                     }
                                 }
                             }
                         }
                     }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
                     .padding(.horizontal)
                     .padding(.bottom, 30)
                 }
@@ -209,24 +216,24 @@ struct DashboardSwiftUIView: View {
         switch code {
         case Constants.ROLE_ADMIN:
             return [
-                DashboardStatItem(label: "전체 회원", value: "\(stats["totalUsers"] ?? 0)", color: .blue),
-                DashboardStatItem(label: "입점 지점", value: "\(stats["totalBranches"] ?? 0)", color: .indigo),
-                DashboardStatItem(label: "전체 주문", value: "\(stats["totalOrders"] ?? 0)", color: .red),
-                DashboardStatItem(label: "누적 거래액", value: formatCurrency(stats["totalRevenue"] ?? 0), color: .green)
+                DashboardStatItem(label: "전체 회원", value: "\(stats["totalUsers"] ?? 0)", color: .blue, icon: "person.2.fill"),
+                DashboardStatItem(label: "입점 지점", value: "\(stats["totalBranches"] ?? 0)", color: .indigo, icon: "building.2.fill"),
+                DashboardStatItem(label: "전체 주문", value: "\(stats["totalOrders"] ?? 0)", color: .red, icon: "cart.fill"),
+                DashboardStatItem(label: "누적 거래액", value: formatCurrency(stats["totalRevenue"] ?? 0), color: .green, icon: "wonsign.circle.fill")
             ]
         case Constants.ROLE_SELL:
             return [
-                DashboardStatItem(label: "미승인 주문", value: "\(stats["unprocessedOrders"] ?? 0)", color: .orange),
-                DashboardStatItem(label: "지점 미송금", value: formatCurrency(stats["branchPendingAmount"] ?? 0), color: .red),
-                DashboardStatItem(label: "출고 대기", value: "\(stats["shipmentPending"] ?? 0)", color: .teal),
-                DashboardStatItem(label: "배송 중", value: "\(stats["inTransit"] ?? 0)", color: .blue)
+                DashboardStatItem(label: "미승인 주문", value: "\(stats["unprocessedOrders"] ?? 0)", color: .orange, icon: "clock.badge.exclamationmark.fill"),
+                DashboardStatItem(label: "지점 미송금", value: formatCurrency(stats["branchPendingAmount"] ?? 0), color: .red, icon: "exclamationmark.arrow.triangle.2.circlepath"),
+                DashboardStatItem(label: "출고 대기", value: "\(stats["shipmentPending"] ?? 0)", color: .teal, icon: "box.truck.fill"),
+                DashboardStatItem(label: "배송 중", value: "\(stats["inTransit"] ?? 0)", color: .blue, icon: "shippingbox.fill")
             ]
         case Constants.ROLE_PROJ:
             return [
-                DashboardStatItem(label: "오늘의 매출", value: formatCurrency(stats["todayTotalSales"] ?? 0), color: .blue),
-                DashboardStatItem(label: "본사 미입금", value: "\(stats["remittancePending"] ?? 0)건", color: .red),
-                DashboardStatItem(label: "배송 대기", value: "\(stats["shipmentPending"] ?? 0)", color: .orange),
-                DashboardStatItem(label: "정산 예정", value: formatCurrency(stats["estimatedProfit"] ?? 0), color: .green)
+                DashboardStatItem(label: "오늘의 매출", value: formatCurrency(stats["todayTotalSales"] ?? 0), color: .blue, icon: "chart.line.uptrend.xyaxis"),
+                DashboardStatItem(label: "본사 미입금", value: "\(stats["remittancePending"] ?? 0)건", color: .red, icon: "arrow.right.arrow.left.circle.fill"),
+                DashboardStatItem(label: "배송 대기", value: "\(stats["shipmentPending"] ?? 0)", color: .orange, icon: "shippingbox.fill"),
+                DashboardStatItem(label: "정산 예정", value: formatCurrency(stats["estimatedProfit"] ?? 0), color: .green, icon: "banknote.fill")
             ]
         default: return []
         }
@@ -251,20 +258,37 @@ struct DashboardStatItem {
     let label: String
     let value: String
     let color: Color
+    let icon: String // Added Icon
 }
 
 struct DashboardStatCard: View {
     let item: DashboardStatItem
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(item.label).font(.system(size: 13)).foregroundColor(.gray)
-            Text(item.value).font(.system(size: 18, weight: .bold)).foregroundColor(item.color)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: item.icon)
+                    .font(.system(size: 16))
+                    .foregroundColor(item.color)
+                Spacer()
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(item.label)
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+                
+                Text(item.value)
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundColor(.primary)
+                    .minimumScaleFactor(0.8)
+                    .lineLimit(1)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
+        .padding(12)
         .background(Color.white)
         .cornerRadius(12)
-        .shadow(color: .black.opacity(0.02), radius: 5, x: 0, y: 2)
+        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
 }
 
