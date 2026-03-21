@@ -22,7 +22,9 @@ struct ProductDetailSwiftUIView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Button(action: { dismiss() }) {
+                Button(action: {
+                    AppCoordinator.shared?.popBack()
+                }) {
                     Image(systemName: "chevron.left")
                         .font(.title3)
                         .foregroundColor(.primary)
@@ -136,7 +138,8 @@ struct ProductDetailSwiftUIView: View {
                                 viewModel: OrderCheckoutViewModel(
                                     product: product,
                                     quantity: 1,
-                                    selectedOption: nil
+                                    selectedOption: nil,
+                                    productImageUrl: viewModel.productDetail?.imageMetas.first(where: { $0.represent == 1 })?.imageUrl ?? viewModel.productDetail?.imageMetas.first?.imageUrl
                                 )
                             )) {
                                 Text("구매하기")

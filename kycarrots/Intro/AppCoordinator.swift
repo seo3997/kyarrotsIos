@@ -130,6 +130,10 @@ final class AppCoordinator {
         let vc = makeProductDetailVC(productId: pid, userId: userId, title: title)
         nav.pushViewController(vc, animated: true)
     }
+    
+    func popBack() {
+        nav.popViewController(animated: true)
+    }
 
     func showIntro(launchDeepLink: PushDeepLink? = nil, animated: Bool = true) {
         print("coordinator nav =", nav)
