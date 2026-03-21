@@ -56,13 +56,9 @@ class OrderCheckoutViewModel: ObservableObject {
         let baseFee = LoginInfoUtil.getBaseShippingFee()
         let freeThreshold = LoginInfoUtil.getFreeShippingThreshold()
 
-        if freeThreshold > 0 && totalItemAmount >= freeThreshold {
-            deliveryFee = 0
-        } else if baseFee > 0 {
-            deliveryFee = baseFee
-        } else {
-            deliveryFee = totalItemAmount >= 50000 ? 0 : 3500
-        }
+        // 안드로이드와 동일한 배송비 계산 로직 적용
+        deliveryFee = (totalItemAmount >= freeThreshold) ? 0 : baseFee
+        
         totalPayAmount = totalItemAmount + deliveryFee
     }
 

@@ -43,41 +43,57 @@ struct BranchInfoVo: Codable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        branchId = try container.decodeIfPresent(Int64.self, forKey: .branchId) ??
-                   container.decodeIfPresent(Int64.self, forKey: .branch_id) ??
-                   container.decodeIfPresent(Int64.self, forKey: .BRANCH_ID)
         
-        branchCode = try container.decodeIfPresent(String.self, forKey: .branchCode) ??
-                     container.decodeIfPresent(String.self, forKey: .branch_code) ??
-                     container.decodeIfPresent(String.self, forKey: .BRANCH_CODE)
+        // branchId: Int64 or String
+        if let val = try? container.decode(Int64.self, forKey: .branchId) { branchId = val }
+        else if let val = try? container.decode(Int64.self, forKey: .branch_id) { branchId = val }
+        else if let val = try? container.decode(Int64.self, forKey: .BRANCH_ID) { branchId = val }
+        else if let str = try? container.decode(String.self, forKey: .branchId), let v = Int64(str) { branchId = v }
+        else if let str = try? container.decode(String.self, forKey: .branch_id), let v = Int64(str) { branchId = v }
+        else if let str = try? container.decode(String.self, forKey: .BRANCH_ID), let v = Int64(str) { branchId = v }
+        else { branchId = nil }
+
+        branchCode = try? container.decode(String.self, forKey: .branchCode) ??
+                     container.decode(String.self, forKey: .branch_code) ??
+                     container.decode(String.self, forKey: .BRANCH_CODE)
         
-        branchName = try container.decodeIfPresent(String.self, forKey: .branchName) ??
-                     container.decodeIfPresent(String.self, forKey: .branch_name) ??
-                     container.decodeIfPresent(String.self, forKey: .BRANCH_NAME)
+        branchName = try? container.decode(String.self, forKey: .branchName) ??
+                     container.decode(String.self, forKey: .branch_name) ??
+                     container.decode(String.self, forKey: .BRANCH_NAME)
         
-        logoImageUrl = try container.decodeIfPresent(String.self, forKey: .logoImageUrl) ??
-                       container.decodeIfPresent(String.self, forKey: .logo_image_url) ??
-                       container.decodeIfPresent(String.self, forKey: .LOGO_IMAGE_URL)
+        logoImageUrl = try? container.decode(String.self, forKey: .logoImageUrl) ??
+                       container.decode(String.self, forKey: .logo_image_url) ??
+                       container.decode(String.self, forKey: .LOGO_IMAGE_URL)
         
-        branchStatus = try container.decodeIfPresent(String.self, forKey: .branchStatus) ??
-                       container.decodeIfPresent(String.self, forKey: .branch_status) ??
-                       container.decodeIfPresent(String.self, forKey: .BRANCH_STATUS)
+        branchStatus = try? container.decode(String.self, forKey: .branchStatus) ??
+                       container.decode(String.self, forKey: .branch_status) ??
+                       container.decode(String.self, forKey: .BRANCH_STATUS)
         
-        companyName = try container.decodeIfPresent(String.self, forKey: .companyName) ??
-                      container.decodeIfPresent(String.self, forKey: .company_name) ??
-                      container.decodeIfPresent(String.self, forKey: .COMPANY_NAME)
+        companyName = try? container.decode(String.self, forKey: .companyName) ??
+                      container.decode(String.self, forKey: .company_name) ??
+                      container.decode(String.self, forKey: .COMPANY_NAME)
         
-        tossClientKey = try container.decodeIfPresent(String.self, forKey: .tossClientKey) ??
-                        container.decodeIfPresent(String.self, forKey: .toss_client_key) ??
-                        container.decodeIfPresent(String.self, forKey: .TOSS_CLIENT_KEY)
+        tossClientKey = try? container.decode(String.self, forKey: .tossClientKey) ??
+                        container.decode(String.self, forKey: .toss_client_key) ??
+                        container.decode(String.self, forKey: .TOSS_CLIENT_KEY)
         
-        baseShippingFee = try container.decodeIfPresent(Int.self, forKey: .baseShippingFee) ??
-                          container.decodeIfPresent(Int.self, forKey: .base_shipping_fee) ??
-                          container.decodeIfPresent(Int.self, forKey: .BASE_SHIPPING_FEE)
-        
-        freeShippingThreshold = try container.decodeIfPresent(Int.self, forKey: .freeShippingThreshold) ??
-                                container.decodeIfPresent(Int.self, forKey: .free_shipping_threshold) ??
-                                container.decodeIfPresent(Int.self, forKey: .FREE_SHIPPING_THRESHOLD)
+        // baseShippingFee: Int or String
+        if let val = try? container.decode(Int.self, forKey: .baseShippingFee) { baseShippingFee = val }
+        else if let val = try? container.decode(Int.self, forKey: .base_shipping_fee) { baseShippingFee = val }
+        else if let val = try? container.decode(Int.self, forKey: .BASE_SHIPPING_FEE) { baseShippingFee = val }
+        else if let str = try? container.decode(String.self, forKey: .baseShippingFee), let v = Int(str) { baseShippingFee = v }
+        else if let str = try? container.decode(String.self, forKey: .base_shipping_fee), let v = Int(str) { baseShippingFee = v }
+        else if let str = try? container.decode(String.self, forKey: .BASE_SHIPPING_FEE), let v = Int(str) { baseShippingFee = v }
+        else { baseShippingFee = 0 }
+
+        // freeShippingThreshold: Int or String
+        if let val = try? container.decode(Int.self, forKey: .freeShippingThreshold) { freeShippingThreshold = val }
+        else if let val = try? container.decode(Int.self, forKey: .free_shipping_threshold) { freeShippingThreshold = val }
+        else if let val = try? container.decode(Int.self, forKey: .FREE_SHIPPING_THRESHOLD) { freeShippingThreshold = val }
+        else if let str = try? container.decode(String.self, forKey: .freeShippingThreshold), let v = Int(str) { freeShippingThreshold = v }
+        else if let str = try? container.decode(String.self, forKey: .free_shipping_threshold), let v = Int(str) { freeShippingThreshold = v }
+        else if let str = try? container.decode(String.self, forKey: .FREE_SHIPPING_THRESHOLD), let v = Int(str) { freeShippingThreshold = v }
+        else { freeShippingThreshold = 0 }
     }
     
     func encode(to encoder: Encoder) throws {
