@@ -150,6 +150,7 @@ struct OrderManagementView: View {
             }
         }
         .navigationTitle("주문 관리")
+        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
         .onAppear {
             viewModel.loadOrders()
         }

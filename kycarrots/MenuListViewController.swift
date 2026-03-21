@@ -236,6 +236,7 @@ final class MenuListViewController: UITableViewController {
             case .orderManagement:
                 let vc = UIHostingController(rootView: OrderManagementView())
                 vc.navigationItem.title = "주문관리"
+                vc.navigationItem.hidesBackButton = true // ✅ 뒤로가기 숨김 (햄버거만 노출)
                 vc.addLeftMenuButton()
                 nav.pushViewController(vc, animated: true)
                 
