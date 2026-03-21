@@ -1,0 +1,1341 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project kycarrots.xcodeproj -scheme kycarrots build -destination generic/platform=iOS
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  SwiftProtobuf: https://github.com/apple/swift-protobuf.git @ 1.33.3
+  GoogleAppMeasurement: https://github.com/google/GoogleAppMeasurement.git @ 12.5.0
+  Alamofire: https://github.com/Alamofire/Alamofire.git @ 5.11.0
+  Firebase: https://github.com/firebase/firebase-ios-sdk @ 12.7.0
+  GoogleDataTransport: https://github.com/google/GoogleDataTransport.git @ 10.1.0
+  Promises: https://github.com/google/promises.git @ 2.4.0
+  nanopb: https://github.com/firebase/nanopb.git @ 2.30910.0
+  Starscream: https://github.com/daltoniam/Starscream @ 4.0.8
+  GTMSessionFetcher: https://github.com/google/gtm-session-fetcher.git @ 5.0.0
+  leveldb: https://github.com/firebase/leveldb.git @ 1.22.5
+  abseil: https://github.com/google/abseil-cpp-binary.git @ 1.2024072200.0
+  InteropForGoogle: https://github.com/google/interop-ios-for-google-sdks.git @ 101.0.0
+  AppCheck: https://github.com/google/app-check.git @ 11.2.0
+  GoogleAdsOnDeviceConversion: https://github.com/googleads/google-ads-on-device-conversion-ios-sdk @ 3.2.0
+  KakaoOpenSDK: https://github.com/kakao/kakao-ios-sdk @ 2.27.1
+  GoogleUtilities: https://github.com/google/GoogleUtilities.git @ 8.1.0
+  SideMenu: https://github.com/jonkykong/SideMenu @ 6.5.0
+  Kingfisher: https://github.com/onevcat/Kingfisher.git @ 8.6.2
+  gRPC: https://github.com/google/grpc-binary.git @ 1.69.1
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (75 targets)
+    Target 'kycarrots' in project 'kycarrots'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKAuth' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'FirebaseMessaging' in project 'Firebase'
+        ➜ Explicit dependency on target 'Kingfisher' in project 'Kingfisher'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'SideMenu' in project 'SideMenu'
+        ➜ Explicit dependency on target 'FirebaseAnalytics' in project 'Firebase'
+        ➜ Explicit dependency on target 'Starscream' in project 'Starscream'
+        ➜ Explicit dependency on target 'KakaoSDKUser' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKShare' in project 'KakaoOpenSDK'
+    Target 'KakaoSDKShare' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKShare' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKTemplate' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoSDKShare' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKTemplate' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoSDKTemplate' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoSDKUser' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKUser' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoOpenSDK_KakaoSDKUser' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKAuth' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoSDKUser' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoOpenSDK_KakaoSDKUser' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKAuth' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoOpenSDK_KakaoSDKUser' in project 'KakaoOpenSDK' (no dependencies)
+    Target 'Starscream' in project 'Starscream'
+        ➜ Explicit dependency on target 'Starscream' in project 'Starscream'
+        ➜ Explicit dependency on target 'Starscream_Starscream' in project 'Starscream'
+    Target 'Starscream' in project 'Starscream'
+        ➜ Explicit dependency on target 'Starscream_Starscream' in project 'Starscream'
+    Target 'Starscream_Starscream' in project 'Starscream' (no dependencies)
+    Target 'FirebaseAnalytics' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseAnalyticsTarget' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseInstallations' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseAnalyticsWrapper' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'GULUserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleAppMeasurement' in project 'GoogleAppMeasurement'
+        ➜ Explicit dependency on target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULMethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+    Target 'FirebaseAnalyticsTarget' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseInstallations' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseAnalyticsWrapper' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'GULUserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleAppMeasurement' in project 'GoogleAppMeasurement'
+        ➜ Explicit dependency on target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULMethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+    Target 'FirebaseAnalyticsWrapper' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseInstallations' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'GULUserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleAppMeasurement' in project 'GoogleAppMeasurement'
+        ➜ Explicit dependency on target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULMethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+    Target 'GoogleAppMeasurement' in project 'GoogleAppMeasurement'
+        ➜ Explicit dependency on target 'GoogleAppMeasurementTarget' in project 'GoogleAppMeasurement'
+        ➜ Explicit dependency on target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULMethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+        ➜ Explicit dependency on target 'GoogleAdsOnDeviceConversion' in project 'GoogleAdsOnDeviceConversion'
+    Target 'GoogleAppMeasurementTarget' in project 'GoogleAppMeasurement'
+        ➜ Explicit dependency on target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULMethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+        ➜ Explicit dependency on target 'GoogleAdsOnDeviceConversion' in project 'GoogleAdsOnDeviceConversion'
+    Target 'GoogleAdsOnDeviceConversion' in project 'GoogleAdsOnDeviceConversion'
+        ➜ Explicit dependency on target 'GoogleAdsOnDeviceConversionTarget' in project 'GoogleAdsOnDeviceConversion'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+    Target 'GoogleAdsOnDeviceConversionTarget' in project 'GoogleAdsOnDeviceConversion'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+    Target 'GULNetwork' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Network' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Network' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-NSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Reachability' in project 'GoogleUtilities'
+    Target 'GULMethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-MethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-MethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+    Target 'GoogleUtilities-MethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-MethodSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+    Target 'GoogleUtilities_GoogleUtilities-MethodSwizzler' in project 'GoogleUtilities' (no dependencies)
+    Target 'SideMenu' in project 'SideMenu'
+        ➜ Explicit dependency on target 'SideMenu' in project 'SideMenu'
+    Target 'SideMenu' in project 'SideMenu' (no dependencies)
+    Target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase_FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+    Target 'Kingfisher' in project 'Kingfisher'
+        ➜ Explicit dependency on target 'Kingfisher' in project 'Kingfisher'
+        ➜ Explicit dependency on target 'Kingfisher_Kingfisher' in project 'Kingfisher'
+    Target 'Kingfisher' in project 'Kingfisher'
+        ➜ Explicit dependency on target 'Kingfisher_Kingfisher' in project 'Kingfisher'
+    Target 'Kingfisher_Kingfisher' in project 'Kingfisher' (no dependencies)
+    Target 'FirebaseMessaging' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseMessaging' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase_FirebaseMessaging' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseInstallations' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'GULUserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULReachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleDataTransport' in project 'GoogleDataTransport'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+    Target 'FirebaseMessaging' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase_FirebaseMessaging' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseInstallations' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'GULUserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULReachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleDataTransport' in project 'GoogleDataTransport'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+    Target 'GoogleDataTransport' in project 'GoogleDataTransport'
+        ➜ Explicit dependency on target 'GoogleDataTransport' in project 'GoogleDataTransport'
+        ➜ Explicit dependency on target 'GoogleDataTransport_GoogleDataTransport' in project 'GoogleDataTransport'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+    Target 'GoogleDataTransport' in project 'GoogleDataTransport'
+        ➜ Explicit dependency on target 'GoogleDataTransport_GoogleDataTransport' in project 'GoogleDataTransport'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+    Target 'nanopb' in project 'nanopb'
+        ➜ Explicit dependency on target 'nanopb' in project 'nanopb'
+        ➜ Explicit dependency on target 'nanopb_nanopb' in project 'nanopb'
+    Target 'nanopb' in project 'nanopb'
+        ➜ Explicit dependency on target 'nanopb_nanopb' in project 'nanopb'
+    Target 'nanopb_nanopb' in project 'nanopb' (no dependencies)
+    Target 'GoogleDataTransport_GoogleDataTransport' in project 'GoogleDataTransport' (no dependencies)
+    Target 'GULReachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Reachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Reachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+    Target 'GULAppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-AppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-AppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-NSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Reachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Network' in project 'GoogleUtilities'
+    Target 'GoogleUtilities-AppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-AppDelegateSwizzler' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-NSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Reachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Network' in project 'GoogleUtilities'
+    Target 'GoogleUtilities-Network' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Network' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-NSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Reachability' in project 'GoogleUtilities'
+    Target 'GoogleUtilities_GoogleUtilities-Network' in project 'GoogleUtilities' (no dependencies)
+    Target 'GoogleUtilities-Reachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Reachability' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+    Target 'GoogleUtilities_GoogleUtilities-Reachability' in project 'GoogleUtilities' (no dependencies)
+    Target 'GoogleUtilities_GoogleUtilities-AppDelegateSwizzler' in project 'GoogleUtilities' (no dependencies)
+    Target 'FirebaseInstallations' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase_FirebaseInstallations' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'GULUserDefaults' in project 'GoogleUtilities'
+    Target 'GULUserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-UserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-UserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+    Target 'GoogleUtilities-UserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-UserDefaults' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+    Target 'GoogleUtilities_GoogleUtilities-UserDefaults' in project 'GoogleUtilities' (no dependencies)
+    Target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'Promises_FBLPromises' in project 'Promises'
+    Target 'FBLPromises' in project 'Promises'
+        ➜ Explicit dependency on target 'Promises_FBLPromises' in project 'Promises'
+    Target 'Promises_FBLPromises' in project 'Promises' (no dependencies)
+    Target 'Firebase_FirebaseInstallations' in project 'Firebase' (no dependencies)
+    Target 'FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase_FirebaseCore' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase' in project 'Firebase'
+        ➜ Explicit dependency on target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GULLogger' in project 'GoogleUtilities'
+    Target 'GULLogger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+    Target 'GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Logger' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+    Target 'GoogleUtilities_GoogleUtilities-Logger' in project 'GoogleUtilities' (no dependencies)
+    Target 'GULEnvironment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+    Target 'GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-Environment' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'third-party-IsAppEncrypted' in project 'GoogleUtilities'
+    Target 'third-party-IsAppEncrypted' in project 'GoogleUtilities' (no dependencies)
+    Target 'GoogleUtilities_GoogleUtilities-Environment' in project 'GoogleUtilities' (no dependencies)
+    Target 'Firebase_FirebaseCore' in project 'Firebase' (no dependencies)
+    Target 'FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'Firebase_FirebaseCoreInternal' in project 'Firebase'
+        ➜ Explicit dependency on target 'GULNSData' in project 'GoogleUtilities'
+    Target 'GULNSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities-NSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-NSData' in project 'GoogleUtilities'
+    Target 'GoogleUtilities-NSData' in project 'GoogleUtilities'
+        ➜ Explicit dependency on target 'GoogleUtilities_GoogleUtilities-NSData' in project 'GoogleUtilities'
+    Target 'GoogleUtilities_GoogleUtilities-NSData' in project 'GoogleUtilities' (no dependencies)
+    Target 'Firebase_FirebaseCoreInternal' in project 'Firebase' (no dependencies)
+    Target 'Firebase' in project 'Firebase' (no dependencies)
+    Target 'Firebase_FirebaseMessaging' in project 'Firebase' (no dependencies)
+    Target 'KakaoSDKAuth' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKAuth' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoSDKAuth' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoOpenSDK_KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'KakaoOpenSDK_KakaoSDKCommon' in project 'KakaoOpenSDK'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+    Target 'Alamofire' in project 'Alamofire'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+        ➜ Explicit dependency on target 'Alamofire_Alamofire' in project 'Alamofire'
+    Target 'Alamofire' in project 'Alamofire'
+        ➜ Explicit dependency on target 'Alamofire_Alamofire' in project 'Alamofire'
+    Target 'Alamofire_Alamofire' in project 'Alamofire' (no dependencies)
+    Target 'KakaoOpenSDK_KakaoSDKCommon' in project 'KakaoOpenSDK' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk -x objective-c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/ibtool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/momc --dry-run --action generate --swift-version 5.0 --sdkroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk --iphoneos-deployment-target 26.0 --module kycarrots /Users/soo/kyarrotsIos/kycarrots/Notification/NotificationModel.xcdatamodeld /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/momc --dry-run --action generate --swift-version 5.0 --sdkroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk --iphoneos-deployment-target 26.0 --module kycarrots /Users/soo/kyarrotsIos/kycarrots/kycarrots.xcdatamodeld /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/kycarrots
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/soo/kyarrotsIos/kycarrots/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk -x c -c /dev/null
+
+ReadFileContents /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/docc/features.json
+
+Build description signature: 96ada242a61422a09ecb0112a9883f5a
+Build description path: /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/XCBuildData/96ada242a61422a09ecb0112a9883f5a.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk /Users/soo/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.1-23B77-69b33fc7382b27d9b5d46e82a00f8e78.sdkstatcache
+    cd /Users/soo/kyarrotsIos/kycarrots.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk -o /Users/soo/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.1-23B77-69b33fc7382b27d9b5d46e82a00f8e78.sdkstatcache
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseMessaging.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseMessaging.build/empty-Firebase_FirebaseMessaging.plist (in target 'Firebase_FirebaseMessaging' from project 'Firebase')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseMessaging.build/empty-Firebase_FirebaseMessaging.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseMessaging.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleDataTransport_GoogleDataTransport.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleDataTransport.build/Debug-iphoneos/GoogleDataTransport_GoogleDataTransport.build/empty-GoogleDataTransport_GoogleDataTransport.plist (in target 'GoogleDataTransport_GoogleDataTransport' from project 'GoogleDataTransport')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleDataTransport
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleDataTransport.build/Debug-iphoneos/GoogleDataTransport_GoogleDataTransport.build/empty-GoogleDataTransport_GoogleDataTransport.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleDataTransport_GoogleDataTransport.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-AppDelegateSwizzler.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-AppDelegateSwizzler.build/empty-GoogleUtilities_GoogleUtilities-AppDelegateSwizzler.plist (in target 'GoogleUtilities_GoogleUtilities-AppDelegateSwizzler' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-AppDelegateSwizzler.build/empty-GoogleUtilities_GoogleUtilities-AppDelegateSwizzler.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-AppDelegateSwizzler.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/nanopb_nanopb.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/nanopb.build/Debug-iphoneos/nanopb_nanopb.build/empty-nanopb_nanopb.plist (in target 'nanopb_nanopb' from project 'nanopb')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/nanopb
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/nanopb.build/Debug-iphoneos/nanopb_nanopb.build/empty-nanopb_nanopb.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/nanopb_nanopb.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Starscream_Starscream.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Starscream.build/Debug-iphoneos/Starscream_Starscream.build/empty-Starscream_Starscream.plist (in target 'Starscream_Starscream' from project 'Starscream')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/Starscream
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Starscream.build/Debug-iphoneos/Starscream_Starscream.build/empty-Starscream_Starscream.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Starscream_Starscream.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Kingfisher_Kingfisher.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Kingfisher.build/Debug-iphoneos/Kingfisher_Kingfisher.build/empty-Kingfisher_Kingfisher.plist (in target 'Kingfisher_Kingfisher' from project 'Kingfisher')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/Kingfisher
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Kingfisher.build/Debug-iphoneos/Kingfisher_Kingfisher.build/empty-Kingfisher_Kingfisher.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Kingfisher_Kingfisher.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/KakaoOpenSDK_KakaoSDKCommon.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/KakaoOpenSDK.build/Debug-iphoneos/KakaoOpenSDK_KakaoSDKCommon.build/empty-KakaoOpenSDK_KakaoSDKCommon.plist (in target 'KakaoOpenSDK_KakaoSDKCommon' from project 'KakaoOpenSDK')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/kakao-ios-sdk
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/KakaoOpenSDK.build/Debug-iphoneos/KakaoOpenSDK_KakaoSDKCommon.build/empty-KakaoOpenSDK_KakaoSDKCommon.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/KakaoOpenSDK_KakaoSDKCommon.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-UserDefaults.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-UserDefaults.build/empty-GoogleUtilities_GoogleUtilities-UserDefaults.plist (in target 'GoogleUtilities_GoogleUtilities-UserDefaults' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-UserDefaults.build/empty-GoogleUtilities_GoogleUtilities-UserDefaults.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-UserDefaults.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Promises_FBLPromises.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Promises.build/Debug-iphoneos/Promises_FBLPromises.build/empty-Promises_FBLPromises.plist (in target 'Promises_FBLPromises' from project 'Promises')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/promises
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Promises.build/Debug-iphoneos/Promises_FBLPromises.build/empty-Promises_FBLPromises.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Promises_FBLPromises.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Reachability.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Reachability.build/empty-GoogleUtilities_GoogleUtilities-Reachability.plist (in target 'GoogleUtilities_GoogleUtilities-Reachability' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Reachability.build/empty-GoogleUtilities_GoogleUtilities-Reachability.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Reachability.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/KakaoOpenSDK_KakaoSDKUser.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/KakaoOpenSDK.build/Debug-iphoneos/KakaoOpenSDK_KakaoSDKUser.build/empty-KakaoOpenSDK_KakaoSDKUser.plist (in target 'KakaoOpenSDK_KakaoSDKUser' from project 'KakaoOpenSDK')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/kakao-ios-sdk
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/KakaoOpenSDK.build/Debug-iphoneos/KakaoOpenSDK_KakaoSDKUser.build/empty-KakaoOpenSDK_KakaoSDKUser.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -additionalcontentfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/KakaoOpenSDK.build/Debug-iphoneos/KakaoOpenSDK_KakaoSDKUser.build/assetcatalog_generated_info.plist -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/KakaoOpenSDK_KakaoSDKUser.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Network.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Network.build/empty-GoogleUtilities_GoogleUtilities-Network.plist (in target 'GoogleUtilities_GoogleUtilities-Network' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Network.build/empty-GoogleUtilities_GoogleUtilities-Network.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Network.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-NSData.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-NSData.build/empty-GoogleUtilities_GoogleUtilities-NSData.plist (in target 'GoogleUtilities_GoogleUtilities-NSData' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-NSData.build/empty-GoogleUtilities_GoogleUtilities-NSData.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-NSData.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-MethodSwizzler.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-MethodSwizzler.build/empty-GoogleUtilities_GoogleUtilities-MethodSwizzler.plist (in target 'GoogleUtilities_GoogleUtilities-MethodSwizzler' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-MethodSwizzler.build/empty-GoogleUtilities_GoogleUtilities-MethodSwizzler.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-MethodSwizzler.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Logger.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Logger.build/empty-GoogleUtilities_GoogleUtilities-Logger.plist (in target 'GoogleUtilities_GoogleUtilities-Logger' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Logger.build/empty-GoogleUtilities_GoogleUtilities-Logger.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Logger.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Environment.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Environment.build/empty-GoogleUtilities_GoogleUtilities-Environment.plist (in target 'GoogleUtilities_GoogleUtilities-Environment' from project 'GoogleUtilities')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GoogleUtilities.build/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Environment.build/empty-GoogleUtilities_GoogleUtilities-Environment.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/GoogleUtilities_GoogleUtilities-Environment.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseInstallations.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseInstallations.build/empty-Firebase_FirebaseInstallations.plist (in target 'Firebase_FirebaseInstallations' from project 'Firebase')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseInstallations.build/empty-Firebase_FirebaseInstallations.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseInstallations.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseCoreInternal.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseCoreInternal.build/empty-Firebase_FirebaseCoreInternal.plist (in target 'Firebase_FirebaseCoreInternal' from project 'Firebase')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseCoreInternal.build/empty-Firebase_FirebaseCoreInternal.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseCoreInternal.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseCore.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseCore.build/empty-Firebase_FirebaseCore.plist (in target 'Firebase_FirebaseCore' from project 'Firebase')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Firebase.build/Debug-iphoneos/Firebase_FirebaseCore.build/empty-Firebase_FirebaseCore.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Firebase_FirebaseCore.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Alamofire_Alamofire.bundle/Info.plist /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Alamofire.build/Debug-iphoneos/Alamofire_Alamofire.build/empty-Alamofire_Alamofire.plist (in target 'Alamofire_Alamofire' from project 'Alamofire')
+    cd /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/Alamofire
+    builtin-infoPlistUtility /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/Alamofire.build/Debug-iphoneos/Alamofire_Alamofire.build/empty-Alamofire_Alamofire.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/Alamofire_Alamofire.bundle/Info.plist
+
+SwiftDriver kycarrots normal arm64 com.apple.xcode.tools.swift.compiler (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name kycarrots -Onone -enforce-exclusivity\=checked @/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleDataTransport.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseMessaging.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-UserDefaults.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleAdsOnDeviceConversionTarget.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleAppMeasurementTarget.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-AppDelegateSwizzler.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-MethodSwizzler.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Reachability.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-NSData.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Logger.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Environment.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/third-party-IsAppEncrypted.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Network.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/nanopb.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseAnalyticsWrapper.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseInstallations.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseCore.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseAnalyticsTarget.modulemap -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk -target arm64-apple-ios26.0 -g -module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64 -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.1-23B77-69b33fc7382b27d9b5d46e82a00f8e78.sdkstatcache -output-file-map /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots_const_extract_protocols.json -Xcc -iquote -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-generated-files.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-own-target-headers.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots-dba518092c91150457c4b7d78b0cc28d-VFS-iphoneos/all-product-headers.yaml -Xcc -iquote -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-project-headers.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleDataTransport/GoogleDataTransport/GDTCORLibrary/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseMessaging/Sources/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/promises/Sources/FBLPromises/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/UserDefaults/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/google-ads-on-device-conversion-ios-sdk/GoogleAdsOnDeviceConversionWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleAppMeasurement/GoogleAppMeasurementWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/AppDelegateSwizzler/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/MethodSwizzler/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Reachability/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/NSData+zlib/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Logger/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Environment/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/third_party/IsAppEncrypted/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Network/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/nanopb/spm_headers -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseAnalyticsWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseInstallations/Source/Library/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseCore/Sources/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/CoreOnly/Sources -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/SwiftPM-PlatformExclude/FirebaseAnalyticsWrap/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources-normal/arm64 -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/arm64 -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots-Swift.h -working-directory /Users/soo/kyarrotsIos -experimental-emit-module-separately -disable-cmo
+
+ProcessInfoPlistFile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Info.plist /Users/soo/kyarrotsIos/kycarrots/Info.plist (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    builtin-infoPlistUtility /Users/soo/kyarrotsIos/kycarrots/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/PkgInfo -expandbuildsettings -format binary -platform iphoneos -additionalcontentfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Base.lproj/LaunchScreen-SBPartialInfo.plist -additionalcontentfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Base.lproj/Main-SBPartialInfo.plist -additionalcontentfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Alamofire_Alamofire.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Firebase_FirebaseCore.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Firebase_FirebaseCoreInternal.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Firebase_FirebaseInstallations.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Firebase_FirebaseMessaging.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Frameworks/FirebaseAnalytics.framework -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Frameworks/GoogleAdsOnDeviceConversion.framework -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Frameworks/GoogleAppMeasurement.framework -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Frameworks/GoogleAppMeasurementIdentitySupport.framework -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleDataTransport_GoogleDataTransport.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-AppDelegateSwizzler.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-Environment.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-Logger.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-MethodSwizzler.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-NSData.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-Network.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-Reachability.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/GoogleUtilities_GoogleUtilities-UserDefaults.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/KakaoOpenSDK_KakaoSDKCommon.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/KakaoOpenSDK_KakaoSDKUser.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Kingfisher_Kingfisher.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Promises_FBLPromises.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Starscream_Starscream.bundle -scanforprivacyfile /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/nanopb_nanopb.bundle -requiredArchitecture arm64 -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.app/Info.plist
+
+SwiftCompile normal arm64 Compiling\ OnboardingViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/OnboardingViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/OnboardingViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 Compiling\ Constants.swift /Users/soo/kyarrotsIos/kycarrots/Common/Constants.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/Constants.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 Compiling\ OrderMgtDetailView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderMgtDetailView.swift (in target 'kycarrots' from project 'kycarrots')
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderMgtDetailView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 Compiling\ DashboardSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardSwiftUIView.swift:141:37: error: cannot find 'RecentProductRowView' in scope
+                                    RecentProductRowView(item: item) {
+                                    ^~~~~~~~~~~~~~~~~~~~
+
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/soo/kyarrotsIos/kycarrots/Common/BlockingLoader.swift /Users/soo/kyarrotsIos/kycarrots/Common/ButtonStyleUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/CommonFunc.swift /Users/soo/kyarrotsIos/kycarrots/Common/CommonUi.swift /Users/soo/kyarrotsIos/kycarrots/Common/CommonUiVC.swift /Users/soo/kyarrotsIos/kycarrots/Common/Constants.swift /Users/soo/kyarrotsIos/kycarrots/Common/CurrencyUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/LoginInfoUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/ProfileImageUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/PushTokenUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/SideMenuRestrictedHostingController.swift /Users/soo/kyarrotsIos/kycarrots/Common/StaticDataInfo.swift /Users/soo/kyarrotsIos/kycarrots/Common/TokenUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/UITextFieldExt.swift /Users/soo/kyarrotsIos/kycarrots/Compnent/RangeSlider.swift /Users/soo/kyarrotsIos/kycarrots/Data/Api/AdApiEndpoint.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdItem.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdListRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductDetailResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductDetailTabResponses.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductImageVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductItem.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/QnaVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/RecentProductViewModel.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ReviewVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/SaleStatus.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/TxtListDataInfo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatBuyerDto.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatMessage.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatMessageResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatRoomResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/EmailSendReq.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/InterestRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/PurchaseHistoryRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/PushTokenVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/SimpleResultResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/StringResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Order/OrderModels.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/BranchInfoVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/LinkSocialRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/LoginResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/OnboardingRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/OpUserVO.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/PasswordChangeRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/SocialAuthRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/SocialAuthResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/UnlinkSocialRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Network/Socket/StompFrame.swift /Users/soo/kyarrotsIos/kycarrots/Data/Network/Socket/StompManager.swift /Users/soo/kyarrotsIos/kycarrots/Data/Repository/RemoteRepository.swift /Users/soo/kyarrotsIos/kycarrots/Domain/AppService.swift /Users/soo/kyarrotsIos/kycarrots/Domain/AppServiceProvider.swift /Users/soo/kyarrotsIos/kycarrots/Intro/AppCoordinator.swift /Users/soo/kyarrotsIos/kycarrots/Intro/IntroViewController.swift /Users/soo/kyarrotsIos/kycarrots/Intro/PushType.swift /Users/soo/kyarrotsIos/kycarrots/Network/ApiClient.swift /Users/soo/kyarrotsIos/kycarrots/Network/ApiError.swift /Users/soo/kyarrotsIos/kycarrots/Network/Endpoint.swift /Users/soo/kyarrotsIos/kycarrots/Network/HttpMethod.swift /Users/soo/kyarrotsIos/kycarrots/Network/NetworkConfig.swift /Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PersistenceController.swift /Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift /Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift /Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeManager.swift /Users/soo/kyarrotsIos/kycarrots/Notification/NotifType.swift /Users/soo/kyarrotsIos/kycarrots/Notification/PushNotification.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/HomeView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/HomeViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/InterestProductView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/InterestProductViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/MainTabView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/ProductRowView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/PurchaseHistoryView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/PurchaseHistoryViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatViewModel.swift -primary-file /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/LoginSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/LoginViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/OnboardingSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/OnboardingViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/MembershipSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/TermsAgreeSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/TermsZoomSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/AddressSearchView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderCheckoutView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderManagementView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderMgtDetailView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderSuccessView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/PaymentWebView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDescriptionView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductQnaView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductQnaWriteView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductReviewView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductReviewWriteView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/WebSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDraft.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdImgRegiViewController.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift /Users/soo/kyarrotsIos/kycarrots/AppDelegate.swift /Users/soo/kyarrotsIos/kycarrots/ApplicationEx.swift /Users/soo/kyarrotsIos/kycarrots/MenuListViewController.swift /Users/soo/kyarrotsIos/kycarrots/SceneDelegate.swift /Users/soo/kyarrotsIos/kycarrots/UIViewController.swift /Users/soo/kyarrotsIos/kycarrots/ViewController.swift /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel/CDPushNotification+CoreDataClass.swift /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel/CDPushNotification+CoreDataProperties.swift /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel/NotificationModel+CoreDataModel.swift /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/GeneratedAssetSymbols.swift -emit-dependencies-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/DashboardSwiftUIView.d -emit-const-values-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/DashboardSwiftUIView.swiftconstvalues -emit-reference-dependencies-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/DashboardSwiftUIView.swiftdeps -serialize-diagnostics-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/DashboardSwiftUIView.dia -emit-localized-strings -emit-localized-strings-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64 -target arm64-apple-ios26.0 -module-can-import-version DeveloperToolsSupport 23.0.4 23.0.4 -module-can-import-version SwiftUI 7.1.13.1 7.1.13 -module-can-import-version UIKit 9126.1.12.1 9126.1.12 -disable-cross-import-overlay-search -swift-module-cross-import CoreData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/CoreData.framework/Modules/CoreData.swiftcrossimport/CloudKit.swiftoverlay -swift-module-cross-import CoreData /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk/System/Library/Frameworks/CoreData.framework/Modules/CoreData.swiftcrossimport/CloudKit.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/WidgetKit.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/WidgetKit.swiftoverlay -swift-module-cross-import WebKit /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import WebKit /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk/System/Library/Frameworks/WebKit.framework/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libTipKitMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#TipKitMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk -I /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -enforce-exclusivity\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots_const_extract_protocols.json -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -default-isolation\=MainActor -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/soo/kyarrotsIos -enable-anonymous-context-mangled-names -file-compilation-dir /Users/soo/kyarrotsIos -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleDataTransport.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseMessaging.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-UserDefaults.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleAdsOnDeviceConversionTarget.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleAppMeasurementTarget.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-AppDelegateSwizzler.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-MethodSwizzler.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Reachability.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-NSData.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Logger.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Environment.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/third-party-IsAppEncrypted.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Network.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/nanopb.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseAnalyticsWrapper.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseInstallations.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseCore.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseAnalyticsTarget.modulemap -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.1-23B77-69b33fc7382b27d9b5d46e82a00f8e78.sdkstatcache -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-generated-files.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-own-target-headers.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots-dba518092c91150457c4b7d78b0cc28d-VFS-iphoneos/all-product-headers.yaml -Xcc -iquote -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-project-headers.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleDataTransport/GoogleDataTransport/GDTCORLibrary/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseMessaging/Sources/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/promises/Sources/FBLPromises/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/UserDefaults/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/google-ads-on-device-conversion-ios-sdk/GoogleAdsOnDeviceConversionWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleAppMeasurement/GoogleAppMeasurementWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/AppDelegateSwizzler/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/MethodSwizzler/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Reachability/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/NSData+zlib/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Logger/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Environment/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/third_party/IsAppEncrypted/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Network/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/nanopb/spm_headers -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseAnalyticsWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseInstallations/Source/Library/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseCore/Sources/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/CoreOnly/Sources -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/SwiftPM-PlatformExclude/FirebaseAnalyticsWrap/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources-normal/arm64 -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/arm64 -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name kycarrots -frontend-parseable-output -disable-clang-spi -target-sdk-version 26.1 -target-sdk-name iphoneos26.1 -clang-target arm64-apple-ios26.1 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/DashboardSwiftUIView.o -index-unit-output-path /kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/DashboardSwiftUIView.o -index-store-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Index.noindex/DataStore -index-system-modules
+SwiftCompile normal arm64 Compiling\ MembershipSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/MembershipSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/MembershipSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 Compiling\ OrderManagementView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderManagementView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderManagementView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 Compiling\ AddressSearchView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/AddressSearchView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/AddressSearchView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 Compiling\ SettingsView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift:66:31: warning: no calls to throwing functions occur within 'try' expression
+                if let info = try await appService.getUserInfoByToken(token: token) {
+                              ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift:82:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift:293:58: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+                                        Text(city.strMsg ?? "").tag(city.strIdx ?? "")
+                                             ~~~~~~~~~~~~^~~~~
+                                                        
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift:293:81: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+                                        Text(city.strMsg ?? "").tag(city.strIdx ?? "")
+                                                                    ~~~~~~~~~~~~^~~~~
+                                                                               
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift:307:58: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+                                        Text(town.strMsg ?? "").tag(town.strIdx ?? "")
+                                             ~~~~~~~~~~~~^~~~~
+                                                        
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift:307:81: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+                                        Text(town.strMsg ?? "").tag(town.strIdx ?? "")
+                                                                    ~~~~~~~~~~~~^~~~~
+                                                                               
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/SettingsView.swift:297:34: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+                                .onChange(of: viewModel.selectedCityCode) { newValue in
+                                 ^
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ kycarrots (in target 'kycarrots' from project 'kycarrots')
+
+EmitSwiftModule normal arm64 (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift:18:65: warning: main actor-isolated static property 'shared' can not be referenced from a nonisolated context
+        context: NSManagedObjectContext = PersistenceController.shared.container.viewContext
+                                                                ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PersistenceController.swift:12:16: note: static property declared here
+    static let shared = PersistenceController()
+               ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift:14:32: warning: call to main actor-isolated initializer 'init(context:)' in a synchronous nonisolated context
+        repo: PushRepository = CoreDataPushRepository(),
+                               ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift:23:5: note: calls to initializer 'init(context:)' from outside of its actor context are implicitly asynchronous
+    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+    ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift:23:5: note: main actor isolation inferred from conformance to protocol 'PushRepository'
+    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+    ^
+/Users/soo/kyarrotsIos/kycarrots/AppDelegate.swift:50:36: warning: 'OpenURLOptionsKey' was deprecated in iOS 26.0: Use UIScene lifecycle and equivalent properties on UISceneOpenURLOptions from a UIOpenURLContext in UIScene.ConnectionOptions.URLContexts instead.
+           options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+                                   ^
+
+SwiftCompile normal arm64 Compiling\ ChatViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatViewModel.swift:102:29: warning: no calls to throwing functions occur within 'try' expression
+            let responses = try await AppServiceProvider.shared.getChatMessages(roomId: roomId)
+                            ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatViewModel.swift:113:11: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+        } catch {
+          ^
+
+SwiftCompile normal arm64 Compiling\ OrderCheckoutView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderCheckoutView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderCheckoutView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling Constants.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AddressSearchView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 Compiling\ ProductListViewModel.swift,\ ProductQnaView.swift,\ ProductQnaWriteView.swift,\ ProductReviewView.swift,\ ProductReviewWriteView.swift,\ WebSwiftUIView.swift,\ MakeAdDetailViewController.swift,\ MakeAdDraft.swift,\ MakeAdImgRegiViewController.swift,\ MakeAdMainViewController.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductQnaView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductQnaWriteView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductReviewView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductReviewWriteView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/WebSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDraft.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdImgRegiViewController.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListViewModel.swift:45:27: warning: no calls to throwing functions occur within 'try' expression
+                let ads = try await appService.getAdvertiseList(req: req)
+                          ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListViewModel.swift:52:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift:18:65: warning: main actor-isolated static property 'shared' can not be referenced from a nonisolated context
+        context: NSManagedObjectContext = PersistenceController.shared.container.viewContext
+                                                                ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PersistenceController.swift:12:16: note: static property declared here
+    static let shared = PersistenceController()
+               ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductQnaView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductQnaWriteView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductReviewView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductReviewWriteView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductReviewWriteView.swift:105:34: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+                                .onChange(of: selectedItems) { _ in
+                                 ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/WebSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/WebSwiftUIView.swift:100:43: warning: 'javaScriptEnabled' was deprecated in iOS 14.0: Use WKWebpagePreferences.allowsContentJavaScript to disable content JavaScript on a per-navigation basis
+        webView.configuration.preferences.javaScriptEnabled = true
+                                          ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift:119:11: warning: 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+        b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 14, bottom: 0, right: 14)
+          ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift:135:54: warning: 'done' was deprecated in iOS 26.0: renamed to 'UIBarButtonItem.Style.prominent'
+            UIBarButtonItem(title: "확인", style: .done, target: self, action: #selector(onConfirmDate))
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift:135:54: note: use 'UIBarButtonItem.Style.prominent' instead
+            UIBarButtonItem(title: "확인", style: .done, target: self, action: #selector(onConfirmDate))
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift:161:53: warning: no calls to throwing functions occur within 'try' expression
+                let (catList, areaList, unitList) = try await (cat, area, unit)
+                                                    ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift:168:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift:367:61: warning: 'done' was deprecated in iOS 26.0: renamed to 'UIBarButtonItem.Style.prominent'
+        let done = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(doneTapped))
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDetailViewController.swift:367:61: note: use 'UIBarButtonItem.Style.prominent' instead
+        let done = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(doneTapped))
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdDraft.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdImgRegiViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdImgRegiViewController.swift:173:22: warning: 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+        btnPickTitle.contentEdgeInsets = UIEdgeInsets(top: 14, left: 16, bottom: 14, right: 16)
+                     ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdImgRegiViewController.swift:224:17: warning: 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+        btnPrev.contentEdgeInsets = UIEdgeInsets(top: 14, left: 16, bottom: 14, right: 16)
+                ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdImgRegiViewController.swift:232:17: warning: 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+        btnNext.contentEdgeInsets = UIEdgeInsets(top: 14, left: 16, bottom: 14, right: 16)
+                ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift:135:31: warning: no calls to throwing functions occur within 'try' expression
+                    let sub = try await self.service.getSCodeList(groupId: "R010610", mcode: code)
+                              ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift:139:19: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+                } catch {
+                  ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift:149:32: warning: no calls to throwing functions occur within 'try' expression
+                     let sub = try await self.service.getSCodeList(groupId: "R010070", mcode: code)
+                               ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift:153:20: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+                 } catch {
+                   ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdMainViewController.swift:237:36: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+            d.name = product.title ?? ""
+                     ~~~~~~~~~~~~~~^~~~~
+                                  
+
+SwiftCompile normal arm64 Compiling\ MakeAdPreviewViewController.swift,\ AppDelegate.swift,\ ApplicationEx.swift,\ MenuListViewController.swift,\ SceneDelegate.swift,\ UIViewController.swift,\ ViewController.swift,\ CDPushNotification+CoreDataClass.swift,\ CDPushNotification+CoreDataProperties.swift,\ GeneratedAssetSymbols.swift /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift /Users/soo/kyarrotsIos/kycarrots/AppDelegate.swift /Users/soo/kyarrotsIos/kycarrots/ApplicationEx.swift /Users/soo/kyarrotsIos/kycarrots/MenuListViewController.swift /Users/soo/kyarrotsIos/kycarrots/SceneDelegate.swift /Users/soo/kyarrotsIos/kycarrots/UIViewController.swift /Users/soo/kyarrotsIos/kycarrots/ViewController.swift /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel/CDPushNotification+CoreDataClass.swift /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel/CDPushNotification+CoreDataProperties.swift /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift:208:25: warning: no calls to throwing functions occur within 'try' expression
+                    _ = try await service.updateAdvertise(product: product, imageMetas: metas, images: images)
+                        ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift:210:25: warning: no calls to throwing functions occur within 'try' expression
+                    _ = try await service.registerAdvertise(product: product, imageMetas: metas, images: images)
+                        ^
+/Users/soo/kyarrotsIos/kycarrots/Ui/Ad/MakeAdPreviewViewController.swift:218:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/AppDelegate.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/AppDelegate.swift:50:36: warning: 'OpenURLOptionsKey' was deprecated in iOS 26.0: Use UIScene lifecycle and equivalent properties on UISceneOpenURLOptions from a UIOpenURLContext in UIScene.ConnectionOptions.URLContexts instead.
+           options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+                                   ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/ApplicationEx.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/MenuListViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SceneDelegate.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/UIViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/ViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel/CDPushNotification+CoreDataClass.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/CoreDataGenerated/NotificationModel/CDPushNotification+CoreDataProperties.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ChatViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 Compiling\ LoginViewModel.swift,\ OnboardingSwiftUIView.swift,\ TermsAgreeSwiftUIView.swift,\ TermsZoomSwiftUIView.swift,\ NotificationListSwiftUIView.swift,\ OrderSuccessView.swift,\ PaymentWebView.swift,\ ProductDescriptionView.swift,\ ProductDetailSwiftUIView.swift,\ ProductDetailViewModel.swift,\ ProductListSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/LoginViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/OnboardingSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/TermsAgreeSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/TermsZoomSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderSuccessView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/PaymentWebView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDescriptionView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/LoginViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/OnboardingSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/TermsAgreeSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/membership/TermsZoomSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift:14:32: warning: call to main actor-isolated initializer 'init(context:)' in a synchronous nonisolated context
+        repo: PushRepository = CoreDataPushRepository(),
+                               ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift:23:5: note: calls to initializer 'init(context:)' from outside of its actor context are implicitly asynchronous
+    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+    ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift:23:5: note: main actor isolation inferred from conformance to protocol 'PushRepository'
+    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+    ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift:27:26: warning: main actor-isolated property 'repo' can not be referenced from a Sendable closure
+                try self.repo.markAllRead(userId: userId)
+                         ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift:10:17: note: property declared here
+    private let repo: PushRepository
+                ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift:28:37: warning: main actor-isolated property 'repo' can not be referenced from a Sendable closure
+                let rows = try self.repo.list(userId: userId, onlyUnread: false, limit: 100, offset: 0)
+                                    ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift:10:17: note: property declared here
+    private let repo: PushRepository
+                ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/OrderSuccessView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/PaymentWebView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDescriptionView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailSwiftUIView.swift:107:24: warning: value 'product' was defined but never used; consider replacing with boolean test
+                if let product = viewModel.productDetail?.product {
+                   ~~~~^~~~~~~~~~
+                   (                                             ) != nil
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:104:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:142:89: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+                    let dict = Dictionary(grouping: self.statusOptions, by: { $0.strIdx ?? "" })
+                                                                              ~~~~~~~~~~^~~~~
+                                                                                       
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:127:28: warning: no calls to throwing functions occur within 'try' expression
+                let list = try await AppServiceProvider.shared.getCodeList(groupId: "R010630")
+                           ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:147:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:160:31: warning: no calls to throwing functions occur within 'try' expression
+                let success = try await AppServiceProvider.shared.toggleInterest(req)
+                              ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:167:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:185:21: warning: no calls to throwing functions occur within 'try' expression
+                _ = try await AppServiceProvider.shared.createPurchase(req)
+                    ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:197:27: warning: no calls to throwing functions occur within 'try' expression
+            let success = try await AppServiceProvider.shared.updateProductStatus(token: token, product: item)
+                          ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:206:11: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+        } catch {
+          ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:218:20: warning: no calls to throwing functions occur within 'try' expression
+            return try await AppServiceProvider.shared.getChatBuyers(productId: productId, branchId: targetBranchId)
+                   ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:219:11: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+        } catch {
+          ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:227:20: warning: no calls to throwing functions occur within 'try' expression
+            return try await AppServiceProvider.shared.createOrGetChatRoom(productId: pid, buyerId: buyerId, branchId: branchId)
+                   ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:228:11: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+        } catch {
+          ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:237:20: warning: no calls to throwing functions occur within 'try' expression
+            return try await AppServiceProvider.shared.getUserChatRooms(productId: pid, userId: targetBranchId)
+                   ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailViewModel.swift:238:11: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+        } catch {
+          ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductListSwiftUIView.swift:20:18: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+                .onChange(of: viewModel.selectedStatus) { _ in
+                 ^
+
+SwiftDriverJobDiscovery normal arm64 Compiling OnboardingViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 Compiling\ UITextFieldExt.swift,\ RangeSlider.swift,\ AdApiEndpoint.swift,\ AdItem.swift,\ AdListRequest.swift,\ AdResponse.swift,\ ProductDetailResponse.swift,\ ProductDetailTabResponses.swift,\ ProductImageVo.swift,\ ProductItem.swift,\ ProductVo.swift /Users/soo/kyarrotsIos/kycarrots/Common/UITextFieldExt.swift /Users/soo/kyarrotsIos/kycarrots/Compnent/RangeSlider.swift /Users/soo/kyarrotsIos/kycarrots/Data/Api/AdApiEndpoint.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdItem.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdListRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductDetailResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductDetailTabResponses.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductImageVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductItem.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductVo.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/UITextFieldExt.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Compnent/RangeSlider.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Api/AdApiEndpoint.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdItem.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdListRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/AdResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductDetailResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductDetailTabResponses.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductImageVo.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductItem.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ProductVo.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling SettingsView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 Compiling\ InterestProductView.swift,\ InterestProductViewModel.swift,\ MainTabView.swift,\ ProductRowView.swift,\ PurchaseHistoryView.swift,\ PurchaseHistoryViewModel.swift,\ ChatSwiftUIView.swift,\ DashboardViewModel.swift,\ FindAccountSwiftUIView.swift,\ FindAccountViewModel.swift,\ LoginSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/InterestProductView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/InterestProductViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/MainTabView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/ProductRowView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/PurchaseHistoryView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/PurchaseHistoryViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountSwiftUIView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountViewModel.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/LoginSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/InterestProductView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/InterestProductViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/MainTabView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift:18:65: warning: main actor-isolated static property 'shared' can not be referenced from a nonisolated context
+        context: NSManagedObjectContext = PersistenceController.shared.container.viewContext
+                                                                ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PersistenceController.swift:12:16: note: static property declared here
+    static let shared = PersistenceController()
+               ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/ProductRowView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/PurchaseHistoryView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/PurchaseHistoryViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatSwiftUIView.swift:59:22: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+                    .onChange(of: viewModel.chatMessages.count) { _ in
+                     ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardViewModel.swift:48:50: warning: left side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used
+                    let title = "\(product.title ?? "") \(formattedQty) \(product.unitCodeNm ?? "-")"
+                                   ~~~~~~~~~~~~~~^~~~~
+                                                
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardViewModel.swift:44:34: warning: no calls to throwing functions occur within 'try' expression
+                let recentList = try await appService.getRecentProducts(token: token)
+                                 ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardViewModel.swift:105:38: warning: no calls to throwing functions occur within 'try' expression
+                let wholesalerList = try await appService.getWholesalers(memberCode: "ROLE_PROJ")
+                                     ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/DashboardViewModel.swift:130:15: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+            } catch {
+              ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountSwiftUIView.swift:76:26: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+                        .onChange(of: viewModel.phoneMid) { newValue in
+                         ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountSwiftUIView.swift:85:26: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+                        .onChange(of: viewModel.phoneLast) { newValue in
+                         ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountViewModel.swift:64:28: warning: no calls to throwing functions occur within 'try' expression
+            let codeStr = (try await service.findPassword(email: trimmedEmail) ?? "")
+                           ^
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/FindAccountViewModel.swift:72:11: warning: 'catch' block is unreachable because no errors are thrown in 'do' block
+        } catch {
+          ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/loginout/LoginSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling OrderManagementView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 Compiling\ BlockingLoader.swift,\ ButtonStyleUtil.swift,\ CommonFunc.swift,\ CommonUi.swift,\ CommonUiVC.swift,\ CurrencyUtil.swift,\ LoginInfoUtil.swift,\ ProfileImageUtil.swift,\ PushTokenUtil.swift,\ SideMenuRestrictedHostingController.swift,\ TokenUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/BlockingLoader.swift /Users/soo/kyarrotsIos/kycarrots/Common/ButtonStyleUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/CommonFunc.swift /Users/soo/kyarrotsIos/kycarrots/Common/CommonUi.swift /Users/soo/kyarrotsIos/kycarrots/Common/CommonUiVC.swift /Users/soo/kyarrotsIos/kycarrots/Common/CurrencyUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/LoginInfoUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/ProfileImageUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/PushTokenUtil.swift /Users/soo/kyarrotsIos/kycarrots/Common/SideMenuRestrictedHostingController.swift /Users/soo/kyarrotsIos/kycarrots/Common/TokenUtil.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/BlockingLoader.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/ButtonStyleUtil.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/CommonFunc.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/CommonUi.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Common/CommonUi.swift:84:9: warning: 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+        contentEdgeInsets = UIEdgeInsets(
+        ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/CommonUiVC.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/CurrencyUtil.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/LoginInfoUtil.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/ProfileImageUtil.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/PushTokenUtil.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/SideMenuRestrictedHostingController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Common/TokenUtil.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for kycarrots (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriver\ Compilation\ Requirements kycarrots normal arm64 com.apple.xcode.tools.swift.compiler (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name kycarrots -Onone -enforce-exclusivity\=checked @/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleDataTransport.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseMessaging.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-UserDefaults.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleAdsOnDeviceConversionTarget.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleAppMeasurementTarget.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-AppDelegateSwizzler.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-MethodSwizzler.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Reachability.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-NSData.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Logger.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Environment.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/third-party-IsAppEncrypted.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/GoogleUtilities-Network.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/nanopb.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseAnalyticsWrapper.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseInstallations.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseCore.modulemap -Xcc -fmodule-map-file\=/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/FirebaseAnalyticsTarget.modulemap -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk -target arm64-apple-ios26.0 -g -module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64 -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.1-23B77-69b33fc7382b27d9b5d46e82a00f8e78.sdkstatcache -output-file-map /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/soo/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots_const_extract_protocols.json -Xcc -iquote -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-generated-files.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-own-target-headers.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots-dba518092c91150457c4b7d78b0cc28d-VFS-iphoneos/all-product-headers.yaml -Xcc -iquote -Xcc /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/kycarrots-project-headers.hmap -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleDataTransport/GoogleDataTransport/GDTCORLibrary/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseMessaging/Sources/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/promises/Sources/FBLPromises/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/UserDefaults/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/google-ads-on-device-conversion-ios-sdk/GoogleAdsOnDeviceConversionWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleAppMeasurement/GoogleAppMeasurementWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/AppDelegateSwizzler/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/MethodSwizzler/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Reachability/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/NSData+zlib/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Logger/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Environment/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/third_party/IsAppEncrypted/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Network/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/nanopb/spm_headers -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseAnalyticsWrapper/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseInstallations/Source/Library/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/FirebaseCore/Sources/Public -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/CoreOnly/Sources -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/SourcePackages/checkouts/firebase-ios-sdk/SwiftPM-PlatformExclude/FirebaseAnalyticsWrap/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/include -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources-normal/arm64 -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources/arm64 -Xcc -I/Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots-Swift.h -working-directory /Users/soo/kyarrotsIos -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling MembershipSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 Compiling\ ApiError.swift,\ Endpoint.swift,\ HttpMethod.swift,\ NetworkConfig.swift,\ PersistenceController.swift,\ PushRepository.swift,\ NotificationBadgeHelper.swift,\ NotificationBadgeManager.swift,\ PushNotification.swift,\ HomeView.swift,\ HomeViewModel.swift /Users/soo/kyarrotsIos/kycarrots/Network/ApiError.swift /Users/soo/kyarrotsIos/kycarrots/Network/Endpoint.swift /Users/soo/kyarrotsIos/kycarrots/Network/HttpMethod.swift /Users/soo/kyarrotsIos/kycarrots/Network/NetworkConfig.swift /Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PersistenceController.swift /Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift /Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift /Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeManager.swift /Users/soo/kyarrotsIos/kycarrots/Notification/PushNotification.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/HomeView.swift /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/HomeViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Network/ApiError.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Network/Endpoint.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Network/HttpMethod.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Network/NetworkConfig.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PersistenceController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift:18:65: warning: main actor-isolated static property 'shared' can not be referenced from a nonisolated context
+        context: NSManagedObjectContext = PersistenceController.shared.container.viewContext
+                                                                ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PersistenceController.swift:12:16: note: static property declared here
+    static let shared = PersistenceController()
+               ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeHelper.swift:59:30: warning: 'applicationIconBadgeNumber' was deprecated in iOS 17.0: Use -[UNUserNotificationCenter setBadgeCount:withCompletionHandler:] instead.
+        UIApplication.shared.applicationIconBadgeNumber = max(0, count)
+                             ^
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Notification/NotificationBadgeManager.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Notification/PushNotification.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/HomeView.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/buy/HomeViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+Copy /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.swiftmodule/arm64-apple-ios.swiftmodule /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.swiftmodule (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.swiftmodule /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.swiftmodule/arm64-apple-ios.swiftmodule
+
+SwiftDriverJobDiscovery normal arm64 Compiling MakeAdPreviewViewController.swift, AppDelegate.swift, ApplicationEx.swift, MenuListViewController.swift, SceneDelegate.swift, UIViewController.swift, ViewController.swift, CDPushNotification+CoreDataClass.swift, CDPushNotification+CoreDataProperties.swift, GeneratedAssetSymbols.swift (in target 'kycarrots' from project 'kycarrots')
+
+Copy /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.swiftmodule/arm64-apple-ios.abi.json /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.abi.json (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.abi.json /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.swiftmodule/arm64-apple-ios.abi.json
+
+Copy /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.swiftsourceinfo (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Intermediates.noindex/kycarrots.build/Debug-iphoneos/kycarrots.build/Objects-normal/arm64/kycarrots.swiftsourceinfo /Users/soo/Library/Developer/Xcode/DerivedData/kycarrots-hbhdjduveyxlhoejkxijqeotknje/Build/Products/Debug-iphoneos/kycarrots.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ QnaVo.swift,\ RecentProductViewModel.swift,\ ReviewVo.swift,\ SaleStatus.swift,\ TxtListDataInfo.swift,\ ChatBuyerDto.swift,\ ChatMessage.swift,\ ChatMessageResponse.swift,\ ChatRoomResponse.swift,\ EmailSendReq.swift,\ InterestRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/QnaVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/RecentProductViewModel.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ReviewVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/SaleStatus.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/TxtListDataInfo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatBuyerDto.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatMessage.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatMessageResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatRoomResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/EmailSendReq.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/InterestRequest.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/QnaVo.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/RecentProductViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/ReviewVo.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/SaleStatus.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Ad/TxtListDataInfo.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatBuyerDto.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatMessage.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatMessageResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Chat/ChatRoomResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/EmailSendReq.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/InterestRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling OrderMgtDetailView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 Compiling\ SocialAuthRequest.swift,\ SocialAuthResponse.swift,\ UnlinkSocialRequest.swift,\ StompFrame.swift,\ StompManager.swift,\ RemoteRepository.swift,\ AppService.swift,\ AppCoordinator.swift,\ IntroViewController.swift,\ PushType.swift,\ ApiClient.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/SocialAuthRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/SocialAuthResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/UnlinkSocialRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Network/Socket/StompFrame.swift /Users/soo/kyarrotsIos/kycarrots/Data/Network/Socket/StompManager.swift /Users/soo/kyarrotsIos/kycarrots/Data/Repository/RemoteRepository.swift /Users/soo/kyarrotsIos/kycarrots/Domain/AppService.swift /Users/soo/kyarrotsIos/kycarrots/Intro/AppCoordinator.swift /Users/soo/kyarrotsIos/kycarrots/Intro/IntroViewController.swift /Users/soo/kyarrotsIos/kycarrots/Intro/PushType.swift /Users/soo/kyarrotsIos/kycarrots/Network/ApiClient.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/SocialAuthRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/SocialAuthResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/UnlinkSocialRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Network/Socket/StompFrame.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Network/Socket/StompManager.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Repository/RemoteRepository.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Domain/AppService.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Domain/AppService.swift:73:50: warning: expression implicitly coerced from 'String?' to 'Any'
+                print("❌ savePushToken fail:", res.message)
+/Users/soo/kyarrotsIos/kycarrots/Domain/AppService.swift:73:54: note: provide a default value to avoid this warning
+                print("❌ savePushToken fail:", res.message)
+/Users/soo/kyarrotsIos/kycarrots/Domain/AppService.swift:73:54: note: force-unwrap the value to avoid this warning
+                print("❌ savePushToken fail:", res.message)
+/Users/soo/kyarrotsIos/kycarrots/Domain/AppService.swift:73:54: note: explicitly cast to 'Any' with 'as Any' to silence this warning
+                print("❌ savePushToken fail:", res.message)
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Intro/AppCoordinator.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Intro/AppCoordinator.swift:35:47: warning: 'main' was deprecated in iOS 26.0: Use a UIScreen instance found through context instead (i.e, view.window.windowScene.screen), or for properties like UIScreen.scale with trait equivalents, use a traitCollection found through context.
+        menuNav.menuWidth = min(300, UIScreen.main.bounds.width * 0.8)
+                                              ^
+/Users/soo/kyarrotsIos/kycarrots/Intro/AppCoordinator.swift:214:13: warning: variable 'rootView' was never mutated; consider changing to 'let' constant
+        var rootView = NotificationListSwiftUIView(viewModel: viewModel) { [weak self] item in
+        ~~~ ^
+        let
+/Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/noti/NotificationListSwiftUIView.swift:14:32: warning: call to main actor-isolated initializer 'init(context:)' in a synchronous nonisolated context
+        repo: PushRepository = CoreDataPushRepository(),
+                               ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift:23:5: note: calls to initializer 'init(context:)' from outside of its actor context are implicitly asynchronous
+    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+    ^
+/Users/soo/kyarrotsIos/kycarrots/Notification/Persistence/PushRepository.swift:23:5: note: main actor isolation inferred from conformance to protocol 'PushRepository'
+    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+    ^
+/Users/soo/kyarrotsIos/kycarrots/Intro/AppCoordinator.swift:283:13: warning: variable 'rootView' was never mutated; consider changing to 'let' constant
+        var rootView = ProductDetailSwiftUIView(viewModel: viewModel) { [weak self] pid in
+        ~~~ ^
+        let
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Intro/IntroViewController.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+/Users/soo/kyarrotsIos/kycarrots/Intro/IntroViewController.swift:153:13: warning: initialization of immutable value 'userNo' was never used; consider replacing with assignment to '_' or removing it
+        let userNo = LoginInfoUtil.getUserNo()
+        ~~~~^~~~~~
+        _
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Intro/PushType.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Network/ApiClient.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 Compiling\ PurchaseHistoryRequest.swift,\ PushTokenVo.swift,\ SimpleResultResponse.swift,\ StringResponse.swift,\ OrderModels.swift,\ BranchInfoVo.swift,\ LinkSocialRequest.swift,\ LoginResponse.swift,\ OnboardingRequest.swift,\ OpUserVO.swift,\ PasswordChangeRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/PurchaseHistoryRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/PushTokenVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/SimpleResultResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/StringResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/Order/OrderModels.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/BranchInfoVo.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/LinkSocialRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/LoginResponse.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/OnboardingRequest.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/OpUserVO.swift /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/PasswordChangeRequest.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/PurchaseHistoryRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/PushTokenVo.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/SimpleResultResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Common/StringResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/Order/OrderModels.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/BranchInfoVo.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/LinkSocialRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/LoginResponse.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/OnboardingRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/OpUserVO.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftCompile normal arm64 /Users/soo/kyarrotsIos/kycarrots/Data/Models/User/PasswordChangeRequest.swift (in target 'kycarrots' from project 'kycarrots')
+    cd /Users/soo/kyarrotsIos
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling BlockingLoader.swift, ButtonStyleUtil.swift, CommonFunc.swift, CommonUi.swift, CommonUiVC.swift, CurrencyUtil.swift, LoginInfoUtil.swift, ProfileImageUtil.swift, PushTokenUtil.swift, SideMenuRestrictedHostingController.swift, TokenUtil.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling OrderCheckoutView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling QnaVo.swift, RecentProductViewModel.swift, ReviewVo.swift, SaleStatus.swift, TxtListDataInfo.swift, ChatBuyerDto.swift, ChatMessage.swift, ChatMessageResponse.swift, ChatRoomResponse.swift, EmailSendReq.swift, InterestRequest.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ApiError.swift, Endpoint.swift, HttpMethod.swift, NetworkConfig.swift, PersistenceController.swift, PushRepository.swift, NotificationBadgeHelper.swift, NotificationBadgeManager.swift, PushNotification.swift, HomeView.swift, HomeViewModel.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling UITextFieldExt.swift, RangeSlider.swift, AdApiEndpoint.swift, AdItem.swift, AdListRequest.swift, AdResponse.swift, ProductDetailResponse.swift, ProductDetailTabResponses.swift, ProductImageVo.swift, ProductItem.swift, ProductVo.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling SocialAuthRequest.swift, SocialAuthResponse.swift, UnlinkSocialRequest.swift, StompFrame.swift, StompManager.swift, RemoteRepository.swift, AppService.swift, AppCoordinator.swift, IntroViewController.swift, PushType.swift, ApiClient.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling InterestProductView.swift, InterestProductViewModel.swift, MainTabView.swift, ProductRowView.swift, PurchaseHistoryView.swift, PurchaseHistoryViewModel.swift, ChatSwiftUIView.swift, DashboardViewModel.swift, FindAccountSwiftUIView.swift, FindAccountViewModel.swift, LoginSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PurchaseHistoryRequest.swift, PushTokenVo.swift, SimpleResultResponse.swift, StringResponse.swift, OrderModels.swift, BranchInfoVo.swift, LinkSocialRequest.swift, LoginResponse.swift, OnboardingRequest.swift, OpUserVO.swift, PasswordChangeRequest.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ProductListViewModel.swift, ProductQnaView.swift, ProductQnaWriteView.swift, ProductReviewView.swift, ProductReviewWriteView.swift, WebSwiftUIView.swift, MakeAdDetailViewController.swift, MakeAdDraft.swift, MakeAdImgRegiViewController.swift, MakeAdMainViewController.swift (in target 'kycarrots' from project 'kycarrots')
+
+SwiftDriverJobDiscovery normal arm64 Compiling LoginViewModel.swift, OnboardingSwiftUIView.swift, TermsAgreeSwiftUIView.swift, TermsZoomSwiftUIView.swift, NotificationListSwiftUIView.swift, OrderSuccessView.swift, PaymentWebView.swift, ProductDescriptionView.swift, ProductDetailSwiftUIView.swift, ProductDetailViewModel.swift, ProductListSwiftUIView.swift (in target 'kycarrots' from project 'kycarrots')
+

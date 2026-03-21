@@ -60,4 +60,12 @@ struct Constants {
     static let ROLE_PUB  = "ROLE_PUB"
     static let ROLE_SELL = "ROLE_SELL"
     static let ROLE_PROJ = "ROLE_PROJ"
+    static let ROLE_ADMIN = "ROLE_ADMIN"
+}
+
+extension Optional where Wrapped == Any {
+    func asString() -> String {
+        if let val = self { return String(describing: val) }
+        return ""
+    }
 }

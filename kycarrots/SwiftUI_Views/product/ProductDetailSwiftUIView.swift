@@ -132,7 +132,13 @@ struct ProductDetailSwiftUIView: View {
                             }
                             
                             // Buy Button
-                            Button(action: { /* Buy logic */ }) {
+                            NavigationLink(destination: OrderCheckoutView(
+                                viewModel: OrderCheckoutViewModel(
+                                    product: product,
+                                    quantity: 1,
+                                    selectedOption: nil
+                                )
+                            )) {
                                 Text("구매하기")
                                     .font(.system(size: 18, weight: .bold))
                                     .foregroundColor(.white)

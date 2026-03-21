@@ -264,6 +264,74 @@ final class AppService {
         (try? await repo.answerQna(qnaId: qnaId, answerContents: answerContents, token: token).result) ?? false
     }
 
+    // MARK: - 주문 (Order)
+    func createOrder(req: OrderCreateRequest) async -> OrderCreateResponse? {
+        try? await repo.createOrder(req: req)
+    }
+
+    func confirmPayment(req: PaymentConfirmRequest) async -> Bool {
+        (try? await repo.confirmPayment(req: req).success) ?? false
+    }
+
+    func getOrderHistory(buyerNo: Int64, page: Int) async -> [AdItem] {
+        (try? await repo.getOrderHistory(buyerNo: buyerNo, page: page).items) ?? []
+    }
+
+    func getOrderDetail(orderId: String) async -> OrderDetailResponse? {
+        try? await repo.getOrderDetail(orderId: orderId)
+    }
+
+    func cancelPayment(req: OrderCancelRequest) async -> Bool {
+        (try? await repo.cancelPayment(req: req).success) ?? false
+    }
+
+    // MARK: - 주소록 (Address)
+    func getAddressList(token: String) async -> [TbAddressBookVo] {
+        (try? await repo.getAddressList(token: token)) ?? []
+    }
+
+    func addAddress(token: String, address: TbAddressBookVo) async -> Bool {
+        (try? await repo.addAddress(token: token, address: address).result) ?? false
+    }
+
+    func updateAddress(id: Int64, token: String, address: TbAddressBookVo) async -> Bool {
+        (try? await repo.updateAddress(id: id, token: token, address: address).result) ?? false
+    }
+
+    func deleteAddress(id: Int64, token: String) async -> Bool {
+        (try? await repo.deleteAddress(id: id, token: token).result) ?? false
+    }
+
+    // MARK: - 관리자 (Admin)
+    func getDashboardMgtData(token: String) async -> [String: Any]? {
+        try? await repo.getDashboardMgtData(token: token)
+    }
+
+    func getOrderMgtList(token: String, status: String?, stDate: String?, edDate: String?, keyword: String?) async -> [String: Any]? {
+        try? await repo.getOrderMgtList(token: token, status: status, stDate: stDate, edDate: edDate, keyword: keyword)
+    }
+
+    func getOrderMgtDetail(orderId: String, token: String) async -> [String: Any]? {
+        try? await repo.getOrderMgtDetail(orderId: orderId, token: token)
+    }
+
+    func updateOrderStatus(token: String, orderId: String, status: String) async -> Bool {
+        (try? await repo.updateOrderStatus(token: token, orderId: orderId, status: status).result) ?? false
+    }
+
+    func confirmDeposit(token: String, orderId: String, carrier: String, tracking: String) async -> Bool {
+        (try? await repo.confirmDeposit(token: token, orderId: orderId, carrier: carrier, tracking: tracking).result) ?? false
+    }
+
+    func requestBranchDeposit(token: String, orderId: String) async -> Bool {
+        (try? await repo.requestBranchDeposit(token: token, orderId: orderId).result) ?? false
+    }
+
+    func updateShipping(token: String, orderId: String, carrier: String, tracking: String) async -> Bool {
+        (try? await repo.updateShipping(token: token, orderId: orderId, carrier: carrier, tracking: tracking).result) ?? false
+    }
+
+
     // Android처럼 TODO 유지
     func saveJwt(_ jwt: String) {
         // TODO: Keychain / UserDefaults 등에 저장

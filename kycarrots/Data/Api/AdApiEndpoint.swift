@@ -102,6 +102,28 @@ enum AdApiEndpoint: Endpoint {
     case authSocial(req: SocialAuthRequest)
     case linkSocial(req: LinkSocialRequest)
     case unlinkSocial(req: UnlinkSocialRequest)
+    // 주문 (Order)
+    case createOrder(req: OrderCreateRequest)
+    case confirmPayment(req: PaymentConfirmRequest)
+    case getOrderHistory(buyerNo: Int64, page: Int, size: Int)
+    case getOrderDetail(orderId: String)
+    case cancelPayment(req: OrderCancelRequest)
+
+    // 주소록 (Address)
+    case getAddressList(token: String)
+    case addAddress(token: String, address: TbAddressBookVo)
+    case updateAddress(id: Int64, token: String, address: TbAddressBookVo)
+    case deleteAddress(id: Int64, token: String)
+
+    // 관리자 / 대시보드
+    case getDashboardData(token: String)
+    case getOrderMgtList(token: String, status: String?, stDate: String?, edDate: String?, keyword: String?)
+    case getOrderMgtDetail(orderId: String, token: String)
+    case updateOrderStatus(token: String, orderId: String, status: String)
+    case confirmDeposit(token: String, orderId: String, carrier: String, tracking: String)
+    case requestBranchDeposit(token: String, orderId: String)
+    case updateShipping(token: String, orderId: String, carrier: String, tracking: String)
+
     // MARK: - Endpoint conformance
 
     var path: String {
@@ -212,6 +234,42 @@ enum AdApiEndpoint: Endpoint {
             return "api/members/link"
         case .unlinkSocial:
             return "api/members/unlink"
+
+        // Order
+        case .createOrder:
+            return "api/payment/order/create"
+        case .confirmPayment:
+            return "api/payment/confirm"
+        case let .getOrderHistory(buyerNo, _, _):
+            return "api/orders/buyer/\(buyerNo)"
+        case .cancelPayment:
+            return "api/payment/cancel"
+        case let .getOrderDetail(orderId):
+            return "api/orders/\(orderId)"
+
+        // Address
+        case .getAddressList, .addAddress:
+            return "api/members/address"
+        case let .updateAddress(id, _, _):
+            return "api/members/address/update/\(id)"
+        case let .deleteAddress(id, _):
+            return "api/members/address/delete/\(id)"
+
+        // Dashboard / Order Mgt
+        case .getDashboardData:
+            return "api/dashboard"
+        case .getOrderMgtList:
+            return "api/order/list"
+        case .getOrderMgtDetail:
+            return "/api/order/mgt/detail"
+        case .updateOrderStatus:
+            return "/api/order/mgt/update/status"
+        case .confirmDeposit:
+            return "/api/order/mgt/confirm/deposit"
+        case .requestBranchDeposit:
+            return "/api/order/mgt/request/deposit"
+        case .updateShipping:
+            return "/api/order/mgt/update/shipping"
         }
     }
 
@@ -234,6 +292,9 @@ enum AdApiEndpoint: Endpoint {
              .getReviewList,
              .getQnaList:
             return .get
+
+        case .getOrderMgtDetail, .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:
+            return .post
 
         default:
             return .post
@@ -350,7 +411,7 @@ enum AdApiEndpoint: Endpoint {
                 "wholesalerNo": wholesalerNo
             ]
 
-        // @FormUrlEncoded email-check / userinfo → query로 매핑
+        // @FormUrlEncoded email-check / userinfo → query 로 매핑
         case let .checkEmailDuplicate(email):
             return ["email": email]
 
@@ -362,6 +423,40 @@ enum AdApiEndpoint: Endpoint {
 
         case let .changePassword(token, _):
             return ["token": token]
+
+        case let .getOrderHistory(_, page, size):
+            return ["page": String(page), "size": String(size)]
+
+        case let .getAddressList(token),
+             let .addAddress(token, _):
+            return ["token": token]
+
+        case let .updateAddress(_, token, _),
+             let .deleteAddress(_, token):
+            return ["token": token]
+
+        case let .getDashboardData(token):
+            return ["token": token]
+
+        case let .getOrderMgtList(token, status, stDate, edDate, keyword):
+            var q = ["token": token]
+            if let s = status { q["orderStatus"] = s }
+            if let sd = stDate { q["orderStDt"] = sd }
+            if let ed = edDate { q["orderEdDt"] = ed }
+            if let k = keyword { q["searchKeyword"] = k }
+            return q
+
+        case let .getOrderMgtDetail(_, token):
+            return ["token": token]
+
+        case let .updateOrderStatus(token, orderId, status):
+            return ["token": token, "orderId": orderId, "status": status]
+        case let .confirmDeposit(token, orderId, carrier, tracking):
+            return ["token": token, "orderId": orderId, "carrier": carrier, "trackingNo": tracking]
+        case let .requestBranchDeposit(token, orderId):
+            return ["token": token, "orderId": orderId]
+        case let .updateShipping(token, orderId, carrier, tracking):
+            return ["token": token, "orderId": orderId, "carrier": carrier, "trackingNo": tracking]
 
         default:
             return nil
@@ -427,6 +522,17 @@ enum AdApiEndpoint: Endpoint {
             return req
         case let .unlinkSocial(req):
             return req
+
+        // Order / Address JSON Body
+        case let .createOrder(req):
+            return req
+        case let .confirmPayment(req):
+            return req
+        case let .cancelPayment(req):
+            return req
+        case let .addAddress(_, address),
+             let .updateAddress(_, _, address):
+            return address
 
         default:
             return nil

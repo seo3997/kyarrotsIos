@@ -25,6 +25,9 @@
    구현 되어 있어니 안드로이이 앱을 참고 해서 구현한다.
    iOs 신규화면
    안드로이드 화면을 참조하여 동일한 기능으로 및 디자인을 구현한다.
+   상풍상세 ProductDetailSwiftUIView.swift 구매하기 버튼클릭시 구해화면으로 이동됨
+   구매화면관련 소스는
+   /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/ 폴더에 구현한다.
    구매화면: OrderActivity.kt (배송지 관리 기능 추가)
    구매상세화면: OrderDetailActivity.kt
    주소검새: AddressSearchActivity.kt

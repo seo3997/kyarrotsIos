@@ -353,6 +353,8 @@ final class RemoteRepository {
             as: SimpleResultResponse.self
         )
     }
+
+    // MARK: - 문의 (QnA)
     func fetchQnaList(productId: Int64) async throws -> QnaListResponse {
         try await api.request(
             AdApiEndpoint.getQnaList(productId: productId),
@@ -386,5 +388,87 @@ final class RemoteRepository {
             AdApiEndpoint.answerQna(qnaId: qnaId, answerContents: answerContents, token: token),
             as: SimpleResultResponse.self
         )
+    }
+
+    // MARK: - 주문 (Order)
+    func createOrder(req: OrderCreateRequest) async throws -> OrderCreateResponse {
+        try await api.request(AdApiEndpoint.createOrder(req: req), as: OrderCreateResponse.self)
+    }
+
+    func confirmPayment(req: PaymentConfirmRequest) async throws -> PaymentConfirmResponse {
+        try await api.request(AdApiEndpoint.confirmPayment(req: req), as: PaymentConfirmResponse.self)
+    }
+
+    func getOrderHistory(buyerNo: Int64, page: Int, size: Int = 10) async throws -> AdResponse {
+        try await api.request(AdApiEndpoint.getOrderHistory(buyerNo: buyerNo, page: page, size: size), as: AdResponse.self)
+    }
+
+    func getOrderDetail(orderId: String) async throws -> OrderDetailResponse {
+        try await api.request(AdApiEndpoint.getOrderDetail(orderId: orderId), as: OrderDetailResponse.self)
+    }
+
+    func cancelPayment(req: OrderCancelRequest) async throws -> PaymentCancelResponse {
+        try await api.request(AdApiEndpoint.cancelPayment(req: req), as: PaymentCancelResponse.self)
+    }
+
+    // MARK: - 주소록 (Address)
+    func getAddressList(token: String) async throws -> [TbAddressBookVo] {
+        try await api.request(AdApiEndpoint.getAddressList(token: token), as: [TbAddressBookVo].self)
+    }
+
+    func addAddress(token: String, address: TbAddressBookVo) async throws -> SimpleResultResponse {
+        try await api.request(AdApiEndpoint.addAddress(token: token, address: address), as: SimpleResultResponse.self)
+    }
+
+    func updateAddress(id: Int64, token: String, address: TbAddressBookVo) async throws -> SimpleResultResponse {
+        try await api.request(AdApiEndpoint.updateAddress(id: id, token: token, address: address), as: SimpleResultResponse.self)
+    }
+
+    func deleteAddress(id: Int64, token: String) async throws -> SimpleResultResponse {
+        try await api.request(AdApiEndpoint.deleteAddress(id: id, token: token), as: SimpleResultResponse.self)
+    }
+
+    // MARK: - 관리자 / 대시보드
+    func getDashboardMgtData(token: String) async throws -> [String: Any] {
+        return try await api.request(AdApiEndpoint.getDashboardData(token: token), as: [String: AnyCodable].self).mapValues { $0.value }
+    }
+
+    func getOrderMgtList(token: String, status: String?, stDate: String?, edDate: String?, keyword: String?) async throws -> [String: Any] {
+        try await api.request(AdApiEndpoint.getOrderMgtList(token: token, status: status, stDate: stDate, edDate: edDate, keyword: keyword), as: [String: AnyCodable].self).mapValues { $0.value }
+    }
+
+    func getOrderMgtDetail(orderId: String, token: String) async throws -> [String: Any] {
+        try await api.request(AdApiEndpoint.getOrderMgtDetail(orderId: orderId, token: token), as: [String: AnyCodable].self).mapValues { $0.value }
+    }
+
+    func updateOrderStatus(token: String, orderId: String, status: String) async throws -> SimpleResultResponse {
+        try await api.request(AdApiEndpoint.updateOrderStatus(token: token, orderId: orderId, status: status), as: SimpleResultResponse.self)
+    }
+
+    func confirmDeposit(token: String, orderId: String, carrier: String, tracking: String) async throws -> SimpleResultResponse {
+        try await api.request(AdApiEndpoint.confirmDeposit(token: token, orderId: orderId, carrier: carrier, tracking: tracking), as: SimpleResultResponse.self)
+    }
+
+    func requestBranchDeposit(token: String, orderId: String) async throws -> SimpleResultResponse {
+        try await api.request(AdApiEndpoint.requestBranchDeposit(token: token, orderId: orderId), as: SimpleResultResponse.self)
+    }
+
+    func updateShipping(token: String, orderId: String, carrier: String, tracking: String) async throws -> SimpleResultResponse {
+        try await api.request(AdApiEndpoint.updateShipping(token: token, orderId: orderId, carrier: carrier, tracking: tracking), as: SimpleResultResponse.self)
+    }
+}
+
+// Simple AnyCodable helper to handle Map<String, Any> from Android
+struct AnyCodable: Decodable {
+    let value: Any
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let v = try? container.decode(String.self) { value = v }
+        else if let v = try? container.decode(Int.self) { value = v }
+        else if let v = try? container.decode(Double.self) { value = v }
+        else if let v = try? container.decode(Bool.self) { value = v }
+        else if let v = try? container.decode([String: AnyCodable].self) { value = v.mapValues { $0.value } }
+        else if let v = try? container.decode([AnyCodable].self) { value = v.map { $0.value } }
+        else { value = NSNull() }
     }
 }
