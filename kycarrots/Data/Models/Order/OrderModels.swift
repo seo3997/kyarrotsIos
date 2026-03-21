@@ -21,6 +21,7 @@ struct OrderItemRequest: Encodable {
     let productId: Int64
     let quantity: Int
     let optionName: String?
+    let productName: String?
 }
 
 struct OrderCreateResponse: Decodable {
@@ -28,7 +29,7 @@ struct OrderCreateResponse: Decodable {
     let orderId: Int64
     let orderNo: String
     let amount: Int
-    let orderName: String
+    let orderName: String?
     let message: String?
 }
 

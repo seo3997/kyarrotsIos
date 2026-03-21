@@ -1,54 +1,77 @@
 import SwiftUI
 
 struct OrderSuccessView: View {
+    let orderId: String
     let orderNo: String
     let amount: Int
     var onGoHome: () -> Void
     
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
             Spacer()
             
-            Image(systemName: "checkmark.circle.fill")
-                .resizable()
-                .frame(width: 80, height: 80)
-                .foregroundColor(.green)
+            // ── 1. 성공 아이콘 및 메시지 ──────────────────────────────
+            VStack(spacing: 24) {
+                ZStack {
+                    Circle()
+                        .fill(Color.orange.opacity(0.1))
+                        .frame(width: 100, height: 100)
+                    
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                        .foregroundColor(.orange)
+                }
+                
+                VStack(spacing: 12) {
+                    Text("주문이 완료되었습니다!")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.black)
+                    
+                    Text("주문해주셔서 감사합니다.\n상품 준비를 곧 시작할게요.")
+                        .font(.system(size: 16))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(4)
+                }
+            }
+            .padding(.bottom, 60)
             
-            Text("주문이 완료되었습니다!")
-                .font(.system(size: 24, weight: .bold))
-            
-            VStack(spacing: 12) {
+            // ── 2. 주문 정보 요약 카드 ──────────────────────────────
+            VStack(spacing: 16) {
                 HStack {
                     Text("주문번호")
+                        .font(.system(size: 16))
                         .foregroundColor(.gray)
                     Spacer()
-                    Text(orderNo)
-                        .fontWeight(.bold)
+                    Text(orderNo.isEmpty ? orderId : orderNo)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.black)
                 }
+                
+                Divider()
                 
                 HStack {
                     Text("결제금액")
+                        .font(.system(size: 16))
                         .foregroundColor(.gray)
                     Spacer()
-                    Text(formattedAmount)
-                        .font(.headline)
+                    Text(formatCurrency(amount))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.orange)
                 }
             }
-            .padding()
-            .background(Color(hex: "F8F9FA"))
-            .cornerRadius(12)
-            .padding(.horizontal, 40)
-            
-            Text("신속하고 정확하게 배송해드리겠습니다.")
-                .font(.system(size: 14))
-                .foregroundColor(.gray)
+            .padding(24)
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .padding(.horizontal, 24)
             
             Spacer()
             
-            Button(action: {
-                onGoHome()
-            }) {
+            // ── 3. 하단 버튼 ──────────────────────────────
+            Button(action: onGoHome) {
                 Text("홈으로 이동")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
@@ -56,17 +79,30 @@ struct OrderSuccessView: View {
                     .frame(height: 56)
                     .background(Color.orange)
                     .cornerRadius(12)
+                    .shadow(color: Color.orange.opacity(0.3), radius: 8, x: 0, y: 4)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 40)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 34)
         }
+        .background(Color(white: 0.98).ignoresSafeArea())
         .navigationBarHidden(true)
     }
     
-    private var formattedAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.string(from: NSNumber(value: amount)) ?? "0원"
+    private func formatCurrency(_ value: Int) -> String {
+        let f = NumberFormatter()
+        f.numberStyle = .currency
+        f.locale = Locale(identifier: "ko_KR")
+        return f.string(from: NSNumber(value: value)) ?? "0원"
+    }
+}
+
+struct OrderSuccessView_Previews: PreviewProvider {
+    static var previews: some View {
+        OrderSuccessView(
+            orderId: "123",
+            orderNo: "ORD_20260322_00001",
+            amount: 53000,
+            onGoHome: {}
+        )
     }
 }

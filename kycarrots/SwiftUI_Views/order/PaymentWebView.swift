@@ -107,7 +107,7 @@ struct PaymentWKWebView: UIViewRepresentable {
                         tossPayments.requestPayment('CARD', {
                             amount: \(orderResponse.amount),
                             orderId: '\(orderResponse.orderNo)',
-                            orderName: '\(orderResponse.orderName)',
+                            orderName: '\(orderResponse.orderName ?? "상품 구매")',
                             successUrl: '\(successUrl)',
                             failUrl: '\(failUrl)',
                         });

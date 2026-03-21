@@ -135,6 +135,10 @@ final class AppCoordinator {
         nav.popViewController(animated: true)
     }
 
+    func popToRoot() {
+        nav.popToRootViewController(animated: true)
+    }
+
     func showIntro(launchDeepLink: PushDeepLink? = nil, animated: Bool = true) {
         print("coordinator nav =", nav)
         print("window.rootVC =", window.rootViewController as Any)
