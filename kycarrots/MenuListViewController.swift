@@ -25,8 +25,13 @@ final class MenuListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDynamicMenu() // 권한별 메뉴 설정
         setupTableView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupDynamicMenu() // 권한 및 메뉴 갱신
+        updateHeaderInfo() // 유저 정보(이름, 이메일) 갱신
     }
     // MARK: - 권한별 메뉴 구성 (Android의 applyMenuForRole 대응)
     private func setupDynamicMenu() {
@@ -65,8 +70,13 @@ final class MenuListViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.contentInset.top = 40
         
+        // 헤더 뷰 최초 설정
+        updateHeaderInfo()
+    }
+    
+    private func updateHeaderInfo() {
         let header = MenuHeaderView()
-        header.frame = CGRect(x: 0, y: 0, width: 0, height: 120)
+        header.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 120)
         tableView.tableHeaderView = header
     }
     

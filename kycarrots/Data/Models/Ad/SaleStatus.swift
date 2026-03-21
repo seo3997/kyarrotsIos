@@ -1,31 +1,31 @@
 import Foundation
 
-/// 안드로이드 코드의 상태코드 기준으로 UI 라벨만 담당
-/// (실제 API에는 saleStatus "1","10","99","98" 같은 코드가 넘어감)
+/// 안드로이드 MainActivity.kr 기준 SaleStatus 매핑
+/// (반려 항목 제거 및 상태 코드 업데이트)
 enum SaleStatus: Int, CaseIterable, Identifiable {
-    case rejected = 98      // 승인반려(또는 반려)
-    case onSale  = 1        // 판매중
-    case reserved = 10      // 예약중
-    case soldOut = 99       // 판매완료
+    case onSale = 0      // 판매중 ("1")
+    case outOfStock = 1  // 품절 ("20")
+    case suspended = 2   // 판매중지 ("30")
+    case completed = 3   // 판매완료 ("99")
 
     var id: Int { self.rawValue }
 
     var title: String {
         switch self {
-        case .rejected: return "승인반려"
-        case .onSale:   return "판매중"
-        case .reserved: return "예약중"
-        case .soldOut:  return "판매완료"
+        case .onSale:      return "판매중"
+        case .outOfStock:  return "품절"
+        case .suspended:   return "판매중지"
+        case .completed:   return "판매완료"
         }
     }
 
     /// 서버에 넘길 saleStatus 코드
     var apiCode: String {
         switch self {
-        case .rejected: return "0"   // 서버에서 반려가 98이면 "98"로 바꾸면 됨
-        case .onSale:   return "1"
-        case .reserved: return "10"
-        case .soldOut:  return "99"
+        case .onSale:      return "1"
+        case .outOfStock:  return "20"
+        case .suspended:   return "30"
+        case .completed:   return "99"
         }
     }
 }
