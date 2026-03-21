@@ -407,14 +407,36 @@ struct OrderCheckoutView: View {
                 showAddressSearch = false
             })
         }
-        // 최근 배송지 선택
-        .confirmationDialog("최근 배송지 선택", isPresented: $viewModel.showAddressPicker, titleVisibility: .visible) {
-            ForEach(viewModel.addresses) { addr in
-                Button(addressLabel(addr)) {
-                    viewModel.applyAddress(addr)
+        // 최근 배송지 상세 선택 시트 (주소, 전화번호 상세 노출)
+        .sheet(isPresented: $viewModel.showAddressPicker) {
+            NavigationView {
+                List(viewModel.addresses) { addr in
+                    Button {
+                        viewModel.applyAddress(addr)
+                        viewModel.showAddressPicker = false
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(addressLabel(addr))
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundColor(.primary)
+                            
+                            Text("\(addr.addressMain ?? "") \(addr.addressDetail ?? "")")
+                                .font(.system(size: 14))
+                                .foregroundColor(.gray)
+                                .lineLimit(2)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+                .navigationTitle("최근 배송지 선택")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("닫기") { viewModel.showAddressPicker = false }
+                    }
                 }
             }
-            Button("취소", role: .cancel) {}
+            .presentationDetents([.medium, .large])
         }
         // 결제 확인 다이얼로그
         .alert("결제 확인", isPresented: $showPayConfirm) {
@@ -445,11 +467,10 @@ struct OrderCheckoutView: View {
 
     private func addressLabel(_ addr: TbAddressBookVo) -> String {
         let name = addr.recipientName ?? ""
-        let phone = addr.recipientPhone ?? ""
-        let main = addr.addressMain ?? ""
-        let detail = addr.addressDetail ?? ""
-        let def = addr.isDefault == 1 ? " [기본]" : ""
-        return "\(name) (\(phone))\(def)\n\(main) \(detail)"
+        // 전화번호에 하이픈 추가
+        let phone = viewModel.formatPhone(addr.recipientPhone ?? "")
+        let def = addr.isDefault == 1 ? "[기본] " : ""
+        return "\(def)\(name) (\(phone))"
     }
 
     private func formatCurrency(_ value: Int) -> String {
