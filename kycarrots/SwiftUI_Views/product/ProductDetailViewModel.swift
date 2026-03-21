@@ -26,8 +26,9 @@ class ProductDetailViewModel: ObservableObject {
     }
     
     var totalPrice: Int {
-        guard let priceStr = productDetail?.product.price,
-              let price = Int(priceStr.replacingOccurrences(of: ",", with: "")) else { return 0 }
+        guard let priceStr = productDetail?.product.price else { return 0 }
+        let cleanPrice = priceStr.replacingOccurrences(of: ",", with: "")
+        let price = Int(Double(cleanPrice) ?? 0)
         return price * quantity
     }
     

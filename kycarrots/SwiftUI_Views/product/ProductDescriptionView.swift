@@ -52,11 +52,17 @@ struct ProductDescriptionView: View {
                         
                         // 3. Description
                         VStack(alignment: .leading, spacing: 12) {
-                            if product.editorMode == "1" || product.editorMode == "2" {
-                                let rawDescription = product.description ?? "정보가 없습니다."
-                                let htmlContent = wrapHTML(rawDescription)
-                                HTMLStringView(htmlContent: htmlContent)
-                                    .frame(height: webViewHeight)
+                            if product.editorMode == "1" || product.editorMode == "2" || product.editorMode == "3" {
+                                let rawDescription = product.description ?? ""
+                                if rawDescription == "없음" || rawDescription.isEmpty {
+                                    Text("정보가 없습니다.")
+                                        .font(.system(size: 15))
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    let htmlContent = wrapHTML(rawDescription)
+                                    HTMLStringView(htmlContent: htmlContent)
+                                        .frame(height: webViewHeight)
+                                }
                             } else {
                                 Text(product.description ?? "정보가 없습니다.")
                                     .font(.system(size: 15))
@@ -72,7 +78,8 @@ struct ProductDescriptionView: View {
                         
                         // 4. Price & Shipping
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("\(CurrencyUtil.formatCurrency(Int(product.price ?? "0") ?? 0))")
+                            let priceValue = Int(Double(product.price ?? "0") ?? 0)
+                            Text("\(CurrencyUtil.formatCurrency(priceValue))")
                                 .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.primary)
                             
@@ -95,7 +102,8 @@ struct ProductDescriptionView: View {
                             .cornerRadius(8)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.blue.opacity(0.1), lineWidth: 1))
                             
-                            Text("구매 가능 수량: \(CurrencyUtil.formatCurrency(Int(product.availableQuantity ?? "0") ?? 0))개")
+                            let availQtyValue = Int(Double(product.availableQuantity ?? "0") ?? 0)
+                            Text("구매 가능 수량: \(CurrencyUtil.formatCurrency(availQtyValue))개")
                                 .font(.system(size: 13))
                                 .foregroundColor(.gray)
                             
@@ -112,7 +120,7 @@ struct ProductDescriptionView: View {
                                         .font(.system(size: 18, weight: .bold))
                                         .frame(width: 40)
                                     Button(action: { 
-                                        let max = Int(product.availableQuantity ?? "0") ?? 0
+                                        let max = Int(Double(product.availableQuantity ?? "0") ?? 0)
                                         if viewModel.quantity < max { viewModel.quantity += 1 } 
                                     }) {
                                         Image(systemName: "plus.circle.fill")

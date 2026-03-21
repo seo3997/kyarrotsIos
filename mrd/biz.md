@@ -16,7 +16,7 @@
    ProductDescriptionFragment.kt
    2-1-2 상품리뷰
    ProductReviewFragment.kt
-   2-1-3 상품문의
+   2-1-3 상품문의tnwj
    ProductQAFragment.kt
 3. 구매하기
    3-1 구매하기 화면
