@@ -42,15 +42,42 @@ struct AdItem: Codable, Identifiable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        productId = try container.decodeIfPresent(String.self, forKey: .productId) ?? container.decodeIfPresent(String.self, forKey: .PRODUCT_ID)
+        
+        // productId (String or Int)
+        if let str = try? container.decode(String.self, forKey: .productId) { productId = str }
+        else if let str = try? container.decode(String.self, forKey: .PRODUCT_ID) { productId = str }
+        else if let num = try? container.decode(Int64.self, forKey: .productId) { productId = String(num) }
+        else if let num = try? container.decode(Int64.self, forKey: .PRODUCT_ID) { productId = String(num) }
+        else { productId = nil }
+
         title = try container.decodeIfPresent(String.self, forKey: .title) ?? container.decodeIfPresent(String.self, forKey: .TITLE)
         description = try container.decodeIfPresent(String.self, forKey: .description) ?? container.decodeIfPresent(String.self, forKey: .DESCRIPTION)
-        price = try container.decodeIfPresent(String.self, forKey: .price) ?? container.decodeIfPresent(String.self, forKey: .PRICE)
+        
+        // price (String or Double/Decimal)
+        if let str = try? container.decode(String.self, forKey: .price) { price = str }
+        else if let str = try? container.decode(String.self, forKey: .PRICE) { price = str }
+        else if let num = try? container.decode(Double.self, forKey: .price) { price = String(num) }
+        else if let num = try? container.decode(Double.self, forKey: .PRICE) { price = String(num) }
+        else { price = nil }
+
         imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl) ?? container.decodeIfPresent(String.self, forKey: .IMAGE_URL)
-        userId = try container.decodeIfPresent(String.self, forKey: .userId) ?? container.decodeIfPresent(String.self, forKey: .USER_NO)
+        
+        // userId / userNo (String or Int)
+        if let str = try? container.decode(String.self, forKey: .userId) { userId = str }
+        else if let str = try? container.decode(String.self, forKey: .USER_NO) { userId = str }
+        else if let num = try? container.decode(Int64.self, forKey: .userId) { userId = String(num) }
+        else if let num = try? container.decode(Int64.self, forKey: .USER_NO) { userId = String(num) }
+        else { userId = nil }
         
         orderNo = try container.decodeIfPresent(String.self, forKey: .orderNo) ?? container.decodeIfPresent(String.self, forKey: .ORDER_NO)
-        orderId = try container.decodeIfPresent(String.self, forKey: .orderId) ?? container.decodeIfPresent(String.self, forKey: .ORDER_ID)
+        
+        // orderId (String or Int)
+        if let str = try? container.decode(String.self, forKey: .orderId) { orderId = str }
+        else if let str = try? container.decode(String.self, forKey: .ORDER_ID) { orderId = str }
+        else if let num = try? container.decode(Int64.self, forKey: .orderId) { orderId = String(num) }
+        else if let num = try? container.decode(Int64.self, forKey: .ORDER_ID) { orderId = String(num) }
+        else { orderId = nil }
+
         paymentStatus = try container.decodeIfPresent(String.self, forKey: .paymentStatus) ?? container.decodeIfPresent(String.self, forKey: .PAYMENT_STATUS) ?? container.decodeIfPresent(String.self, forKey: .ORDER_STATUS)
         orderStatusNm = try container.decodeIfPresent(String.self, forKey: .orderStatusNm) ?? container.decodeIfPresent(String.self, forKey: .ORDER_STATUS_NM)
         deliveredAt = try container.decodeIfPresent(String.self, forKey: .deliveredAt) ?? container.decodeIfPresent(String.self, forKey: .DELIVERED_AT)

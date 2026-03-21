@@ -6,40 +6,9 @@ struct PurchaseHistoryView: View {
     var onSelectOrder: ((String) -> Void)? = nil
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 12) {
-                    ForEach(viewModel.items) { item in
-                        Button(action: {
-                            if let orderId = item.orderId {
-                                onSelectOrder?(orderId)
-                            }
-                        }) {
-                            PurchaseItemRow(
-                                item: item,
-                                onCancel: { viewModel.cancelOrder(item: item) },
-                                onReturn: { viewModel.requestReturn(item: item) }
-                            )
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        .onAppear {
-                            if item.productId == viewModel.items.last?.productId {
-                                viewModel.fetchPurchaseList()
-                            }
-                        }
-                    }
-                    
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .padding()
-                    }
-                }
-                .padding(.vertical, 16)
-            }
-            .background(Color(.systemGroupedBackground))
-            .refreshable {
-                viewModel.fetchPurchaseList(isRefresh: true)
-            }
+        ZStack {
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
             
             if viewModel.items.isEmpty && !viewModel.isLoading {
                 VStack(spacing: 12) {
@@ -53,7 +22,38 @@ struct PurchaseHistoryView: View {
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.systemGroupedBackground))
+            } else {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(viewModel.items, id: \.id) { item in
+                            PurchaseItemRow(
+                                item: item,
+                                onCancel: { viewModel.cancelOrder(item: item) },
+                                onReturn: { viewModel.requestReturn(item: item) }
+                            )
+                            .padding(.bottom, 12) // Explicit spacing between cards
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                if let orderId = item.orderId {
+                                    onSelectOrder?(orderId)
+                                }
+                            }
+                            .onAppear {
+                                if item.productId == viewModel.items.last?.productId {
+                                    viewModel.fetchPurchaseList()
+                                }
+                            }
+                        }
+                        
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .padding()
+                        }
+                    }
+                }
+                .refreshable {
+                    viewModel.fetchPurchaseList(isRefresh: true)
+                }
             }
         }
         .onAppear {
@@ -105,28 +105,28 @@ struct PurchaseItemRow: View {
                     
                     // Title
                     Text(item.title ?? "제목 없음")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(Color(.label))
                         .lineLimit(1)
                     
                     // Price
                     if let priceString = item.price, let priceVal = Double(priceString) {
                         Text("\(formattedPrice(priceVal))원")
-                            .font(.system(size: 15, weight: .bold))
+                            .font(.system(size: 17, weight: .bold))
                             .foregroundColor(Color(red: 255/255, green: 109/255, blue: 0/255))
                     }
                     
                     // Order Number
                     if let orderNo = item.orderNo {
                         Text("주문번호: \(orderNo)")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                             .foregroundColor(.secondary)
                     }
                 }
                 
                 Spacer()
             }
-            .padding(12)
+            .padding(10) // Reduced from 12
             
             // Delivery Info
             if item.paymentStatus == "60", let tracking = item.trackingNo {
@@ -194,7 +194,7 @@ struct PurchaseItemRow: View {
     private func statusBadgeView(text: String, status: String) -> some View {
         let isInactive = status == "40" // 취소
         Text(text)
-            .font(.system(size: 11, weight: .bold))
+            .font(.system(size: 12, weight: .bold))
             .padding(.horizontal, 8)
             .padding(.vertical, 2)
             .background(isInactive ? Color(.systemGray6) : Color(.systemBlue).opacity(0.1))

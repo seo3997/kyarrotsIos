@@ -17,12 +17,12 @@ final class AppService {
 
     // 광고 리스트
     func getAdvertiseList(req: AdListRequest) async -> [AdItem] {
-        do { return try await repo.getAdvertiseList(req: req).items }
+        do { return try await repo.getAdvertiseList(req: req).adItems }
         catch { return [] }
     }
 
     func getBuyAdvertiseList(req: AdListRequest) async -> [AdItem] {
-        do { return try await repo.getBuyAdvertiseList(req: req).items }
+        do { return try await repo.getBuyAdvertiseList(req: req).adItems }
         catch { return [] }
     }
 
@@ -62,7 +62,7 @@ final class AppService {
     }
 
     func getInterestItems(token: String, pageNo: Int) async -> [AdItem] {
-        (try? await repo.getInterestItems(token: token, pageNo: pageNo).items) ?? []
+        (try? await repo.getInterestItems(token: token, pageNo: pageNo).adItems) ?? []
     }
 
     // 푸시 토큰 저장
@@ -160,7 +160,7 @@ final class AppService {
     }
     // 구매내역
     func getPurchaseItems(token: String, pageNo: Int) async -> [AdItem] {
-        (try? await repo.getPurchaseItems(token: token, pageNo: pageNo).items) ?? []
+        (try? await repo.getPurchaseItems(token: token, pageNo: pageNo).adItems) ?? []
     }
 
     func createPurchase(_ req: PurchaseHistoryRequest) async -> Bool {
@@ -274,7 +274,7 @@ final class AppService {
     }
 
     func getOrderHistory(buyerNo: Int64, page: Int) async -> [AdItem] {
-        (try? await repo.getOrderHistory(buyerNo: buyerNo, page: page).items) ?? []
+        (try? await repo.getOrderHistory(buyerNo: buyerNo, page: page).adItems) ?? []
     }
 
     func getOrderDetail(orderId: String) async -> OrderDetailResponse? {
