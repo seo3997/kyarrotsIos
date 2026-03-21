@@ -52,7 +52,7 @@ class LoginViewModel: ObservableObject {
             isLoading = false
             switch response.resultCode {
             case StaticDataInfo.RESULT_CODE_200:
-                LoginInfoUtil.saveLoginInfo(response)
+                LoginInfoUtil.saveLoginInfo(response, email: trimmedEmail, password: trimmedPwd)
                 if let token = response.token {
                     TokenUtil.saveToken(token)
                 }
@@ -181,7 +181,7 @@ class LoginViewModel: ObservableObject {
                 isLoading = false
                 if auth.resultCode == StaticDataInfo.RESULT_CODE_200,
                    let jwt = auth.token, !jwt.isEmpty {
-                    LoginInfoUtil.saveLoginInfo(auth)
+                    LoginInfoUtil.saveLoginInfo(auth, email: auth.loginId, password: auth.loginPwd)
                     TokenUtil.saveToken(jwt)
                     onLoginSuccess()
                     return

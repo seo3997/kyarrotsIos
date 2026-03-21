@@ -34,6 +34,18 @@ enum AdApiEndpoint: Endpoint {
     case getProductDetail(productId: Int64, userNo: Int64)
     case deleteImageById(imageId: String)
 
+    // 리뷰 (Review)
+    case getReviewList(productId: Int64)
+    case deleteReview(reviewId: String, token: String)
+    case updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String)
+
+    // 문의 (QnA)
+    case getQnaList(productId: Int64)
+    case insertQna(productId: String, title: String, contents: String, secretYn: String, token: String, branchId: String)
+    case updateQna(qnaId: String, title: String, contents: String, secretYn: String, token: String, branchId: String)
+    case deleteQna(qnaId: String, token: String)
+    case answerQna(qnaId: String, answerContents: String, token: String)
+
     // 로그인 / 비번/이메일 찾기
     case login(
         email: String,
@@ -112,6 +124,24 @@ enum AdApiEndpoint: Endpoint {
             return "api/product/detail/\(productId)"
         case .deleteImageById:
             return "api/product/image/delete"
+
+        case .getReviewList:
+            return "api/product/review/list"
+        case .deleteReview:
+            return "api/product/review/delete"
+        case .updateReview:
+            return "api/product/review/update"
+
+        case .getQnaList:
+            return "api/product/qna/list"
+        case .insertQna:
+            return "api/product/qna/insert"
+        case .updateQna:
+            return "api/product/qna/update"
+        case .deleteQna:
+            return "api/product/qna/delete"
+        case .answerQna:
+            return "api/product/qna/answer"
 
         case .login:
             return "api/members/login"
@@ -197,7 +227,9 @@ enum AdApiEndpoint: Endpoint {
              .getPurchaseItems,
              .getChatBuyers,
              .getWholesalers,
-             .getDefaultWholesaler:
+             .getDefaultWholesaler,
+             .getReviewList,
+             .getQnaList:
             return .get
 
         default:
@@ -221,6 +253,34 @@ enum AdApiEndpoint: Endpoint {
 
         case let .deleteImageById(imageId):
             return ["imageId": imageId]
+
+        case let .getReviewList(productId):
+            return ["productId": String(productId)]
+        case let .getQnaList(productId):
+            return ["productId": String(productId)]
+
+        case let .deleteReview(reviewId, token):
+            return ["reviewId": reviewId, "token": token]
+        case let .deleteQna(qnaId, token):
+            return ["qnaId": qnaId, "token": token]
+        case let .answerQna(qnaId, answerContents, token):
+            return ["qnaId": qnaId, "answerContents": answerContents, "token": token]
+
+        case let .insertQna(productId, title, contents, secretYn, token, branchId):
+            return [
+                "productId": productId, "title": title, "contents": contents,
+                "secretYn": secretYn, "token": token, "branchId": branchId
+            ]
+        case let .updateQna(qnaId, title, contents, secretYn, token, branchId):
+            return [
+                "qnaId": qnaId, "title": title, "contents": contents,
+                "secretYn": secretYn, "token": token, "branchId": branchId
+            ]
+        case let .updateReview(reviewId, rating, contents, token, branchId):
+            return [
+                "reviewId": reviewId, "rating": String(rating), "contents": contents,
+                "token": token, "branchId": branchId
+            ]
 
         // 비밀번호/이메일 찾기
         case let .findPassword(mail):

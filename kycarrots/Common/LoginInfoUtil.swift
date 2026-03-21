@@ -20,7 +20,10 @@ struct LoginInfoUtil {
     static let KEY_LOGIN_CD    = "LogIn_CD"
     static let KEY_SOCIAL_ID   = "LogIn_SOCIAL_ID"
     static let KEY_BRANCH_ID    = "LogIn_BRANCH_ID"
-    static let KEY_BRANCH_NM    = "LogIn_BRANCH_NM"
+    static let KEY_BRANCH_NAME  = "LogIn_BRANCH_NAME"
+    static let KEY_TOSS_CLIENT_KEY = "LogIn_TOSS_CLIENT_KEY"
+    static let KEY_BASE_SHIPPING_FEE = "LogIn_BASE_SHIPPING_FEE"
+    static let KEY_FREE_SHIPPING_THRESHOLD = "LogIn_FREE_SHIPPING_THRESHOLD"
 
     private static let defaults = UserDefaults.standard
 
@@ -33,8 +36,11 @@ struct LoginInfoUtil {
         loginNm: String,
         loginCd: String,
         loginSocialId: String,
-        branchId: String,
-        branchNm: String
+        branchId: String? = nil,
+        branchName: String? = nil,
+        tossClientKey: String? = nil,
+        baseShippingFee: Int = 0,
+        freeShippingThreshold: Int = 0
     ) {
         defaults.set(email,        forKey: KEY_ID)
         defaults.set(loginNo,      forKey: KEY_NO)
@@ -44,8 +50,11 @@ struct LoginInfoUtil {
         defaults.set(true,         forKey: KEY_IS_LOGIN)
         defaults.set(loginCd,      forKey: KEY_LOGIN_CD)
         defaults.set(loginSocialId,forKey: KEY_SOCIAL_ID)
-        defaults.set(branchId,     forKey: KEY_BRANCH_ID)
-        defaults.set(branchNm,     forKey: KEY_BRANCH_NM)
+        defaults.set(branchId ?? "",     forKey: KEY_BRANCH_ID)
+        defaults.set(branchName ?? "",   forKey: KEY_BRANCH_NAME)
+        defaults.set(tossClientKey ?? "",forKey: KEY_TOSS_CLIENT_KEY)
+        defaults.set(baseShippingFee,     forKey: KEY_BASE_SHIPPING_FEE)
+        defaults.set(freeShippingThreshold,forKey: KEY_FREE_SHIPPING_THRESHOLD)
     }
 
     // Android getUserId()
@@ -83,11 +92,23 @@ struct LoginInfoUtil {
     }
 
     static func getBranchId() -> String {
-        return defaults.string(forKey: KEY_BRANCH_ID) ?? "0"
+        return defaults.string(forKey: KEY_BRANCH_ID) ?? ""
     }
 
     static func getBranchName() -> String {
-        return defaults.string(forKey: KEY_BRANCH_NM) ?? ""
+        return defaults.string(forKey: KEY_BRANCH_NAME) ?? ""
+    }
+
+    static func getTossClientKey() -> String {
+        return defaults.string(forKey: KEY_TOSS_CLIENT_KEY) ?? ""
+    }
+
+    static func getBaseShippingFee() -> Int {
+        return defaults.integer(forKey: KEY_BASE_SHIPPING_FEE)
+    }
+
+    static func getFreeShippingThreshold() -> Int {
+        return defaults.integer(forKey: KEY_FREE_SHIPPING_THRESHOLD)
     }
 
     // Android isLoggedIn()
@@ -105,19 +126,28 @@ struct LoginInfoUtil {
         defaults.removeObject(forKey: KEY_IS_LOGIN)
         defaults.removeObject(forKey: KEY_LOGIN_CD)
         defaults.removeObject(forKey: KEY_SOCIAL_ID)
+        defaults.removeObject(forKey: KEY_BRANCH_ID)
+        defaults.removeObject(forKey: KEY_BRANCH_NAME)
+        defaults.removeObject(forKey: KEY_TOSS_CLIENT_KEY)
+        defaults.removeObject(forKey: KEY_BASE_SHIPPING_FEE)
+        defaults.removeObject(forKey: KEY_FREE_SHIPPING_THRESHOLD)
     }
     
-    static func saveLoginInfo(_ login: LoginResponse) {
+    // Convenience helper matching LoginInfo.kt logic
+    static func saveLoginInfo(_ login: LoginResponse, email: String? = nil, password: String? = nil) {
            saveLoginInfo(
-               email: login.loginId ?? "",
+               email: email ?? login.loginId ?? "",
                loginNo: login.loginIdx ?? "",
-               password: login.loginPwd ?? "",
+               password: password ?? login.loginPwd ?? "",
                memberCode: login.memberCode ?? "",
                loginNm: login.loginNm ?? "",
                loginCd: login.loginCd ?? "",
                loginSocialId: login.loginSocialId ?? "",
-               branchId: String(login.branchInfo?.branchId ?? 0),
-               branchNm: login.branchInfo?.branchName ?? ""
+               branchId: login.branchInfo?.branchId != nil ? String(login.branchInfo!.branchId!) : nil,
+               branchName: login.branchInfo?.branchName,
+               tossClientKey: login.branchInfo?.tossClientKey,
+               baseShippingFee: login.branchInfo?.baseShippingFee ?? 0,
+               freeShippingThreshold: login.branchInfo?.freeShippingThreshold ?? 0
            )
     }
 }

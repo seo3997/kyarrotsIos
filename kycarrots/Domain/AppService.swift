@@ -225,6 +225,41 @@ final class AppService {
     func unlinkSocial(_ req: UnlinkSocialRequest) async -> SimpleResultResponse? {
         try? await repo.unlinkSocial(req)
     }
+
+    // MARK: - 리뷰 (Review)
+    func getReviewList(productId: Int64) async -> [ReviewVo] {
+        (try? await repo.fetchReviewList(productId: productId).reviews) ?? []
+    }
+
+    func deleteReview(reviewId: String, token: String) async -> Bool {
+        (try? await repo.deleteReview(reviewId: reviewId, token: token).result) ?? false
+    }
+
+    func updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String) async -> Bool {
+        (try? await repo.updateReview(reviewId: reviewId, rating: rating, contents: contents, token: token, branchId: branchId).result) ?? false
+    }
+
+    // MARK: - 문의 (QnA)
+    func getQnaList(productId: Int64) async -> [QnaVo] {
+        (try? await repo.fetchQnaList(productId: productId).qnas) ?? []
+    }
+
+    func insertQna(productId: String, title: String, contents: String, secretYn: String, token: String, branchId: String) async -> Bool {
+        (try? await repo.insertQna(productId: productId, title: title, contents: contents, secretYn: secretYn, token: token, branchId: branchId).result) ?? false
+    }
+
+    func updateQna(qnaId: String, title: String, contents: String, secretYn: String, token: String, branchId: String) async -> Bool {
+        (try? await repo.updateQna(qnaId: qnaId, title: title, contents: contents, secretYn: secretYn, token: token, branchId: branchId).result) ?? false
+    }
+
+    func deleteQna(qnaId: String, token: String) async -> Bool {
+        (try? await repo.deleteQna(qnaId: qnaId, token: token).result) ?? false
+    }
+
+    func answerQna(qnaId: String, answerContents: String, token: String) async -> Bool {
+        (try? await repo.answerQna(qnaId: qnaId, answerContents: answerContents, token: token).result) ?? false
+    }
+
     // Android처럼 TODO 유지
     func saveJwt(_ jwt: String) {
         // TODO: Keychain / UserDefaults 등에 저장

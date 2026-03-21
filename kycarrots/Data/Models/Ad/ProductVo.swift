@@ -43,4 +43,7 @@ struct ProductVo: Codable {
     let fav: String?
     let systemType: String?
     let rejectReason: String?
+    let branchId: String?
+    let editorMode: String?
+    let availableQuantity: String?
 }

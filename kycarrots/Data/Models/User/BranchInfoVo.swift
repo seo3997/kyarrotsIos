@@ -7,6 +7,9 @@ struct BranchInfoVo: Codable {
     let logoImageUrl: String?
     let branchStatus: String?
     let companyName: String?
+    let tossClientKey: String?
+    let baseShippingFee: Int?
+    let freeShippingThreshold: Int?
     
     enum CodingKeys: String, CodingKey {
         case branchId = "branchId"
@@ -27,6 +30,15 @@ struct BranchInfoVo: Codable {
         case companyName = "companyName"
         case company_name = "company_name"
         case COMPANY_NAME = "COMPANY_NAME"
+        case tossClientKey = "tossClientKey"
+        case toss_client_key = "toss_client_key"
+        case TOSS_CLIENT_KEY = "TOSS_CLIENT_KEY"
+        case baseShippingFee = "baseShippingFee"
+        case base_shipping_fee = "base_shipping_fee"
+        case BASE_SHIPPING_FEE = "BASE_SHIPPING_FEE"
+        case freeShippingThreshold = "freeShippingThreshold"
+        case free_shipping_threshold = "free_shipping_threshold"
+        case FREE_SHIPPING_THRESHOLD = "FREE_SHIPPING_THRESHOLD"
     }
 
     init(from decoder: Decoder) throws {
@@ -54,6 +66,18 @@ struct BranchInfoVo: Codable {
         companyName = try container.decodeIfPresent(String.self, forKey: .companyName) ??
                       container.decodeIfPresent(String.self, forKey: .company_name) ??
                       container.decodeIfPresent(String.self, forKey: .COMPANY_NAME)
+        
+        tossClientKey = try container.decodeIfPresent(String.self, forKey: .tossClientKey) ??
+                        container.decodeIfPresent(String.self, forKey: .toss_client_key) ??
+                        container.decodeIfPresent(String.self, forKey: .TOSS_CLIENT_KEY)
+        
+        baseShippingFee = try container.decodeIfPresent(Int.self, forKey: .baseShippingFee) ??
+                          container.decodeIfPresent(Int.self, forKey: .base_shipping_fee) ??
+                          container.decodeIfPresent(Int.self, forKey: .BASE_SHIPPING_FEE)
+        
+        freeShippingThreshold = try container.decodeIfPresent(Int.self, forKey: .freeShippingThreshold) ??
+                                container.decodeIfPresent(Int.self, forKey: .free_shipping_threshold) ??
+                                container.decodeIfPresent(Int.self, forKey: .FREE_SHIPPING_THRESHOLD)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -64,5 +88,8 @@ struct BranchInfoVo: Codable {
         try container.encode(logoImageUrl, forKey: .logoImageUrl)
         try container.encode(branchStatus, forKey: .branchStatus)
         try container.encode(companyName, forKey: .companyName)
+        try container.encode(tossClientKey, forKey: .tossClientKey)
+        try container.encode(baseShippingFee, forKey: .baseShippingFee)
+        try container.encode(freeShippingThreshold, forKey: .freeShippingThreshold)
     }
 }

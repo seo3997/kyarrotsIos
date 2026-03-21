@@ -117,17 +117,7 @@ class MembershipViewModel: ObservableObject {
         
         isLoading = true
         if let res = await service.registerUser(user), res.resultCode == 200 {
-            LoginInfoUtil.saveLoginInfo(
-                email: res.loginId ?? "",
-                loginNo: res.loginIdx ?? "",
-                password: password,
-                memberCode: res.memberCode ?? "",
-                loginNm: res.loginNm ?? "",
-                loginCd: res.loginCd ?? "",
-                loginSocialId: res.loginSocialId ?? "",
-                branchId: String(res.branchInfo?.branchId ?? 0),
-                branchNm: res.branchInfo?.branchName ?? ""
-            )
+            LoginInfoUtil.saveLoginInfo(res, email: email, password: password)
             isLoading = false
             showToast(message: "회원가입 성공!")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

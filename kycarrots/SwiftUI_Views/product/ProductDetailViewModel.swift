@@ -11,6 +11,22 @@ class ProductDetailViewModel: ObservableObject {
     @Published var unreadNotificationCount = 0
     @Published var errorMessage: String?
     
+    // New Fields for Tabs
+    @Published var selectedTab: Int = 0
+    @Published var reviews: [ReviewVo] = []
+    @Published var qnas: [QnaVo] = []
+    @Published var quantity: Int = 1 {
+        didSet {
+            if quantity < 1 { quantity = 1 }
+        }
+    }
+    
+    var totalPrice: Int {
+        guard let priceStr = productDetail?.product.price,
+              let price = Int(priceStr.replacingOccurrences(of: ",", with: "")) else { return 0 }
+        return price * quantity
+    }
+    
     let productId: Int64
     private var cancellables = Set<AnyCancellable>()
     
@@ -31,9 +47,14 @@ class ProductDetailViewModel: ObservableObject {
                 if let detail = try await AppServiceProvider.shared.getProductDetail(productId: productId, userNo: userNo) {
                     await MainActor.run {
                         self.productDetail = detail
-                        self.isFavorite = (detail.product.fav == "1")
+                        self.isFavorite = (detail.product.fav == "Y" || detail.product.fav == "1")
+                        self.quantity = 1
                         self.loadStatusOptions(currentStatus: detail.product.saleStatus)
                         self.isLoading = false
+                        
+                        // Initial Tab Data (optional, but keep consistent)
+                        if self.selectedTab == 1 { self.loadReviews() }
+                        if self.selectedTab == 2 { self.loadQnas() }
                     }
                 }
             } catch {
@@ -173,4 +194,18 @@ class ProductDetailViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Tab Data Loading
+    func loadReviews() {
+        Task {
+            let list = await AppServiceProvider.shared.getReviewList(productId: productId)
+            await MainActor.run { self.reviews = list }
+        }
+    }
+    
+    func loadQnas() {
+        Task {
+            let list = await AppServiceProvider.shared.getQnaList(productId: productId)
+            await MainActor.run { self.qnas = list }
+        }
+    }
 }

@@ -132,7 +132,7 @@ class OnboardingViewModel: ObservableObject {
             isLoading = false
             switch body.resultCode {
             case 200:
-                LoginInfoUtil.saveLoginInfo(body)
+                LoginInfoUtil.saveLoginInfo(body, email: email, password: password)
                 showToast(message: "소셜계정 링크 성공!!!")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     onSuccess()
@@ -171,7 +171,7 @@ class OnboardingViewModel: ObservableObject {
         
         isLoading = true
         if let res = await service.registerUser(user), res.resultCode == 200 {
-            LoginInfoUtil.saveLoginInfo(res)
+            LoginInfoUtil.saveLoginInfo(res, email: email, password: password)
             isLoading = false
             showToast(message: "회원가입 성공!")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

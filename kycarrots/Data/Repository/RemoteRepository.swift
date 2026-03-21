@@ -310,4 +310,62 @@ final class RemoteRepository {
             as: SimpleResultResponse.self
         )
     }
+
+    // MARK: - 리뷰 (Review)
+    func fetchReviewList(productId: Int64) async throws -> ReviewListResponse {
+        try await api.request(
+            AdApiEndpoint.getReviewList(productId: productId),
+            as: ReviewListResponse.self
+        )
+    }
+
+    func deleteReview(reviewId: String, token: String) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.deleteReview(reviewId: reviewId, token: token),
+            as: SimpleResultResponse.self
+        )
+    }
+
+    func updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.updateReview(reviewId: reviewId, rating: rating, contents: contents, token: token, branchId: branchId),
+            as: SimpleResultResponse.self
+        )
+    }
+
+    // MARK: - 문의 (QnA)
+    func fetchQnaList(productId: Int64) async throws -> QnaListResponse {
+        try await api.request(
+            AdApiEndpoint.getQnaList(productId: productId),
+            as: QnaListResponse.self
+        )
+    }
+
+    func insertQna(productId: String, title: String, contents: String, secretYn: String, token: String, branchId: String) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.insertQna(productId: productId, title: title, contents: contents, secretYn: secretYn, token: token, branchId: branchId),
+            as: SimpleResultResponse.self
+        )
+    }
+
+    func updateQna(qnaId: String, title: String, contents: String, secretYn: String, token: String, branchId: String) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.updateQna(qnaId: qnaId, title: title, contents: contents, secretYn: secretYn, token: token, branchId: branchId),
+            as: SimpleResultResponse.self
+        )
+    }
+
+    func deleteQna(qnaId: String, token: String) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.deleteQna(qnaId: qnaId, token: token),
+            as: SimpleResultResponse.self
+        )
+    }
+
+    func answerQna(qnaId: String, answerContents: String, token: String) async throws -> SimpleResultResponse {
+        try await api.request(
+            AdApiEndpoint.answerQna(qnaId: qnaId, answerContents: answerContents, token: token),
+            as: SimpleResultResponse.self
+        )
+    }
 }

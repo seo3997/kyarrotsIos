@@ -266,7 +266,10 @@ final class MakeAdPreviewViewController: UIViewController {
             wholesalerId: nil,
             fav: nil,
             systemType: systemType,
-            rejectReason: nil
+            rejectReason: nil,
+            branchId: nil,
+            editorMode: nil,
+            availableQuantity: nil
         )
 
         var metas: [ProductImageVo] = []
