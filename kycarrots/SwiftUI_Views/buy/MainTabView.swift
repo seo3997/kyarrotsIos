@@ -20,6 +20,8 @@ class MainTabViewModel: ObservableObject {
 struct MainTabView: View {
     @State private var selectedTab = 0
     @StateObject private var viewModel = MainTabViewModel()
+    @AppStorage(LoginInfoUtil.KEY_BRANCH_NAME) var branchNameValue: String = ""
+    
     var onSelectProduct: ((AdItem) -> Void)? = nil
     var onSelectOrder: ((String) -> Void)? = nil
     var onShowNotifications: (() -> Void)? = nil
@@ -103,7 +105,6 @@ struct MainTabView: View {
     }
     
     private var navigationTitle: String {
-        let branchName = LoginInfoUtil.getBranchName()
         let baseTitle: String
         switch selectedTab {
         case 0: baseTitle = "상품리스트"
@@ -112,8 +113,10 @@ struct MainTabView: View {
         default: baseTitle = ""
         }
         
-        if !branchName.isEmpty {
-            return "(\(branchName)) \(baseTitle)"
+        let displayBranch = branchNameValue.isEmpty ? LoginInfoUtil.getBranchName() : branchNameValue
+        
+        if !displayBranch.isEmpty {
+            return "(\(displayBranch)) \(baseTitle)"
         } else {
             return baseTitle
         }

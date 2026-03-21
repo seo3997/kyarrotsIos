@@ -53,29 +53,29 @@ struct BranchInfoVo: Codable {
         else if let str = try? container.decode(String.self, forKey: .BRANCH_ID), let v = Int64(str) { branchId = v }
         else { branchId = nil }
 
-        branchCode = try? container.decode(String.self, forKey: .branchCode) ??
-                     container.decode(String.self, forKey: .branch_code) ??
-                     container.decode(String.self, forKey: .BRANCH_CODE)
+        branchCode = try container.decodeIfPresent(String.self, forKey: .branchCode) ??
+                     container.decodeIfPresent(String.self, forKey: .branch_code) ??
+                     container.decodeIfPresent(String.self, forKey: .BRANCH_CODE)
         
-        branchName = try? container.decode(String.self, forKey: .branchName) ??
-                     container.decode(String.self, forKey: .branch_name) ??
-                     container.decode(String.self, forKey: .BRANCH_NAME)
+        branchName = try container.decodeIfPresent(String.self, forKey: .branchName) ??
+                     container.decodeIfPresent(String.self, forKey: .branch_name) ??
+                     container.decodeIfPresent(String.self, forKey: .BRANCH_NAME)
         
-        logoImageUrl = try? container.decode(String.self, forKey: .logoImageUrl) ??
-                       container.decode(String.self, forKey: .logo_image_url) ??
-                       container.decode(String.self, forKey: .LOGO_IMAGE_URL)
+        logoImageUrl = try container.decodeIfPresent(String.self, forKey: .logoImageUrl) ??
+                       container.decodeIfPresent(String.self, forKey: .logo_image_url) ??
+                       container.decodeIfPresent(String.self, forKey: .LOGO_IMAGE_URL)
         
-        branchStatus = try? container.decode(String.self, forKey: .branchStatus) ??
-                       container.decode(String.self, forKey: .branch_status) ??
-                       container.decode(String.self, forKey: .BRANCH_STATUS)
+        branchStatus = try container.decodeIfPresent(String.self, forKey: .branchStatus) ??
+                       container.decodeIfPresent(String.self, forKey: .branch_status) ??
+                       container.decodeIfPresent(String.self, forKey: .BRANCH_STATUS)
         
-        companyName = try? container.decode(String.self, forKey: .companyName) ??
-                      container.decode(String.self, forKey: .company_name) ??
-                      container.decode(String.self, forKey: .COMPANY_NAME)
+        companyName = try container.decodeIfPresent(String.self, forKey: .companyName) ??
+                      container.decodeIfPresent(String.self, forKey: .company_name) ??
+                      container.decodeIfPresent(String.self, forKey: .COMPANY_NAME)
         
-        tossClientKey = try? container.decode(String.self, forKey: .tossClientKey) ??
-                        container.decode(String.self, forKey: .toss_client_key) ??
-                        container.decode(String.self, forKey: .TOSS_CLIENT_KEY)
+        tossClientKey = try container.decodeIfPresent(String.self, forKey: .tossClientKey) ??
+                        container.decodeIfPresent(String.self, forKey: .toss_client_key) ??
+                        container.decodeIfPresent(String.self, forKey: .TOSS_CLIENT_KEY)
         
         // baseShippingFee: Int or String
         if let val = try? container.decode(Int.self, forKey: .baseShippingFee) { baseShippingFee = val }
