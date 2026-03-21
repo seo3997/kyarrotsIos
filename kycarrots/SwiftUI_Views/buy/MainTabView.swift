@@ -102,11 +102,19 @@ struct MainTabView: View {
     }
     
     private var navigationTitle: String {
+        let branchName = LoginInfoUtil.getBranchName()
+        let baseTitle: String
         switch selectedTab {
-        case 0: return "상품리스트"
-        case 1: return "관심상품"
-        case 2: return "구매내역"
-        default: return ""
+        case 0: baseTitle = "상품리스트"
+        case 1: baseTitle = "관심상품"
+        case 2: baseTitle = "구매내역"
+        default: baseTitle = ""
+        }
+        
+        if !branchName.isEmpty {
+            return "(\(branchName)) \(baseTitle)"
+        } else {
+            return baseTitle
         }
     }
 }
