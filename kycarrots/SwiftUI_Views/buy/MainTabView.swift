@@ -1,9 +1,27 @@
 import SwiftUI
+import Combine
 import SideMenu
+
+@MainActor
+class MainTabViewModel: ObservableObject {
+    @Published var unreadNotificationCount = 0
+    
+    func fetchUnreadCount() {
+        let userId = LoginInfoUtil.getUserId()
+        Task {
+            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
+            await MainActor.run {
+                self.unreadNotificationCount = count
+            }
+        }
+    }
+}
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @StateObject private var viewModel = MainTabViewModel()
     var onSelectProduct: ((AdItem) -> Void)? = nil
+    var onShowNotifications: (() -> Void)? = nil
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -26,7 +44,31 @@ struct MainTabView: View {
                 .tag(2)
         }
         .accentColor(.blue)
+        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    onShowNotifications?()
+                }) {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "bell")
+                            .font(.system(size: 18))
+                            .foregroundColor(.primary)
+                        
+                        if viewModel.unreadNotificationCount > 0 {
+                            Text("\(min(viewModel.unreadNotificationCount, 99))\(viewModel.unreadNotificationCount > 99 ? "+" : "")")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(4)
+                                .background(Color.red)
+                                .clipShape(Circle())
+                                .offset(x: 10, y: -10)
+                        }
+                    }
+                }
+            }
+        }
         .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
         .navigationBarHidden(false) // ✅ 네비게이션 바 다시 표시
         .onAppear {
@@ -53,6 +95,18 @@ struct MainTabView: View {
             if #available(iOS 15.0, *) {
                 UITabBar.appearance().scrollEdgeAppearance = appearance
             }
+            
+            // 초기 데이터 로드
+            viewModel.fetchUnreadCount()
+        }
+    }
+    
+    private var navigationTitle: String {
+        switch selectedTab {
+        case 0: return "상품리스트"
+        case 1: return "관심상품"
+        case 2: return "구매내역"
+        default: return ""
         }
     }
 }
