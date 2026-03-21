@@ -150,6 +150,14 @@ struct ProductDetailSwiftUIView: View {
             }
         }
         .navigationBarHidden(true)
+        .sheet(item: $viewModel.activeSheet) { sheetType in
+            switch sheetType {
+            case .reviewWrite(let r):
+                ProductReviewWriteView(viewModel: viewModel, review: r)
+            case .qnaWrite(let q):
+                ProductQnaWriteView(viewModel: viewModel, qna: q)
+            }
+        }
         .onAppear {
             viewModel.fetchData()
         }

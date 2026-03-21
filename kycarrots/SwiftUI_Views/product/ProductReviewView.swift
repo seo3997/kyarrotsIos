@@ -22,8 +22,7 @@ struct ProductReviewView: View {
                 Spacer()
                 
                 Button(action: {
-                    // Action for writing Review
-                    print("Write Review tapped")
+                    viewModel.startReviewWrite()
                 }) {
                     Text("리뷰 쓰기")
                         .font(.system(size: 14, weight: .bold))

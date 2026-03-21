@@ -21,8 +21,7 @@ struct ProductQnaView: View {
                 Spacer()
                 
                 Button(action: {
-                    // Action for writing QnA
-                    print("Write QnA tapped")
+                    viewModel.startQnaWrite()
                 }) {
                     Text("문의 하기")
                         .font(.system(size: 14, weight: .bold))

@@ -15,6 +15,20 @@ class ProductDetailViewModel: ObservableObject {
     @Published var currentUserId: String = ""
     @Published var errorMessage: String?
     
+    // UI State for Sheets
+    enum ProductDetailSheet: Identifiable {
+        case reviewWrite(ReviewVo?) // Edit mode if non-nil
+        case qnaWrite(QnaVo?)      // Edit mode if non-nil
+        
+        var id: String {
+            switch self {
+            case .reviewWrite(let r): return "review_\(r?.reviewId ?? "new")"
+            case .qnaWrite(let q): return "qna_\(q?.qnaId ?? "new")"
+            }
+        }
+    }
+    @Published var activeSheet: ProductDetailSheet?
+    
     // Dependencies lds for Tabs
     @Published var selectedTab: Int = 0
     @Published var reviews: [ReviewVo] = []
@@ -226,7 +240,7 @@ class ProductDetailViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Tab Data Loading
+    // MARK: - Tab Data Actions
     func loadReviews() {
         print("🔍 [ViewModel] loadReviews called for productId: \(productId)")
         Task {
@@ -243,9 +257,75 @@ class ProductDetailViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Review & QnA Write/Edit
+    func startReviewWrite(review: ReviewVo? = nil) {
+        activeSheet = .reviewWrite(review)
+    }
+    
+    func startQnaWrite(qna: QnaVo? = nil) {
+        activeSheet = .qnaWrite(qna)
+    }
+
+    func submitReview(reviewId: String?, rating: Int, contents: String, images: [Data]?) {
+        guard !contents.isEmpty else { return }
+        
+        isLoading = true
+        Task {
+            let token = TokenUtil.getToken()
+            let branchId = LoginInfoUtil.getBranchId()
+            let success: Bool
+            
+            if let rId = reviewId {
+                // Update
+                success = await AppServiceProvider.shared.updateReview(reviewId: rId, rating: rating, contents: contents, token: token, branchId: branchId, images: images)
+            } else {
+                // Insert
+                success = await AppServiceProvider.shared.insertReview(productId: String(productId), rating: rating, contents: contents, token: token, branchId: branchId, images: images)
+            }
+            
+            await MainActor.run {
+                if success {
+                    self.activeSheet = nil
+                    self.loadReviews()
+                } else {
+                    self.errorMessage = "리뷰 저장에 실패했습니다."
+                }
+                self.isLoading = false
+            }
+        }
+    }
+
+    func submitQna(qnaId: String?, title: String, contents: String, secretYn: String) {
+        guard !title.isEmpty && !contents.isEmpty else { return }
+        
+        isLoading = true
+        Task {
+            let token = TokenUtil.getToken()
+            let branchId = LoginInfoUtil.getBranchId()
+            let successResult: Bool
+            
+            if let qId = qnaId {
+                // Update
+                successResult = await AppServiceProvider.shared.updateQna(qnaId: qId, title: title, contents: contents, secretYn: secretYn, token: token, branchId: branchId)
+            } else {
+                // Insert
+                successResult = await AppServiceProvider.shared.insertQna(productId: String(productId), title: title, contents: contents, secretYn: secretYn, token: token, branchId: branchId)
+            }
+            
+            await MainActor.run {
+                if successResult {
+                    self.activeSheet = nil
+                    self.loadQnas()
+                } else {
+                    self.errorMessage = "문의 저장에 실패했습니다."
+                }
+                self.isLoading = false
+            }
+        }
+    }
+    
     func editQna(_ qna: QnaVo) {
-        // Implementation for QnA edit (e.g., show sheet/navigation)
-        print("Edit QnA: \(qna.qnaId ?? "")")
+        startQnaWrite(qna: qna)
     }
     
     func deleteQna(_ qna: QnaVo) {
@@ -259,8 +339,7 @@ class ProductDetailViewModel: ObservableObject {
     }
     
     func editReview(_ review: ReviewVo) {
-        // Implementation for Review edit
-        print("Edit Review: \(review.reviewId ?? "")")
+        startReviewWrite(review: review)
     }
     
     func deleteReview(_ review: ReviewVo) {

@@ -111,7 +111,7 @@ class OnboardingViewModel: ObservableObject {
                 isEmailChecked = false
                 emailStatusMessage = "이미 가입된 이메일입니다. 계정 연결을 진행합니다."
                 isFormVisible = false
-                await linkSocial(email: trimmedEmail, userNo: res.message, onSuccess: onLinkSuccess)
+                await linkSocial(email: trimmedEmail, userNo: res.message ?? "", onSuccess: onLinkSuccess)
             }
         } else {
             isLoading = false

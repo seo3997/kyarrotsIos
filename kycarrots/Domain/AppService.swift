@@ -231,12 +231,16 @@ final class AppService {
         (try? await repo.fetchReviewList(productId: productId).reviews) ?? []
     }
 
-    func deleteReview(reviewId: String, token: String) async -> Bool {
-        (try? await repo.deleteReview(reviewId: reviewId, token: token).result) ?? false
+    func insertReview(productId: String, rating: Int, contents: String, token: String, branchId: String, images: [Data]?) async -> Bool {
+        (try? await repo.insertReview(productId: productId, rating: rating, contents: contents, token: token, branchId: branchId, images: images).result) ?? false
     }
 
-    func updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String) async -> Bool {
-        (try? await repo.updateReview(reviewId: reviewId, rating: rating, contents: contents, token: token, branchId: branchId).result) ?? false
+    func updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String, images: [Data]?) async -> Bool {
+        (try? await repo.updateReview(reviewId: reviewId, rating: rating, contents: contents, token: token, branchId: branchId, images: images).result) ?? false
+    }
+
+    func deleteReview(reviewId: String, token: String) async -> Bool {
+        (try? await repo.deleteReview(reviewId: reviewId, token: token).result) ?? false
     }
 
     // MARK: - 문의 (QnA)

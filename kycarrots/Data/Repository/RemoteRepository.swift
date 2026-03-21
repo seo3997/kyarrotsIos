@@ -319,21 +319,40 @@ final class RemoteRepository {
         )
     }
 
+    func insertReview(productId: String, rating: Int, contents: String, token: String, branchId: String, images: [Data]?) async throws -> SimpleResultResponse {
+        if let images = images, !images.isEmpty {
+            return try await api.uploadMultipart(
+                AdApiEndpoint.insertReview(productId: productId, rating: rating, contents: contents, token: token, branchId: branchId, images: images),
+                as: SimpleResultResponse.self
+            )
+        } else {
+            return try await api.request(
+                AdApiEndpoint.insertReview(productId: productId, rating: rating, contents: contents, token: token, branchId: branchId, images: nil),
+                as: SimpleResultResponse.self
+            )
+        }
+    }
+
+    func updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String, images: [Data]?) async throws -> SimpleResultResponse {
+        if let images = images, !images.isEmpty {
+            return try await api.uploadMultipart(
+                AdApiEndpoint.updateReview(reviewId: reviewId, rating: rating, contents: contents, token: token, branchId: branchId, images: images),
+                as: SimpleResultResponse.self
+            )
+        } else {
+            return try await api.request(
+                AdApiEndpoint.updateReview(reviewId: reviewId, rating: rating, contents: contents, token: token, branchId: branchId, images: nil),
+                as: SimpleResultResponse.self
+            )
+        }
+    }
+
     func deleteReview(reviewId: String, token: String) async throws -> SimpleResultResponse {
         try await api.request(
             AdApiEndpoint.deleteReview(reviewId: reviewId, token: token),
             as: SimpleResultResponse.self
         )
     }
-
-    func updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String) async throws -> SimpleResultResponse {
-        try await api.request(
-            AdApiEndpoint.updateReview(reviewId: reviewId, rating: rating, contents: contents, token: token, branchId: branchId),
-            as: SimpleResultResponse.self
-        )
-    }
-
-    // MARK: - 문의 (QnA)
     func fetchQnaList(productId: Int64) async throws -> QnaListResponse {
         try await api.request(
             AdApiEndpoint.getQnaList(productId: productId),

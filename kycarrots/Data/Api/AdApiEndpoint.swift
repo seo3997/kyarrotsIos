@@ -36,8 +36,9 @@ enum AdApiEndpoint: Endpoint {
 
     // 리뷰 (Review)
     case getReviewList(productId: Int64)
+    case insertReview(productId: String, rating: Int, contents: String, token: String, branchId: String, images: [Data]?)
+    case updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String, images: [Data]?)
     case deleteReview(reviewId: String, token: String)
-    case updateReview(reviewId: String, rating: Int, contents: String, token: String, branchId: String)
 
     // 문의 (QnA)
     case getQnaList(productId: Int64)
@@ -127,6 +128,8 @@ enum AdApiEndpoint: Endpoint {
 
         case .getReviewList:
             return "api/product/review/list"
+        case .insertReview:
+            return "api/product/review/insert"
         case .deleteReview:
             return "api/product/review/delete"
         case .updateReview:
@@ -266,6 +269,11 @@ enum AdApiEndpoint: Endpoint {
         case let .answerQna(qnaId, answerContents, token):
             return ["qnaId": qnaId, "answerContents": answerContents, "token": token]
 
+        case let .insertReview(productId, rating, contents, token, branchId, _):
+            return [
+                "productId": productId, "rating": String(rating), "contents": contents,
+                "token": token, "branchId": branchId
+            ]
         case let .insertQna(productId, title, contents, secretYn, token, branchId):
             return [
                 "productId": productId, "title": title, "contents": contents,
@@ -276,7 +284,7 @@ enum AdApiEndpoint: Endpoint {
                 "qnaId": qnaId, "title": title, "contents": contents,
                 "secretYn": secretYn, "token": token, "branchId": branchId
             ]
-        case let .updateReview(reviewId, rating, contents, token, branchId):
+        case let .updateReview(reviewId, rating, contents, token, branchId, _):
             return [
                 "reviewId": reviewId, "rating": String(rating), "contents": contents,
                 "token": token, "branchId": branchId
