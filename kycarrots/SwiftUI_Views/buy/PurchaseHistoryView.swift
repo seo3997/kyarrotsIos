@@ -76,6 +76,19 @@ struct PurchaseItemRow: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // Order No (Top Header)
+            if let orderNo = item.orderNo {
+                HStack {
+                    Text("주문번호: \(orderNo)")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.top, 10)
+                .padding(.bottom, 4)
+            }
+            
             HStack(alignment: .top, spacing: 12) {
                 // Thumbnail Image
                 if let urlString = item.imageUrl, let url = URL(string: urlString) {
@@ -97,36 +110,24 @@ struct PurchaseItemRow: View {
                         .overlay(Image(systemName: "photo").foregroundColor(.gray))
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    // Status Badge
-                    if let statusText = getStatusName() {
-                        statusBadgeView(text: statusText, status: item.paymentStatus ?? "")
-                    }
-                    
+                VStack(alignment: .leading, spacing: 6) {
                     // Title
                     Text(item.title ?? "제목 없음")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 18, weight: .bold))
                         .foregroundColor(Color(.label))
-                        .lineLimit(1)
-                    
+                        .lineLimit(2)
+
                     // Price
                     if let priceString = item.price, let priceVal = Double(priceString) {
                         Text("\(formattedPrice(priceVal))원")
-                            .font(.system(size: 17, weight: .bold))
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundColor(Color(red: 255/255, green: 109/255, blue: 0/255))
-                    }
-                    
-                    // Order Number
-                    if let orderNo = item.orderNo {
-                        Text("주문번호: \(orderNo)")
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
                     }
                 }
                 
                 Spacer()
             }
-            .padding(10) // Reduced from 12
+            .padding(10)
             
             // Delivery Info
             if item.paymentStatus == "60", let tracking = item.trackingNo {
@@ -140,46 +141,50 @@ struct PurchaseItemRow: View {
                 .padding(.bottom, 8)
             }
             
-            // Action Buttons
-            if showCancelButton() || showReturnButton() {
-                Divider()
-                HStack(spacing: 8) {
-                    Spacer()
-                    if showCancelButton() {
-                        Button(action: {
-                            onCancel?()
-                        }) {
-                            Text("주문 취소")
-                                .font(.system(size: 12, weight: .bold))
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 6)
-                                .background(Color.white)
-                                .foregroundColor(.red)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .stroke(Color.red, lineWidth: 1)
-                                )
-                        }
-                    }
-                    if showReturnButton() {
-                        Button(action: {
-                            onReturn?()
-                        }) {
-                            Text("반품 요청")
-                                .font(.system(size: 12, weight: .bold))
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 6)
-                                .background(Color.white)
-                                .foregroundColor(.gray)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .stroke(Color.gray, lineWidth: 1)
-                                )
-                        }
+            // Status & Action Buttons
+            Divider()
+            HStack(spacing: 8) {
+                // Status Badge (Bottom Left)
+                if let statusText = getStatusName() {
+                    statusBadgeView(text: statusText, status: item.paymentStatus ?? "")
+                }
+                
+                Spacer()
+                
+                if showCancelButton() {
+                    Button(action: {
+                        onCancel?()
+                    }) {
+                        Text("주문 취소")
+                            .font(.system(size: 13, weight: .bold))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
+                            .background(Color.white)
+                            .foregroundColor(.red)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.red, lineWidth: 1)
+                            )
                     }
                 }
-                .padding(8)
+                if showReturnButton() {
+                    Button(action: {
+                        onReturn?()
+                    }) {
+                        Text("반품 요청")
+                            .font(.system(size: 13, weight: .bold))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
+                            .background(Color.white)
+                            .foregroundColor(.gray)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.gray, lineWidth: 1)
+                            )
+                    }
+                }
             }
+            .padding(10)
         }
         .background(Color(.secondarySystemGroupedBackground))
         .cornerRadius(12)
@@ -194,7 +199,7 @@ struct PurchaseItemRow: View {
     private func statusBadgeView(text: String, status: String) -> some View {
         let isInactive = status == "40" // 취소
         Text(text)
-            .font(.system(size: 12, weight: .bold))
+            .font(.system(size: 14, weight: .bold))
             .padding(.horizontal, 8)
             .padding(.vertical, 2)
             .background(isInactive ? Color(.systemGray6) : Color(.systemBlue).opacity(0.1))
