@@ -10,16 +10,19 @@ class InterestProductViewModel: ObservableObject {
     private let appService = AppServiceProvider.shared
     
     func fetchInterestList(isRefresh: Bool = false) {
-        guard !isLoading && !isLastPage else { return }
-        
         if isRefresh {
             pageNo = 1
             isLastPage = false
+        }
+        
+        guard !isLoading && !isLastPage else { return }
+        
+        if isRefresh {
             items.removeAll()
         }
         
         isLoading = true
-        let token = TokenUtil.getToken() ?? ""
+        let token = TokenUtil.getToken()
         
         Task {
             let ads = await appService.getInterestItems(token: token, pageNo: pageNo)

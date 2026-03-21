@@ -5,58 +5,54 @@ struct ProductRowView: View {
     let item: AdItem
     
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 16) {
             // Thumbnail Image
             if let urlString = item.imageUrl, let url = URL(string: urlString) {
                 KFImage(url)
                     .placeholder {
-                        Image("placeholder")
-                            .resizable()
-                            .scaledToFill()
+                        Rectangle()
+                            .fill(Color(.systemGray6))
                     }
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 80, height: 80)
-                    .cornerRadius(6)
+                    .frame(width: 90, height: 90)
+                    .cornerRadius(12)
                     .clipped()
             } else {
-                Image("placeholder")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 80, height: 80)
-                    .cornerRadius(6)
-                    .clipped()
+                Rectangle()
+                    .fill(Color(.systemGray6))
+                    .frame(width: 90, height: 90)
+                    .cornerRadius(12)
+                    .overlay(Image(systemName: "photo").foregroundColor(.gray))
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 8) {
+                // Title
                 Text(item.title ?? "제목 없음")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color(.label))
                     .lineLimit(2)
+                    .multilineTextAlignment(.leading)
                 
-                Text(item.description ?? "설명 없음")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                
-                Spacer()
-                
+                // Price (Orange Color #FF6D00)
                 if let priceString = item.price, let priceVal = Double(priceString) {
                     Text("\(formattedPrice(priceVal))원")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.blue)
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(Color(red: 255/255, green: 109/255, blue: 0/255))
                 }
             }
-            .padding(.vertical, 4)
             
             Spacer()
-            
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.gray)
-                .padding(.top, 30)
         }
-        .padding(.vertical, 8)
+        .padding(14)
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color(.systemGray5), lineWidth: 0.5)
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
+        .padding(.horizontal, 16)
     }
     
     private func formattedPrice(_ price: Double) -> String {
