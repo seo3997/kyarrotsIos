@@ -86,7 +86,7 @@ struct ProductListSwiftUIView: View {
             }
             */
         }
-        .navigationTitle("내 등록 매물")
+        .navigationTitle("상품리스트")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {

@@ -240,7 +240,9 @@ final class MenuListViewController: UITableViewController {
                 }
             case .settings:
                 let vc = UIHostingController(rootView: SettingsView())
-                vc.title = selected.title
+                vc.navigationItem.title = selected.title
+                vc.navigationItem.hidesBackButton = true // ✅ 뒤로가기 숨김
+                vc.addLeftMenuButton() // ✅ 햄버거 메뉴 추가
                 nav.pushViewController(vc, animated: true)
                 
             case .orderManagement:
@@ -294,6 +296,7 @@ final class MenuListViewController: UITableViewController {
             AppCoordinator.shared?.showNotificationList()
         }
         let vc = UIHostingController(rootView: rootView)
+        vc.navigationItem.hidesBackButton = true // ✅ 뒤로가기 숨김
         vc.addLeftMenuButton()
         nav.pushViewController(vc, animated: true)
     }

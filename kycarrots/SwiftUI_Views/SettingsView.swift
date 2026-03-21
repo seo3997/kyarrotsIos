@@ -412,6 +412,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("프로필 / 설정")
+        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
         .alert("로그아웃", isPresented: $viewModel.showLogoutAlert) {
             Button("취소", role: .cancel) { }
             Button("로그아웃", role: .destructive) {
