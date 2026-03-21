@@ -59,6 +59,12 @@ struct PaymentCancelRequest: Encodable {
     let amount: Int
 }
 
+struct OrderReturnRequest: Encodable {
+    let orderId: String
+    let returnReason: String
+    let userNo: Int64
+}
+
 struct PaymentCancelResponse: Decodable {
     let success: Bool
     let message: String?

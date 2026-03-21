@@ -411,6 +411,10 @@ final class RemoteRepository {
         try await api.request(AdApiEndpoint.cancelPayment(req: req), as: PaymentCancelResponse.self)
     }
 
+    func requestReturn(req: OrderReturnRequest) async throws -> PaymentCancelResponse {
+        try await api.request(AdApiEndpoint.requestReturn(req: req), as: PaymentCancelResponse.self)
+    }
+
     // MARK: - 주소록 (Address)
     func getAddressList(token: String) async throws -> [TbAddressBookVo] {
         try await api.request(AdApiEndpoint.getAddressList(token: token), as: [TbAddressBookVo].self)

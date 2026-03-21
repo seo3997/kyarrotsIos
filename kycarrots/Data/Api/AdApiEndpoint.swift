@@ -108,6 +108,7 @@ enum AdApiEndpoint: Endpoint {
     case getOrderHistory(buyerNo: Int64, page: Int, size: Int)
     case getOrderDetail(orderId: String)
     case cancelPayment(req: OrderCancelRequest)
+    case requestReturn(req: OrderReturnRequest)
 
     // 주소록 (Address)
     case getAddressList(token: String)
@@ -244,6 +245,8 @@ enum AdApiEndpoint: Endpoint {
             return "api/orders/buyer/\(buyerNo)"
         case .cancelPayment:
             return "api/payment/cancel"
+        case .requestReturn:
+            return "api/payment/return"
         case let .getOrderDetail(orderId):
             return "api/orders/\(orderId)"
 
@@ -291,6 +294,7 @@ enum AdApiEndpoint: Endpoint {
              .getDefaultWholesaler,
              .getReviewList,
              .getQnaList,
+             .getOrderHistory,
              .getAddressList:
             return .get
 
@@ -530,6 +534,8 @@ enum AdApiEndpoint: Endpoint {
         case let .confirmPayment(req):
             return req
         case let .cancelPayment(req):
+            return req
+        case let .requestReturn(req):
             return req
         case let .addAddress(_, address),
              let .updateAddress(_, _, address):

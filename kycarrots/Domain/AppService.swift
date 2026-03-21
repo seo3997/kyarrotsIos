@@ -285,6 +285,10 @@ final class AppService {
         (try? await repo.cancelPayment(req: req).success) ?? false
     }
 
+    func requestReturn(req: OrderReturnRequest) async -> Bool {
+        (try? await repo.requestReturn(req: req).success) ?? false
+    }
+
     // MARK: - 주소록 (Address)
     func getAddressList(token: String) async -> [TbAddressBookVo] {
         (try? await repo.getAddressList(token: token)) ?? []

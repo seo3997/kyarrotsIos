@@ -246,6 +246,13 @@ final class AppCoordinator {
         vc.navigationItem.title = "알림 리스트"
         nav.pushViewController(vc, animated: true)
     }
+
+    func showOrderDetail(orderId: String) {
+        let rootView = OrderDetailView(orderId: orderId)
+        let vc = SideMenuRestrictedHostingController(rootView: rootView)
+        vc.navigationItem.title = "주문 상세 정보"
+        nav.pushViewController(vc, animated: true)
+    }
     
 }
 
@@ -383,6 +390,9 @@ private extension AppCoordinator {
             guard let self = self else { return }
             let pid = Int64(item.productId ?? "") ?? 0
             self.showProductDetail(pid: pid, userId: item.userId ?? "", title: item.title ?? "")
+        }
+        rootView.onSelectOrder = { [weak self] orderId in
+            self?.showOrderDetail(orderId: orderId)
         }
         let hostingVC = UIHostingController(rootView: rootView)
         hostingVC.navigationItem.title = "상품리스트"

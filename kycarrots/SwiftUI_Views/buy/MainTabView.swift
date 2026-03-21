@@ -21,6 +21,7 @@ struct MainTabView: View {
     @State private var selectedTab = 0
     @StateObject private var viewModel = MainTabViewModel()
     var onSelectProduct: ((AdItem) -> Void)? = nil
+    var onSelectOrder: ((String) -> Void)? = nil
     var onShowNotifications: (() -> Void)? = nil
     
     var body: some View {
@@ -37,7 +38,7 @@ struct MainTabView: View {
                 }
                 .tag(1)
             
-            PurchaseHistoryView(onSelectProduct: onSelectProduct)
+            PurchaseHistoryView(onSelectOrder: onSelectOrder)
                 .tabItem {
                     Label("구매내역", systemImage: "bag")
                 }
