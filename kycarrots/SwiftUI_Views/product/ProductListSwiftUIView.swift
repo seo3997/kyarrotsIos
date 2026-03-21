@@ -22,8 +22,8 @@ struct ProductListSwiftUIView: View {
                 }
                 
                 // Product List
-                ZStack {
-                    List {
+                ScrollView {
+                    LazyVStack(spacing: 12) {
                         ForEach(viewModel.items, id: \.productId) { item in
                             Button(action: {
                                 onSelectProduct?(item)
@@ -37,26 +37,30 @@ struct ProductListSwiftUIView: View {
                                 }
                             }
                         }
-                    }
-                    .listStyle(PlainListStyle())
-                    .refreshable {
-                        viewModel.fetchProducts(isRefresh: true)
-                    }
-                    
-                    if viewModel.items.isEmpty && !viewModel.isLoading {
-                        VStack(spacing: 12) {
-                            Image(systemName: "square.dashed")
-                                .font(.system(size: 40))
-                                .foregroundColor(.secondary)
-                            Text("해당 상태의 상품이 없습니다.")
-                                .foregroundColor(.secondary)
+                        
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .padding()
                         }
                     }
-                    
-                    if viewModel.isLoading && viewModel.items.isEmpty {
-                        ProgressView()
-                            .scaleEffect(1.5)
+                    .padding(.vertical, 12)
+                }
+                .background(Color(.systemGroupedBackground))
+                .refreshable {
+                    viewModel.fetchProducts(isRefresh: true)
+                }
+                
+                if viewModel.items.isEmpty && !viewModel.isLoading {
+                    VStack(spacing: 12) {
+                        Spacer()
+                        Image(systemName: "square.dashed")
+                            .font(.system(size: 40))
+                            .foregroundColor(.secondary)
+                        Text("해당 상태의 상품이 없습니다.")
+                            .foregroundColor(.secondary)
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             

@@ -45,14 +45,10 @@ struct ProductRowView: View {
             Spacer()
         }
         .padding(14)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Color.white)
         .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(.systemGray5), lineWidth: 0.5)
-        )
-        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
-        .padding(.horizontal, 16)
+        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        .padding(.horizontal, 12) // ✅ 좌우 패딩 12로 축소
     }
     
     private func formattedPrice(_ price: Double) -> String {
