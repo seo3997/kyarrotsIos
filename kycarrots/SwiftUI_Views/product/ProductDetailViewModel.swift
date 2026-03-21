@@ -61,9 +61,14 @@ class ProductDetailViewModel: ObservableObject {
                 let userNo = Int64(LoginInfoUtil.getUserNo()) ?? 0
                 print("👨‍💼 [ViewModel] userNo: \(userNo), productId: \(productId)")
                 
-                let detail = try await AppServiceProvider.shared.getProductDetail(productId: productId, userNo: userNo)
+                // Prefetch all data in parallel to avoid tab display delays
+                async let productTask = AppServiceProvider.shared.getProductDetail(productId: productId, userNo: userNo)
+                async let reviewsTask = AppServiceProvider.shared.getReviewList(productId: productId)
+                async let qnasTask = AppServiceProvider.shared.getQnaList(productId: productId)
                 
-                print("📦 [ViewModel] Network result received. detail is nil? \(detail == nil)")
+                let (detail, reviews, qnas) = await (productTask, reviewsTask, qnasTask)
+                
+                print("📦 [ViewModel] All data fetched. Detail: \(detail != nil), Reviews: \(reviews.count), Qnas: \(qnas.count)")
                 
                 await MainActor.run {
                     if let detail = detail {
@@ -72,14 +77,13 @@ class ProductDetailViewModel: ObservableObject {
                         self.isFavorite = (detail.product.fav == "Y" || detail.product.fav == "1")
                         self.quantity = 1
                         self.loadStatusOptions(currentStatus: detail.product.saleStatus)
-                        
-                        // Initial Tab Data based on current selection
-                        if self.selectedTab == 1 { self.loadReviews() }
-                        else if self.selectedTab == 2 { self.loadQnas() }
                     } else {
                         print("❌ [ViewModel] detail was nil - likely a decoding error in AppService/Repo")
                         self.errorMessage = "상품 정보를 가져오지 못했습니다. (데이터 매핑 확인 필요)"
                     }
+                    
+                    self.reviews = reviews
+                    self.qnas = qnas
                     self.isLoading = false
                     print("🏁 [ViewModel] isLoading set to false")
                 }

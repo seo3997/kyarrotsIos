@@ -20,61 +20,28 @@ struct ProductDescriptionView: View {
                     let product = productDetail.product
                     
                     VStack(alignment: .leading, spacing: 16) {
-                        // 1. Title + Status
-                        HStack(alignment: .top) {
-                            Text(product.title)
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.primary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            StatusControlView(viewModel: viewModel, product: product)
-                        }
-                        .padding(.top, 8)
-                        
-                        // 2. Category & Area
-                        HStack {
-                            let mid = product.categoryMidNm ?? ""
-                            let scls = product.categorySclsNm ?? ""
-                            if !mid.isEmpty {
-                                Text(mid + (scls.isEmpty ? "" : " > " + scls))
-                                    .font(.system(size: 13))
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                            let areaMid = product.areaMidNm ?? ""
-                            let areaScls = product.areaSclsNm ?? ""
-                            if !areaMid.isEmpty {
-                                Text(areaMid + " " + areaScls)
-                                    .font(.system(size: 13))
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        
-                        // 3. Description
+                        // 1. Description (Matches Android Snippet)
                         VStack(alignment: .leading, spacing: 12) {
-                            if product.editorMode == "1" || product.editorMode == "2" || product.editorMode == "3" {
-                                let rawDescription = product.description ?? ""
-                                if rawDescription == "없음" || rawDescription.isEmpty {
-                                    Text("정보가 없습니다.")
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.secondary)
-                                } else {
-                                    let htmlContent = wrapHTML(rawDescription)
-                                    HTMLStringView(htmlContent: htmlContent)
-                                        .frame(height: webViewHeight)
-                                }
+                            if product.editorMode == "1" || product.editorMode == "2" {
+                                let rawDescription = product.description ?? "설명이 없습니다"
+                                let htmlContent = wrapHTML(rawDescription)
+                                HTMLStringView(htmlContent: htmlContent)
+                                    .frame(height: webViewHeight)
                             } else {
-                                Text(product.description ?? "정보가 없습니다.")
+                                Text(product.description ?? "설명이 없습니다")
                                     .font(.system(size: 15))
                                     .foregroundColor(.primary)
                                     .lineSpacing(5)
                                     .fixedSize(horizontal: false, vertical: true)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
                         .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color(UIColor.systemBackground))
                         .cornerRadius(8)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+                        .padding(.bottom, 16)
                         
                         // 4. Price & Shipping
                         VStack(alignment: .leading, spacing: 16) {

@@ -51,31 +51,49 @@ struct QnaVo: Codable, Identifiable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case qnaId
-        case productId
-        case userNo
-        case userNm
-        case title
-        case contents
-        case secretYn
-        case registDt
-        case qnaStatus
-        case answerContents
-        case answererNm
-        case answeredAt
+        case qnaId = "QNA_ID"
+        case productId = "PRODUCT_ID"
+        case userNo = "USER_NO"
+        case userNm = "USER_NM"
+        case title = "TITLE"
+        case contents = "CONTENTS"
+        case secretYn = "SECRET_YN"
+        case registDt = "REGIST_DT"
+        case qnaStatus = "QNA_STATUS"
+        case answerContents = "ANSWER_CONTENTS"
+        case answererNm = "ANSWERER_NM"
+        case answeredAt = "ANSWERED_AT"
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        qnaId = (try? container.decodeIfPresent(String.self, forKey: .qnaId))
-            ?? (try? container.decodeIfPresent(Int64.self, forKey: .qnaId)).map { String($0) }
+        // Handle QNA_ID as String or Int64
+        if let qId = try? container.decodeIfPresent(String.self, forKey: .qnaId) {
+            qnaId = qId
+        } else if let qIdInt = try? container.decodeIfPresent(Int64.self, forKey: .qnaId) {
+            qnaId = String(qIdInt)
+        } else {
+            qnaId = nil
+        }
             
-        productId = (try? container.decodeIfPresent(String.self, forKey: .productId))
-            ?? (try? container.decodeIfPresent(Int64.self, forKey: .productId)).map { String($0) }
+        // Handle PRODUCT_ID as String or Int64
+        if let pId = try? container.decodeIfPresent(String.self, forKey: .productId) {
+            productId = pId
+        } else if let pIdInt = try? container.decodeIfPresent(Int64.self, forKey: .productId) {
+            productId = String(pIdInt)
+        } else {
+            productId = nil
+        }
             
-        userNo = (try? container.decodeIfPresent(String.self, forKey: .userNo))
-            ?? (try? container.decodeIfPresent(Int64.self, forKey: .userNo)).map { String($0) }
+        // Handle USER_NO as String or Int64
+        if let uNo = try? container.decodeIfPresent(String.self, forKey: .userNo) {
+            userNo = uNo
+        } else if let uNoInt = try? container.decodeIfPresent(Int64.self, forKey: .userNo) {
+            userNo = String(uNoInt)
+        } else {
+            userNo = nil
+        }
             
         userNm = try container.decodeIfPresent(String.self, forKey: .userNm)
         title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""

@@ -19,6 +19,7 @@ struct ReviewVo: Codable, Identifiable {
     let displayYn: String?
     let atchDocId: String?
     let fileRltvPath: String?
+    let filePaths: String?
 
     init(
         reviewId: String? = nil,
@@ -30,7 +31,8 @@ struct ReviewVo: Codable, Identifiable {
         registDt: String? = nil,
         displayYn: String? = nil,
         atchDocId: String? = nil,
-        fileRltvPath: String? = nil
+        fileRltvPath: String? = nil,
+        filePaths: String? = nil
     ) {
         self.reviewId = reviewId
         self.productId = productId
@@ -42,36 +44,56 @@ struct ReviewVo: Codable, Identifiable {
         self.displayYn = displayYn
         self.atchDocId = atchDocId
         self.fileRltvPath = fileRltvPath
+        self.filePaths = filePaths
     }
 
     enum CodingKeys: String, CodingKey {
-        case reviewId
-        case productId
-        case userNo
-        case userNm
-        case rating
-        case contents
-        case registDt
-        case displayYn
-        case atchDocId
-        case fileRltvPath
+        case reviewId = "REVIEW_ID"
+        case productId = "PRODUCT_ID"
+        case userNo = "USER_NO"
+        case userNm = "USER_NM"
+        case rating = "RATING"
+        case contents = "CONTENTS"
+        case registDt = "REGIST_DT"
+        case displayYn = "DISPLAY_YN"
+        case atchDocId = "ATCH_DOC_ID"
+        case fileRltvPath = "FILE_RLTV_PATH"
+        case filePaths = "FILE_PATHS"
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        reviewId = (try? container.decodeIfPresent(String.self, forKey: .reviewId))
-            ?? (try? container.decodeIfPresent(Int64.self, forKey: .reviewId)).map { String($0) }
+        // Handle REVIEW_ID as String or Int64
+        if let rId = try? container.decodeIfPresent(String.self, forKey: .reviewId) {
+            reviewId = rId
+        } else if let rIdInt = try? container.decodeIfPresent(Int64.self, forKey: .reviewId) {
+            reviewId = String(rIdInt)
+        } else {
+            reviewId = nil
+        }
             
-        productId = (try? container.decodeIfPresent(Int64.self, forKey: .productId)).map { String($0) }
-            ?? (try? container.decodeIfPresent(String.self, forKey: .productId))
+        // Handle PRODUCT_ID as String or Int64
+        if let pIdInt = try? container.decodeIfPresent(Int64.self, forKey: .productId) {
+            productId = String(pIdInt)
+        } else if let pId = try? container.decodeIfPresent(String.self, forKey: .productId) {
+            productId = pId
+        } else {
+            productId = nil
+        }
             
-        userNo = (try? container.decodeIfPresent(String.self, forKey: .userNo))
-            ?? (try? container.decodeIfPresent(Int64.self, forKey: .userNo)).map { String($0) }
+        // Handle USER_NO as String or Int64
+        if let uNo = try? container.decodeIfPresent(String.self, forKey: .userNo) {
+            userNo = uNo
+        } else if let uNoInt = try? container.decodeIfPresent(Int64.self, forKey: .userNo) {
+            userNo = String(uNoInt)
+        } else {
+            userNo = nil
+        }
             
         userNm = try container.decodeIfPresent(String.self, forKey: .userNm)
         
-        // Flexible decoding for rating (Int)
+        // Flexible decoding for RATING (Int)
         if let rInt = try? container.decodeIfPresent(Int.self, forKey: .rating) {
             rating = rInt
         } else if let rString = try? container.decodeIfPresent(String.self, forKey: .rating) {
@@ -87,5 +109,6 @@ struct ReviewVo: Codable, Identifiable {
         displayYn = try container.decodeIfPresent(String.self, forKey: .displayYn)
         atchDocId = try container.decodeIfPresent(String.self, forKey: .atchDocId)
         fileRltvPath = try container.decodeIfPresent(String.self, forKey: .fileRltvPath)
+        filePaths = try container.decodeIfPresent(String.self, forKey: .filePaths)
     }
 }

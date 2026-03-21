@@ -60,23 +60,25 @@ struct ProductDetailSwiftUIView: View {
             // 3. Tab Bar Section
             HStack(spacing: 0) {
                 ForEach(["상품설명", "상품리뷰", "상품문의"].enumerated().map({$0}), id: \.offset) { index, title in
-                    VStack(spacing: 8) {
-                        Text(title)
-                            .font(.system(size: 15, weight: viewModel.selectedTab == index ? .bold : .medium))
-                            .foregroundColor(viewModel.selectedTab == index ? .primary : .secondary)
-                        
-                        // Underline
-                        Rectangle()
-                            .fill(viewModel.selectedTab == index ? Color.accentColor : Color.clear)
-                            .frame(height: 2)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
+                    Button(action: {
+                        print("👉 [View] Tab tapped: \(index) (\(title))")
                         withAnimation {
                             viewModel.selectedTab = index
                         }
+                    }) {
+                        VStack(spacing: 8) {
+                            Text(title)
+                                .font(.system(size: 15, weight: viewModel.selectedTab == index ? .bold : .medium))
+                                .foregroundColor(viewModel.selectedTab == index ? .primary : .secondary)
+                            
+                            // Underline
+                            Rectangle()
+                                .fill(viewModel.selectedTab == index ? Color.accentColor : Color.clear)
+                                .frame(height: 2)
+                        }
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .frame(maxWidth: .infinity)
                 }
             }
             .padding(.top, 8)

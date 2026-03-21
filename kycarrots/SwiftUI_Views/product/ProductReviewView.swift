@@ -118,7 +118,7 @@ struct ReviewRow: View {
                 .fixedSize(horizontal: false, vertical: true)
             
             // Review Images (80x80 thumbnails from comma-separated URLs)
-            if let imgUrls = review.fileRltvPath, !imgUrls.isEmpty {
+            if let imgUrls = review.filePaths ?? review.fileRltvPath, !imgUrls.isEmpty {
                 let urls = imgUrls.split(separator: ",").map(String.init)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
