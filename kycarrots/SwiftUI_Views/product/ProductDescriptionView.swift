@@ -29,9 +29,9 @@ struct ProductDescriptionView: View {
                                     .frame(height: webViewHeight)
                             } else {
                                 Text(product.description ?? "설명이 없습니다")
-                                    .font(.system(size: 15))
+                                    .font(.system(size: 18))
                                     .foregroundColor(.primary)
-                                    .lineSpacing(5)
+                                    .lineSpacing(6)
                                     .fixedSize(horizontal: false, vertical: true)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -47,7 +47,7 @@ struct ProductDescriptionView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             let priceValue = Int(Double(product.price ?? "0") ?? 0)
                             Text("\(CurrencyUtil.formatCurrency(priceValue))")
-                                .font(.system(size: 22, weight: .bold))
+                                .font(.system(size: 26, weight: .bold))
                                 .foregroundColor(.primary)
                             
                             HStack(spacing: 12) {
@@ -55,11 +55,11 @@ struct ProductDescriptionView: View {
                                     .foregroundColor(.blue)
                                     .font(.system(size: 20))
                                 
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: 4) {
                                     Text("배송비: \(CurrencyUtil.formatCurrency(viewModel.baseShippingFee))")
-                                        .font(.system(size: 14, weight: .bold))
+                                        .font(.system(size: 17, weight: .bold))
                                     Text("(\(CurrencyUtil.formatCurrency(viewModel.freeShippingThreshold)) 이상 구매 시 무료)")
-                                        .font(.system(size: 12))
+                                        .font(.system(size: 15))
                                         .foregroundColor(.gray)
                                 }
                             }
@@ -71,11 +71,11 @@ struct ProductDescriptionView: View {
                             
                             let availQtyValue = Int(Double(product.availableQuantity ?? "0") ?? 0)
                             Text("구매 가능 수량: \(CurrencyUtil.formatCurrency(availQtyValue))개")
-                                .font(.system(size: 13))
+                                .font(.system(size: 16))
                                 .foregroundColor(.gray)
                             
                             HStack(spacing: 16) {
-                                Text("수량").font(.system(size: 14, weight: .bold))
+                                Text("수량").font(.system(size: 17, weight: .bold))
                                 Spacer()
                                 HStack(spacing: 12) {
                                     Button(action: { if viewModel.quantity > 1 { viewModel.quantity -= 1 } }) {
@@ -84,8 +84,8 @@ struct ProductDescriptionView: View {
                                             .foregroundColor(viewModel.quantity > 1 ? .blue : .gray.opacity(0.3))
                                     }
                                     Text("\(viewModel.quantity)")
-                                        .font(.system(size: 18, weight: .bold))
-                                        .frame(width: 40)
+                                        .font(.system(size: 20, weight: .bold))
+                                        .frame(width: 50)
                                     Button(action: { 
                                         let max = Int(Double(product.availableQuantity ?? "0") ?? 0)
                                         if viewModel.quantity < max { viewModel.quantity += 1 } 
@@ -100,10 +100,10 @@ struct ProductDescriptionView: View {
                             Divider()
                             
                             HStack {
-                                Text("총 상품 금액").font(.system(size: 14))
+                                Text("총 상품 금액").font(.system(size: 18))
                                 Spacer()
                                 Text("\(CurrencyUtil.formatCurrency(viewModel.totalPrice))")
-                                    .font(.system(size: 20, weight: .bold))
+                                    .font(.system(size: 24, weight: .bold))
                                     .foregroundColor(.blue)
                             }
                         }
@@ -117,7 +117,7 @@ struct ProductDescriptionView: View {
                         if !subImages.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("상품 이미지")
-                                    .font(.system(size: 16, weight: .bold))
+                                    .font(.system(size: 19, weight: .bold))
                                 
                                 VStack(spacing: 16) {
                                     ForEach(subImages, id: \.imageId) { img in
@@ -162,7 +162,7 @@ struct ProductDescriptionView: View {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
                 img { max-width: 100% !important; height: auto !important; }
-                body { font-size: 16px; line-height: 1.5; word-wrap: break-word; margin: 0; padding: 0; }
+                body { font-size: 18px; line-height: 1.6; word-wrap: break-word; margin: 0; padding: 0; }
             </style>
         </head>
         <body>
@@ -180,9 +180,9 @@ struct StatusControlView: View {
     var body: some View {
         if viewModel.isBuyer {
             Text(product.saleStatusNm ?? "판매중")
-                .font(.system(size: 12, weight: .bold))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
+                .font(.system(size: 15, weight: .bold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
                 .background(Color.blue.opacity(0.1))
                 .foregroundColor(.blue)
                 .cornerRadius(6)
@@ -198,9 +198,9 @@ struct StatusControlView: View {
                     Text(viewModel.selectedStatus?.strMsg ?? product.saleStatusNm ?? "상태 설정")
                     Image(systemName: "chevron.down").font(.system(size: 10))
                 }
-                .font(.system(size: 12, weight: .bold))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
+                .font(.system(size: 15, weight: .bold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
                 .background(Color.blue.opacity(0.1))
                 .foregroundColor(.blue)
                 .cornerRadius(6)
