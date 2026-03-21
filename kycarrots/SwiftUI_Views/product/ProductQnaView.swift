@@ -2,6 +2,8 @@
 //  ProductQnaView.swift
 //  kycarrots
 //
+//  Created by soohyun on 03/21/26.
+//
 
 import SwiftUI
 
@@ -9,21 +11,62 @@ struct ProductQnaView: View {
     @ObservedObject var viewModel: ProductDetailViewModel
     
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.qnas.isEmpty {
-                VStack {
-                    Spacer().frame(height: 100)
-                    Text("등록된 문의가 없습니다.")
-                        .foregroundColor(.gray)
+        VStack(alignment: .leading, spacing: 0) {
+            // 1. Fixed Header (Always visible)
+            HStack(alignment: .center) {
+                Text("상품 문의")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(Color(hex: "1e293b"))
+                
+                Spacer()
+                
+                Button(action: {
+                    // Action for writing QnA
+                    print("Write QnA tapped")
+                }) {
+                    Text("문의 하기")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .cornerRadius(6)
                 }
-            } else {
-                LazyVStack(spacing: 0) {
-                    ForEach(viewModel.qnas) { qna in
-                        QnaRowView(qna: qna, currentUserId: UserDefaults.standard.string(forKey: "userNo"))
-                        Divider()
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 24)
+            .padding(.bottom, 12)
+            
+            Divider()
+                .frame(height: 2)
+                .background(Color(hex: "f1f5f9"))
+                .padding(.horizontal, 24)
+                .padding(.bottom, 16)
+
+            // 2. Scrollable Content Area
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    if viewModel.qnas.isEmpty {
+                        VStack {
+                            Spacer().frame(height: 100)
+                            Text("등록된 문의가 없습니다.")
+                                .foregroundColor(Color(hex: "94a3b8"))
+                                .font(.system(size: 14))
+                                .frame(maxWidth: .infinity)
+                        }
+                    } else {
+                        LazyVStack(spacing: 0) {
+                            ForEach(viewModel.qnas) { qna in
+                                QnaRow(qna: qna, 
+                                       currentUserId: viewModel.currentUserId,
+                                       onEdit: { viewModel.editQna(qna) },
+                                       onDelete: { viewModel.deleteQna(qna) })
+                                Divider().padding(.horizontal, 24)
+                            }
+                        }
                     }
                 }
-                .padding(.top)
+                .padding(.bottom, 100) // Padding for fixed bottom bar
             }
         }
         .onAppear {
@@ -32,99 +75,97 @@ struct ProductQnaView: View {
     }
 }
 
-struct QnaRowView: View {
+struct QnaRow: View {
     let qna: QnaVo
-    let currentUserId: String?
+    let currentUserId: String
+    let onEdit: () -> Void
+    let onDelete: () -> Void
     
     @State private var isExpanded: Bool = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 4) {
+        let isSecret = qna.secretYn == "Y"
+        let normalizedWriter = qna.userNo?.split(separator: ".").first ?? ""
+        let normalizedMe = currentUserId.split(separator: ".").first ?? ""
+        let isOwner = normalizedWriter == normalizedMe || normalizedMe == "admin"
+        let canView = !isSecret || isOwner
+        
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
                 // Status Badge
-                StatusBadge(status: qna.qnaStatus ?? "10", hasAnswer: qna.answerContents != nil)
+                Text(qna.qnaStatus == "2" ? "답변완료" : "답변대기")
+                    .font(.system(size: 11, weight: .bold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(qna.qnaStatus == "2" ? Color.blue.opacity(0.1) : Color.gray.opacity(0.1))
+                    .foregroundColor(qna.qnaStatus == "2" ? .blue : .gray)
+                    .cornerRadius(4)
                 
-                Text(qna.title ?? "")
-                    .font(.body)
-                    .fontWeight(.bold)
-                    .lineLimit(1)
-                
-                if qna.secretYn == "Y" {
+                if isSecret {
                     Image(systemName: "lock.fill")
-                        .font(.caption2)
+                        .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
                 
+                Text(canView ? (qna.title ?? "") : "비밀글입니다.")
+                    .font(.system(size: 15, weight: isSecret ? .medium : .bold))
+                    .foregroundColor(canView ? .primary : .secondary)
+                
                 Spacer()
                 
-                Text(qna.registDt ?? "")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-            .onTapGesture {
-                if canSeeContents {
-                    withAnimation { isExpanded.toggle() }
-                }
-            }
-            
-            Text("\(qna.userNm ?? "사용자")")
-                .font(.footnote)
-                .foregroundColor(.gray)
-            
-            if isExpanded {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text(qna.contents ?? "")
-                        .font(.body)
-                        .padding(.vertical, 8)
-                    
-                    if let answer = qna.answerContents {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("공식 답변")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .foregroundColor(.accentColor)
-                            Text(answer)
-                                .font(.body)
-                            Text(qna.answeredAt ?? "")
-                                .font(.caption2)
-                                .foregroundColor(.gray)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
+                if isOwner {
+                    Menu {
+                        Button("수정", action: onEdit)
+                        Button("삭제", role: .destructive, action: onDelete)
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .foregroundColor(.gray)
+                            .padding(4)
                     }
                 }
-                .padding(.top, 4)
-            } else if !canSeeContents {
-                Text("비밀글입니다.")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .italic()
-                    .padding(.top, 4)
+            }
+            
+            HStack {
+                Text(qna.userNm ?? "익명")
+                Text("|")
+                Text(qna.registDt ?? "")
+            }
+            .font(.system(size: 12))
+            .foregroundColor(.secondary)
+            
+            if isExpanded && canView {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(qna.contents ?? "")
+                        .font(.system(size: 14))
+                        .padding(.top, 4)
+                    
+                    if let answer = qna.answerContents, !answer.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "arrow.turn.down.right")
+                                    .foregroundColor(.blue)
+                                Text("판매자 답변")
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundColor(.blue)
+                            }
+                            Text(answer)
+                                .font(.system(size: 14))
+                                .padding(12)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.blue.opacity(0.05))
+                                .cornerRadius(8)
+                        }
+                        .padding(.top, 8)
+                    }
+                }
             }
         }
-        .padding()
-        .background(Color.white)
-    }
-    
-    private var canSeeContents: Bool {
-        return qna.secretYn != "Y" || (currentUserId != nil && currentUserId == qna.userNo)
-    }
-}
-
-struct StatusBadge: View {
-    let status: String
-    let hasAnswer: Bool
-    
-    var body: some View {
-        Text(hasAnswer || status == "20" ? "답변완료" : "접수")
-            .font(.caption2)
-            .fontWeight(.bold)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .foregroundColor(hasAnswer || status == "20" ? .green : .gray)
-            .background((hasAnswer || status == "20" ? Color.green : Color.gray).opacity(0.1))
-            .cornerRadius(4)
+        .padding(24)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if canView {
+                withAnimation { isExpanded.toggle() }
+            }
+        }
     }
 }

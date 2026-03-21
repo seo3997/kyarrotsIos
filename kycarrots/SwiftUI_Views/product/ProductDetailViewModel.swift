@@ -9,9 +9,13 @@ class ProductDetailViewModel: ObservableObject {
     @Published var statusOptions: [TxtListDataInfo] = []
     @Published var selectedStatus: TxtListDataInfo?
     @Published var unreadNotificationCount = 0
+    @Published var baseShippingFee: Int = 0
+    @Published var freeShippingThreshold: Int = 0
+    @Published var isBuyer: Bool = false
+    @Published var currentUserId: String = ""
     @Published var errorMessage: String?
     
-    // New Fields for Tabs
+    // Dependencies lds for Tabs
     @Published var selectedTab: Int = 0
     @Published var reviews: [ReviewVo] = []
     @Published var qnas: [QnaVo] = []
@@ -35,32 +39,55 @@ class ProductDetailViewModel: ObservableObject {
     
     init(productId: Int64) {
         self.productId = productId
+        self.baseShippingFee = LoginInfoUtil.getBaseShippingFee()
+        self.freeShippingThreshold = LoginInfoUtil.getFreeShippingThreshold()
+        self.isBuyer = (LoginInfoUtil.getMemberCode() == Constants.ROLE_PUB)
+        self.currentUserId = LoginInfoUtil.getUserNo()
     }
     
     func fetchData() {
-        guard productId > 0 else { return }
+        print("🔍 [ViewModel] fetchData called for productId: \(productId)")
+        guard productId > 0 else { 
+            print("⚠️ [ViewModel] Invalid productId: \(productId)")
+            return 
+        }
+        
         isLoading = true
         
         Task {
+            print("🌐 [ViewModel] Starting task to fetch product detail...")
             do {
                 let userNo = Int64(LoginInfoUtil.getUserNo()) ?? 0
-                if let detail = try await AppServiceProvider.shared.getProductDetail(productId: productId, userNo: userNo) {
-                    await MainActor.run {
+                print("👨‍💼 [ViewModel] userNo: \(userNo), productId: \(productId)")
+                
+                let detail = try await AppServiceProvider.shared.getProductDetail(productId: productId, userNo: userNo)
+                
+                print("📦 [ViewModel] Network result received. detail is nil? \(detail == nil)")
+                
+                await MainActor.run {
+                    if let detail = detail {
+                        print("✅ [ViewModel] Successfully decoded detail for product: \(detail.product.title)")
                         self.productDetail = detail
                         self.isFavorite = (detail.product.fav == "Y" || detail.product.fav == "1")
                         self.quantity = 1
                         self.loadStatusOptions(currentStatus: detail.product.saleStatus)
-                        self.isLoading = false
                         
-                        // Initial Tab Data (optional, but keep consistent)
+                        // Initial Tab Data based on current selection
                         if self.selectedTab == 1 { self.loadReviews() }
-                        if self.selectedTab == 2 { self.loadQnas() }
+                        else if self.selectedTab == 2 { self.loadQnas() }
+                    } else {
+                        print("❌ [ViewModel] detail was nil - likely a decoding error in AppService/Repo")
+                        self.errorMessage = "상품 정보를 가져오지 못했습니다. (데이터 매핑 확인 필요)"
                     }
+                    self.isLoading = false
+                    print("🏁 [ViewModel] isLoading set to false")
                 }
             } catch {
+                print("🔥 [ViewModel] Error in fetchData: \(error)")
                 await MainActor.run {
-                    self.errorMessage = error.localizedDescription
+                    self.errorMessage = "네트워크 오류: \(error.localizedDescription)"
                     self.isLoading = false
+                    print("🏁 [ViewModel] isLoading set to false after error")
                 }
             }
         }
@@ -196,6 +223,7 @@ class ProductDetailViewModel: ObservableObject {
     
     // MARK: - Tab Data Loading
     func loadReviews() {
+        print("🔍 [ViewModel] loadReviews called for productId: \(productId)")
         Task {
             let list = await AppServiceProvider.shared.getReviewList(productId: productId)
             await MainActor.run { self.reviews = list }
@@ -203,9 +231,51 @@ class ProductDetailViewModel: ObservableObject {
     }
     
     func loadQnas() {
+        print("🔍 [ViewModel] loadQnas called for productId: \(productId)")
         Task {
             let list = await AppServiceProvider.shared.getQnaList(productId: productId)
             await MainActor.run { self.qnas = list }
+        }
+    }
+    
+    func editQna(_ qna: QnaVo) {
+        // Implementation for QnA edit (e.g., show sheet/navigation)
+        print("Edit QnA: \(qna.qnaId ?? "")")
+    }
+    
+    func deleteQna(_ qna: QnaVo) {
+        Task {
+            let token = TokenUtil.getToken()
+            let success = await AppServiceProvider.shared.deleteQna(qnaId: qna.qnaId ?? "", token: token)
+            if success == true {
+                await MainActor.run { self.loadQnas() }
+            }
+        }
+    }
+    
+    func editReview(_ review: ReviewVo) {
+        // Implementation for Review edit
+        print("Edit Review: \(review.reviewId ?? "")")
+    }
+    
+    func deleteReview(_ review: ReviewVo) {
+        Task {
+            let token = TokenUtil.getToken()
+            let success = await AppServiceProvider.shared.deleteReview(reviewId: review.reviewId ?? "", token: token)
+            if success == true {
+                await MainActor.run { self.loadReviews() }
+            }
+        }
+    }
+    
+    func showImage(_ path: String) {
+        // Trigger image viewer
+        print("Show Image: \(path)")
+    }
+    
+    func updateProductStatus(selectedCode: String) {
+        Task {
+            _ = await updateStatus(code: selectedCode)
         }
     }
 }

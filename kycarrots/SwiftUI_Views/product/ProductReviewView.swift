@@ -2,6 +2,8 @@
 //  ProductReviewView.swift
 //  kycarrots
 //
+//  Created by soohyun on 03/21/26.
+//
 
 import SwiftUI
 import Kingfisher
@@ -10,21 +12,62 @@ struct ProductReviewView: View {
     @ObservedObject var viewModel: ProductDetailViewModel
     
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.reviews.isEmpty {
-                VStack {
-                    Spacer().frame(height: 100)
-                    Text("등록된 리뷰가 없습니다.")
-                        .foregroundColor(.gray)
+        VStack(alignment: .leading, spacing: 0) {
+            // 1. Fixed Header (Always visible)
+            HStack(alignment: .center) {
+                Text("상품 리뷰")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(Color(hex: "1e293b"))
+                
+                Spacer()
+                
+                Button(action: {
+                    // Action for writing Review
+                    print("Write Review tapped")
+                }) {
+                    Text("리뷰 쓰기")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .cornerRadius(6)
                 }
-            } else {
-                LazyVStack(spacing: 0) {
-                    ForEach(viewModel.reviews) { review in
-                        ReviewRowView(review: review)
-                        Divider()
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 24)
+            .padding(.bottom, 12)
+            
+            Divider()
+                .frame(height: 2)
+                .background(Color(hex: "f1f5f9"))
+                .padding(.horizontal, 24)
+                .padding(.bottom, 16)
+
+            // 2. Scrollable Content Area
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    if viewModel.reviews.isEmpty {
+                        VStack {
+                            Spacer().frame(height: 100)
+                            Text("등록된 리뷰가 없습니다.")
+                                .foregroundColor(Color(hex: "94a3b8"))
+                                .font(.system(size: 14))
+                                .frame(maxWidth: .infinity)
+                        }
+                    } else {
+                        LazyVStack(spacing: 0) {
+                            ForEach(viewModel.reviews) { review in
+                                ReviewRow(review: review, 
+                                         currentUserId: viewModel.currentUserId,
+                                         onEdit: { viewModel.editReview(review) },
+                                         onDelete: { viewModel.deleteReview(review) })
+                                Divider().padding(.horizontal, 24)
+                            }
+                        }
                     }
                 }
-                .padding(.top)
+                .padding(.bottom, 100) // Padding for fixed bottom bar
             }
         }
         .onAppear {
@@ -33,52 +76,77 @@ struct ProductReviewView: View {
     }
 }
 
-struct ReviewRowView: View {
+struct ReviewRow: View {
     let review: ReviewVo
+    let currentUserId: String
+    let onEdit: () -> Void
+    let onDelete: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let normalizedWriter = review.userNo?.split(separator: ".").first ?? ""
+        let normalizedMe = currentUserId.split(separator: ".").first ?? ""
+        let isOwner = normalizedWriter == normalizedMe || normalizedMe == "admin"
+        
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                // Star Rating
-                HStack(spacing: 2) {
-                    ForEach(0..<5) { index in
-                        Image(systemName: index < review.rating ? "star.fill" : "star")
-                            .foregroundColor(index < review.rating ? .yellow : .gray)
-                            .font(.caption)
+                HStack(spacing: 4) {
+                    ForEach(1...5, id: \.self) { star in
+                        Image(systemName: star <= review.rating ? "star.fill" : "star")
+                            .font(.system(size: 12))
+                            .foregroundColor(star <= review.rating ? .orange : .gray.opacity(0.3))
                     }
                 }
+                
                 Spacer()
-                Text(review.registDt ?? "")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                
+                if isOwner {
+                    Menu {
+                        Button("수정", action: onEdit)
+                        Button("삭제", role: .destructive, action: onDelete)
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .foregroundColor(.gray)
+                            .padding(4)
+                    }
+                }
             }
             
-            Text("\(review.userNm ?? "사용자")")
-                .font(.footnote)
-                .fontWeight(.bold)
-            
             Text(review.contents ?? "")
-                .font(.body)
-                .padding(.vertical, 4)
+                .font(.system(size: 15))
+                .foregroundColor(.primary)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
             
-            // Images (Horizontal Scroll)
-            if let filePaths = review.fileRltvPath, !filePaths.isEmpty {
+            // Review Images (80x80 thumbnails from comma-separated URLs)
+            if let imgUrls = review.fileRltvPath, !imgUrls.isEmpty {
+                let urls = imgUrls.split(separator: ",").map(String.init)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        let paths = filePaths.components(separatedBy: ",")
-                        ForEach(paths, id: \.self) { path in
-                            KFImage(URL(string: path.trimmingCharacters(in: .whitespaces)))
+                        ForEach(urls, id: \.self) { url in
+                            KFImage(URL(string: url))
                                 .resizable()
-                                .placeholder { Color.gray.opacity(0.1) }
-                                .scaledToFill()
+                                .aspectRatio(contentMode: .fill)
                                 .frame(width: 80, height: 80)
                                 .cornerRadius(8)
                                 .clipped()
+                                .onTapGesture {
+                                    // Image show logic bridge
+                                }
                         }
                     }
                 }
+                .padding(.vertical, 4)
             }
+            
+            HStack {
+                Text(review.userNm ?? "익명")
+                Text("|")
+                Text(review.registDt ?? "")
+            }
+            .font(.system(size: 12))
+            .foregroundColor(.secondary)
         }
-        .padding()
+        .padding(24)
+        .background(Color(UIColor.systemBackground))
     }
 }

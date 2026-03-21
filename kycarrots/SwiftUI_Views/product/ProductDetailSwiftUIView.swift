@@ -42,19 +42,52 @@ struct ProductDetailSwiftUIView: View {
             .padding()
             .background(Color(UIColor.systemBackground))
             
-            // Content
-            ScrollView {
-                VStack(spacing: 0) {
-                    // Tab Picker
-                    Picker("", selection: $viewModel.selectedTab) {
-                        Text("상품설명").tag(0)
-                        Text("상품리뷰").tag(1)
-                        Text("상품문의").tag(2)
+            // 2. Main Image Section
+            if let detail = viewModel.productDetail {
+                let mainImg = detail.imageMetas.first(where: { $0.represent == 1 }) ?? detail.imageMetas.first
+                KFImage(URL(string: mainImg?.imageUrl ?? ""))
+                    .resizable()
+                    .placeholder {
+                        Rectangle().fill(Color.gray.opacity(0.1))
+                            .overlay(ProgressView())
                     }
-                    .pickerStyle(.segmented)
-                    .padding()
-                    
-                    // Tab Content
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 300)
+                    .clipped()
+            }
+            
+            // 3. Tab Bar Section
+            HStack(spacing: 0) {
+                ForEach(["상품설명", "상품리뷰", "상품문의"].enumerated().map({$0}), id: \.offset) { index, title in
+                    VStack(spacing: 8) {
+                        Text(title)
+                            .font(.system(size: 15, weight: viewModel.selectedTab == index ? .bold : .medium))
+                            .foregroundColor(viewModel.selectedTab == index ? .primary : .secondary)
+                        
+                        // Underline
+                        Rectangle()
+                            .fill(viewModel.selectedTab == index ? Color.accentColor : Color.clear)
+                            .frame(height: 2)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation {
+                            viewModel.selectedTab = index
+                        }
+                    }
+                }
+            }
+            .padding(.top, 8)
+            .background(Color(UIColor.systemBackground))
+            
+            Divider()
+
+            // Tab Content
+            ZStack(alignment: .bottom) {
+                // Main Content Area
+                VStack(spacing: 0) {
                     switch viewModel.selectedTab {
                     case 0:
                         ProductDescriptionView(viewModel: viewModel)
@@ -66,18 +99,60 @@ struct ProductDetailSwiftUIView: View {
                         EmptyView()
                     }
                 }
+                .frame(maxHeight: .infinity)
+                
+                // Fixed Bottom Action Bar (L276 style)
+                if let product = viewModel.productDetail?.product {
+                    VStack(spacing: 0) {
+                        Divider()
+                        HStack(spacing: 12) {
+                            // Favorite
+                            Button(action: { viewModel.toggleFavorite() }) {
+                                Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(viewModel.isFavorite ? .red : .gray)
+                                    .padding(12)
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(8)
+                            }
+                            
+                            // Chat
+                            Button(action: { 
+                                NotificationCenter.default.post(name: NSNotification.Name("OpenChatRequested"), object: nil)
+                            }) {
+                                Text("채팅하기")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(8)
+                            }
+                            
+                            // Buy Button
+                            Button(action: { /* Buy logic */ }) {
+                                Text("구매하기")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                    .background(Color.blue)
+                                    .cornerRadius(8)
+                                    .shadow(color: .blue.opacity(0.3), radius: 4, x: 0, y: 4)
+                            }
+                        }
+                        .padding(16)
+                        .background(Color(UIColor.systemBackground))
+                    }
+                }
             }
-            
-            // Bottom Bar
-            BottomActionBar(
-                viewModel: viewModel,
-                onChat: handleChatTap,
-                onBuy: { /* Buy logic */ }
-            )
         }
         .navigationBarHidden(true)
         .onAppear {
             viewModel.fetchData()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenChatRequested"))) { _ in
+            handleChatTap()
         }
         .alert("알림", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -124,53 +199,6 @@ struct ProductDetailSwiftUIView: View {
             onShowAlert("안내", "채팅 대상 선택 로직은 추후 보강 예정입니다.")
         default:
             break
-        }
-    }
-}
-
-struct BottomActionBar: View {
-    @ObservedObject var viewModel: ProductDetailViewModel
-    var onChat: () -> Void
-    var onBuy: () -> Void
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-            HStack(spacing: 16) {
-                // Favorite
-                Button(action: {
-                    viewModel.toggleFavorite()
-                }) {
-                    Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
-                        .foregroundColor(viewModel.isFavorite ? .red : .gray)
-                        .font(.title2)
-                        .frame(width: 44, height: 44)
-                }
-                
-                // Chat
-                Button(action: onChat) {
-                    Text("채팅하기")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                }
-                
-                // Buy
-                Button(action: onBuy) {
-                    Text("구매하기")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.accentColor)
-                        .cornerRadius(8)
-                }
-            }
-            .padding()
-            .background(Color(UIColor.systemBackground))
         }
     }
 }
