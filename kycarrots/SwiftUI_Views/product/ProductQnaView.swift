@@ -20,16 +20,19 @@ struct ProductQnaView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    viewModel.startQnaWrite()
-                }) {
-                    Text("문의 하기")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.blue)
-                        .cornerRadius(6)
+                // Only for ROLE_PUB
+                if LoginInfoUtil.getMemberCode() == Constants.ROLE_PUB {
+                    Button(action: {
+                        viewModel.startQnaWrite()
+                    }) {
+                        Text("문의 하기")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.blue)
+                            .cornerRadius(6)
+                    }
                 }
             }
             .padding(.horizontal, 24)

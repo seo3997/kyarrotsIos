@@ -110,14 +110,16 @@ struct ProductDetailSwiftUIView: View {
                     VStack(spacing: 0) {
                         Divider()
                         HStack(spacing: 12) {
-                            // Favorite
-                            Button(action: { viewModel.toggleFavorite() }) {
-                                Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
-                                    .font(.system(size: 24))
-                                    .foregroundColor(viewModel.isFavorite ? .red : .gray)
-                                    .padding(12)
-                                    .background(Color(UIColor.systemGray6))
-                                    .cornerRadius(8)
+                            // Favorite (Only for ROLE_PUB)
+                            if isBuyer {
+                                Button(action: { viewModel.toggleFavorite() }) {
+                                    Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(viewModel.isFavorite ? .red : .gray)
+                                        .padding(12)
+                                        .background(Color(UIColor.systemGray6))
+                                        .cornerRadius(8)
+                                }
                             }
                             
                             // Chat
@@ -133,23 +135,25 @@ struct ProductDetailSwiftUIView: View {
                                     .cornerRadius(8)
                             }
                             
-                            // Buy Button
-                            NavigationLink(destination: OrderCheckoutView(
-                                viewModel: OrderCheckoutViewModel(
-                                    product: product,
-                                    quantity: 1,
-                                    selectedOption: nil,
-                                    productImageUrl: viewModel.productDetail?.imageMetas.first(where: { $0.represent == 1 })?.imageUrl ?? viewModel.productDetail?.imageMetas.first?.imageUrl
-                                )
-                            )) {
-                                Text("구매하기")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 50)
-                                    .background(Color.blue)
-                                    .cornerRadius(8)
-                                    .shadow(color: .blue.opacity(0.3), radius: 4, x: 0, y: 4)
+                            // Buy Button (Only for ROLE_PUB)
+                            if isBuyer {
+                                NavigationLink(destination: OrderCheckoutView(
+                                    viewModel: OrderCheckoutViewModel(
+                                        product: product,
+                                        quantity: 1,
+                                        selectedOption: nil,
+                                        productImageUrl: viewModel.productDetail?.imageMetas.first(where: { $0.represent == 1 })?.imageUrl ?? viewModel.productDetail?.imageMetas.first?.imageUrl
+                                    )
+                                )) {
+                                    Text("구매하기")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .frame(height: 50)
+                                        .background(Color.blue)
+                                        .cornerRadius(8)
+                                        .shadow(color: .blue.opacity(0.3), radius: 4, x: 0, y: 4)
+                                }
                             }
                         }
                         .padding(16)
@@ -190,6 +194,10 @@ struct ProductDetailSwiftUIView: View {
         let isSeller = LoginInfoUtil.getMemberCode() == Constants.ROLE_SELL
         let isOwner = p.userId == LoginInfoUtil.getUserId() || p.wholesalerId == LoginInfoUtil.getUserId()
         return isSeller && isOwner
+    }
+    
+    private var isBuyer: Bool {
+        return LoginInfoUtil.getMemberCode() == Constants.ROLE_PUB
     }
     
     private func handleChatTap() {
