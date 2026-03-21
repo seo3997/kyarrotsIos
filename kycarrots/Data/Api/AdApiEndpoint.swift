@@ -290,7 +290,8 @@ enum AdApiEndpoint: Endpoint {
              .getWholesalers,
              .getDefaultWholesaler,
              .getReviewList,
-             .getQnaList:
+             .getQnaList,
+             .getAddressList:
             return .get
 
         case .getOrderMgtDetail, .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:

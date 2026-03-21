@@ -68,16 +68,42 @@ class OrderCheckoutViewModel: ObservableObject {
 
     func loadAddresses() {
         let token = TokenUtil.getToken()
+        print("🔍 [iOS] loadAddresses 호출됨 - token: \(token)")
         guard !token.isEmpty else { return }
         Task {
             let list = await service.getAddressList(token: token)
             await MainActor.run {
+                print("✅ [iOS] 배송지 목록 수신 성공 - 개수: \(list.count)")
                 self.addresses = list
                 // 기본 배송지 자동 적용
                 if let def = list.first(where: { $0.isDefault == 1 }) {
                     self.applyAddress(def)
                 } else if let first = list.first {
                     self.applyAddress(first)
+                }
+            }
+        }
+    }
+
+    func showRecentAddresses() {
+        print("🔍 [iOS] 최근 배송지 버튼 클릭됨")
+        let token = TokenUtil.getToken()
+        if token.isEmpty {
+            self.errorMessage = "로그인이 필요합니다."
+            return
+        }
+        
+        Task {
+            let list = await service.getAddressList(token: token)
+            await MainActor.run {
+                if !list.isEmpty {
+                    print("✅ [iOS] 최근 배송지 로드 성공 - \(list.count)개")
+                    self.addresses = list
+                    self.showAddressPicker = true
+                } else {
+                    print("⚠️ [iOS] 저장된 배송지가 없습니다.")
+                    self.errorMessage = "저장된 배송지가 없습니다."
+                    self.addresses = []
                 }
             }
         }
@@ -254,11 +280,7 @@ struct OrderCheckoutView: View {
                                     title: "최근 배송지",
                                     color: .blue
                                 ) {
-                                    if viewModel.addresses.isEmpty {
-                                        viewModel.errorMessage = "저장된 배송지가 없습니다."
-                                    } else {
-                                        viewModel.showAddressPicker = true
-                                    }
+                                    viewModel.showRecentAddresses()
                                 }
 
                                 // 주소 검색

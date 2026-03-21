@@ -75,6 +75,80 @@ struct TbAddressBookVo: Codable, Identifiable {
     let addressDetail: String?
     let isDefault: Int?
     let memo: String?
+
+    enum CodingKeys: String, CodingKey {
+        case addressId = "ADDRESS_ID"
+        case userNo = "USER_NO"
+        case recipientName = "RECIPIENT_NAME"
+        case recipientPhone = "RECIPIENT_PHONE"
+        case zipCode = "ZIP_CODE"
+        case addressMain = "ADDRESS_MAIN"
+        case addressDetail = "ADDRESS_DETAIL"
+        case isDefault = "IS_DEFAULT"
+        case memo = "MEMO"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // addressId: Int64 or Int
+        if let val = try? container.decode(Int64.self, forKey: .addressId) {
+            addressId = val
+        } else if let val = try? container.decode(Int.self, forKey: .addressId) {
+            addressId = Int64(val)
+        } else if let str = try? container.decode(String.self, forKey: .addressId), let val = Int64(str) {
+            addressId = val
+        } else {
+            addressId = nil
+        }
+        
+        // userNo: String or Int
+        if let val = try? container.decode(String.self, forKey: .userNo) {
+            userNo = val
+        } else if let val = try? container.decode(Int.self, forKey: .userNo) {
+            userNo = String(val)
+        } else {
+            userNo = nil
+        }
+        
+        recipientName = try? container.decode(String.self, forKey: .recipientName)
+        recipientPhone = try? container.decode(String.self, forKey: .recipientPhone)
+        zipCode = try? container.decode(String.self, forKey: .zipCode)
+        addressMain = try? container.decode(String.self, forKey: .addressMain)
+        addressDetail = try? container.decode(String.self, forKey: .addressDetail)
+        
+        // isDefault: Bool or Int
+        if let val = try? container.decode(Bool.self, forKey: .isDefault) {
+            isDefault = val ? 1 : 0
+        } else if let val = try? container.decode(Int.self, forKey: .isDefault) {
+            isDefault = val
+        } else {
+            isDefault = 0
+        }
+        
+        memo = try? container.decode(String.self, forKey: .memo)
+    }
+    
+    // 수동 생성자 (커스텀 init(from:) 추가 시 자동 생성자가 소멸되므로 직접 추가)
+    init(addressId: Int64? = nil,
+         userNo: String? = nil,
+         recipientName: String? = nil,
+         recipientPhone: String? = nil,
+         zipCode: String? = nil,
+         addressMain: String? = nil,
+         addressDetail: String? = nil,
+         isDefault: Int? = 0,
+         memo: String? = nil) {
+        self.addressId = addressId
+        self.userNo = userNo
+        self.recipientName = recipientName
+        self.recipientPhone = recipientPhone
+        self.zipCode = zipCode
+        self.addressMain = addressMain
+        self.addressDetail = addressDetail
+        self.isDefault = isDefault
+        self.memo = memo
+    }
 }
 
 // MARK: - Order Detail
