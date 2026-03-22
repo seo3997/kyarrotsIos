@@ -1,136 +1,148 @@
 import Foundation
-import Combine
 import SwiftUI
+import Combine
 
-@MainActor
 class DashboardViewModel: ObservableObject {
-    // Original Stats (Products)
-    @Published var totalProducts: Int = 0
-    @Published var rejectedCount: Int = 0
-    @Published var processingCount: Int = 0
-    @Published var completedCount: Int = 0
-    @Published var recentProducts: [RecentProductViewModel] = []
-    
-    // New Stats (Orders & Financials)
-    @Published var stats: [String: Any] = [:]
-    @Published var recentOrders: [[String: Any]] = []
-    @Published var hqNotice: String?
-    
-    @Published var isLoading = false
-    @Published var unreadNotificationCount: Int = 0
-    @Published var errorMessage: String?
-    
-    @Published var isWholesalerShowing = false
-    @Published var wholesalers: [OpUserVO] = []
+    @Published var dashboardData: [String: Any] = [:]
+    @Published var stats: [DashboardStatItem] = []
+    @Published var recentOrders: [DashboardOrder] = []
+    @Published var isLoading: Bool = false
+    @Published var hqNotice: String = ""
+    @Published var dashboardTitle: String = "대시보드"
     
     private let appService = AppServiceProvider.shared
     
-    func fetchDashboardData() {
+    init() {
+        loadData()
+    }
+    
+    @MainActor
+    func loadData() {
         let token = TokenUtil.getToken()
         guard !token.isEmpty else { return }
         
-        isLoading = true
+        self.isLoading = true
         
         Task {
             do {
-                // 1. Fetch Original Product Stats
-                let pStats = try await appService.getProductDashboard(token: token)
-                self.totalProducts = pStats["totalCount"] ?? 0
-                self.rejectedCount = pStats["reguestCount"] ?? 0
-                self.processingCount = pStats["processingCount"] ?? 0
-                self.completedCount = pStats["completedCount"] ?? 0
-                
-                // 2. Fetch Recent Products
-                let recentList = try await appService.getRecentProducts(token: token)
-                self.recentProducts = recentList.map { product in
-                    let qtyInt = Int(product.quantity ?? "") ?? 0
-                    let formattedQty = NumberFormatter.localizedString(from: NSNumber(value: qtyInt), number: .decimal)
-                    let title = "\(product.title ?? "") \(formattedQty) \(product.unitCodeNm ?? "-")"
-                    let subInfo = "\(product.areaMidNm ?? "") \(product.areaSclsNm ?? "") / \(product.desiredShippingDate ?? "")"
-                    
-                    return RecentProductViewModel(
-                        title: title,
-                        subInfo: subInfo,
-                        statusName: product.saleStatusNm,
-                        imageUrl: product.imageUrl,
-                        productId: product.productId ?? "",
-                        userId: product.userId ?? ""
-                    )
+                if let result = try await appService.getDashboardMgtData(token: token) {
+                    processDashboardData(result)
                 }
-                
-                // 3. Fetch New Order Management Stats (Roles-based)
-                if let mgtData = await appService.getDashboardMgtData(token: token) {
-                    self.stats = mgtData["dashboardStats"] as? [String: Any] ?? [:]
-                    self.recentOrders = mgtData["dashboardOrderList"] as? [[String: Any]] ?? []
-                    
-                    if let hq = mgtData["headQuarterBranch"] as? [String: Any] {
-                        let bank = hq["BANK_NM"] as? String ?? ""
-                        let acc = hq["ACCOUNT_NO"] as? String ?? ""
-                        let holder = hq["ACCOUNT_HOLDER"] as? String ?? ""
-                        self.hqNotice = "본사 입금 안내: \(bank) \(acc) (예금주: \(holder))"
-                    }
-                }
-                
-                fetchUnreadCount()
-                
             } catch {
-                print("Dashboard fetch error: \(error)")
-                self.errorMessage = "대시보드 데이터를 불러오는 중 오류가 발생했습니다."
+                print("Dashboard Load Error:", error)
             }
-            isLoading = false
+            self.isLoading = false
         }
     }
     
-    func fetchUnreadCount() {
-        let userId = LoginInfoUtil.getUserId()
-        Task {
-            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
-            self.unreadNotificationCount = count
-        }
-    }
-    
-    func checkWholesalerAndMove(onReady: @escaping () -> Void, onShowPicker: @escaping ([OpUserVO]) -> Void) {
-        let userId = LoginInfoUtil.getUserId()
-        isLoading = true
+    private func processDashboardData(_ data: [String: Any]) {
+        self.dashboardData = data
+        let role = LoginInfoUtil.getMemberCode()
+        let branchName = LoginInfoUtil.getBranchName()
         
-        Task {
-            do {
-                let defaultWholesalerNo = try await appService.getDefaultWholesaler(userId: userId)
-                if defaultWholesalerNo > 0 {
-                    isLoading = false
-                    onReady()
-                    return
+        // 1. Title matching Android DashboardActivity.kt
+        switch role {
+        case "ROLE_ADMIN": self.dashboardTitle = "시스템 관리자 모드"
+        case "ROLE_SELL":  self.dashboardTitle = "본사 통합 관리 시스템"
+        case "ROLE_PROJ":  self.dashboardTitle = "지점 판매 어드민 [\(branchName)]"
+        default:           self.dashboardTitle = "대시보드"
+        }
+        
+        // 2. Stats matching Android logic
+        let statsMap = data["dashboardStats"] as? [String: Any] ?? [:]
+        var items: [DashboardStatItem] = []
+        
+        switch role {
+        case "ROLE_ADMIN":
+            items = [
+                .init(label: "총 사용자 수", value: formatNumber(statsMap["totalUsers"]), color: .blue, icon: "person.2.fill"),
+                .init(label: "지점 수", value: formatNumber(statsMap["totalBranches"]), color: .indigo, icon: "building.2.fill"),
+                .init(label: "누적 주문", value: formatNumber(statsMap["totalOrders"]), color: .red, icon: "cart.fill"),
+                .init(label: "누적 매출", value: formatCurrency(statsMap["totalRevenue"]), color: .green, icon: "wonsign.circle.fill")
+            ]
+            
+        case "ROLE_SELL":
+            items = [
+                .init(label: "미처리 주문", value: formatNumber(statsMap["unprocessedOrders"]), color: .blue, icon: "clock.fill"),
+                .init(label: "지점 미입금액", value: formatCurrency(statsMap["branchPendingAmount"]), color: .red, icon: "exclamationmark.triangle.fill"),
+                .init(label: "출고 대기", value: formatNumber(statsMap["shipmentPending"]), color: .green, icon: "shippingbox.fill"),
+                .init(label: "배송 중", value: formatNumber(statsMap["inTransit"]), color: .cyan, icon: "truck.box.fill")
+            ]
+            
+        case "ROLE_PROJ":
+            items = [
+                .init(label: "오늘의 매출", value: formatCurrency(statsMap["todayTotalSales"]), color: .blue, icon: "chart.line.uptrend.xyaxis"),
+                .init(label: "예상 순이익", value: formatCurrency(statsMap["estimatedProfit"]), color: .indigo, icon: "banknote.fill"),
+                .init(label: "본사 송금 대기", value: formatNumber(statsMap["remittancePending"]), color: .red, icon: "arrow.right.arrow.left.circle.fill"),
+                .init(label: "이달의 주문", value: formatNumber(statsMap["completedOrders"]), color: .green, icon: "calendar")
+            ]
+            
+            // HQ Notice
+            if let hq = data["headQuarterBranch"] as? [String: Any] {
+                let bank = hq["BANK_NM"] as? String ?? ""
+                let acc = hq["ACCOUNT_NO"] as? String ?? ""
+                let holder = hq["ACCOUNT_HOLDER"] as? String ?? ""
+                if !bank.isEmpty {
+                    self.hqNotice = "본사 입금 안내: \(bank) \(acc) (예금주: \(holder))로 입금하셔야 배송이 시작됩니다."
                 }
-                
-                let wholesalerList = try await appService.getWholesalers(memberCode: "ROLE_PROJ")
-                isLoading = false
-                if wholesalerList.isEmpty {
-                    // Handled by view
-                } else {
-                    self.wholesalers = wholesalerList
-                    onShowPicker(wholesalerList)
-                }
-            } catch {
-                print("Wholesaler check error: \(error)")
-                isLoading = false
             }
+            
+        default:
+            break
+        }
+        self.stats = items
+        
+        // 3. Recent Orders
+        if let ordersList = data["dashboardOrderList"] as? [[String: Any]] {
+            self.recentOrders = ordersList.map { DashboardOrder(dict: $0) }
+        } else {
+            self.recentOrders = []
         }
     }
     
-    func setSelectedWholesaler(_ userNo: String, onComplete: @escaping () -> Void) {
-        let userId = LoginInfoUtil.getUserId()
-        isLoading = true
+    private func formatCurrency(_ value: Any?) -> String {
+        let val = (value as? NSNumber)?.intValue ?? Int(value as? String ?? "0") ?? 0
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale(identifier: "ko_KR")
+        return formatter.string(from: NSNumber(value: val)) ?? "₩0"
+    }
+    
+    private func formatNumber(_ value: Any?) -> String {
+        let val = (value as? NSNumber)?.intValue ?? Int(value as? String ?? "0") ?? 0
+        return "\(val)건"
+    }
+}
+
+struct DashboardStatItem: Identifiable {
+    let id = UUID()
+    let label: String
+    let value: String
+    let color: SwiftUI.Color
+    let icon: String
+}
+
+struct DashboardOrder: Identifiable {
+    let id = UUID()
+    let orderId: String
+    let orderNo: String
+    let branchName: String
+    let date: String
+    let amount: String
+    let status: String
+    
+    init(dict: [String: Any]) {
+        self.orderId = (dict["ORDER_ID"] ?? dict["orderId"] ?? "").asString()
+        self.orderNo = (dict["ORDER_NO"] ?? dict["orderNo"] ?? "").asString()
+        self.branchName = (dict["BRANCH_NAME"] ?? dict["branchName"] ?? "").asString()
+        self.date = (dict["ORDERED_AT"] ?? dict["orderedAt"] ?? dict["ORDER_DATE"] ?? "").asString()
         
-        Task {
-            do {
-                let ok = await appService.setDefaultWholesaler(userId: userId, wholesalerNo: userNo)
-                if ok {
-                    onComplete()
-                }
-            } catch {
-                print("Set wholesaler error: \(error)")
-            }
-            isLoading = false
-        }
+        let amt = (dict["TOTAL_PAY_AMOUNT"] ?? dict["totalPayAmount"] ?? dict["SUPPLY_PRICE_SUM"] ?? 0) as? Double ?? 0
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale(identifier: "ko_KR")
+        self.amount = formatter.string(from: NSNumber(value: Int(amt))) ?? "₩0"
+        
+        self.status = (dict["ORDER_STATUS_NM"] ?? dict["orderStatusNm"] ?? dict["ORDER_STATUS"] ?? "").asString()
     }
 }

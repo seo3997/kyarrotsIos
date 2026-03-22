@@ -263,8 +263,8 @@ enum AdApiEndpoint: Endpoint {
             return "api/dashboard"
         case .getOrderMgtList:
             return "api/order/list"
-        case .getOrderMgtDetail:
-            return "/api/order/mgt/detail"
+        case let .getOrderMgtDetail(orderId, _):
+            return "api/order/\(orderId)"
         case .updateOrderStatus:
             return "/api/order/mgt/update/status"
         case .confirmDeposit:
@@ -294,11 +294,14 @@ enum AdApiEndpoint: Endpoint {
              .getDefaultWholesaler,
              .getReviewList,
              .getQnaList,
-             .getOrderHistory,
-             .getAddressList:
+              .getOrderHistory,
+              .getAddressList,
+              .getDashboardData,
+              .getOrderMgtList,
+              .getOrderMgtDetail:
             return .get
 
-        case .getOrderMgtDetail, .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:
+        case .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:
             return .post
 
         default:

@@ -363,20 +363,6 @@ private extension AppCoordinator {
         rootView.onShowNotifications = { [weak self] in
             self?.showNotificationList()
         }
-        rootView.onAddProduct = { [weak self] in
-            let vc = MakeAdMainViewController(service: AppServiceProvider.shared)
-            self?.nav.pushViewController(vc, animated: true)
-        }
-        rootView.onSelectProduct = { [weak self] item in
-            let pid = Int64(item.productId) ?? 0
-            self?.showProductDetail(pid: pid, userId: item.userId, title: item.title)
-        }
-        rootView.onShowMore = { [weak self] in
-            self?.showProductList()
-        }
-        rootView.onShowApproval = { [weak self] in
-            self?.showProductList()
-        }
         
         let vc = UIHostingController(rootView: rootView)
         vc.navigationItem.title = "대시보드"
