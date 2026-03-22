@@ -367,6 +367,9 @@ private extension AppCoordinator {
             guard let self = self, let menu = SideMenuManager.default.leftMenuNavigationController else { return }
             self.nav.present(menu, animated: true)
         }
+        rootView.onSelectOrder = { [weak self] order in
+            self?.showOrderMgtDetail(orderId: order.orderId)
+        }
         
         let vc = UIHostingController(rootView: rootView)
         vc.navigationItem.title = "대시보드"
@@ -388,5 +391,12 @@ private extension AppCoordinator {
         hostingVC.navigationItem.title = "상품리스트"
         hostingVC.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가
         return hostingVC
+    }
+    
+    func showOrderMgtDetail(orderId: String) {
+        let rootView = OrderMgtDetailView(orderId: orderId)
+        let vc = UIHostingController(rootView: rootView)
+        vc.navigationItem.title = "주문 상세 관리"
+        nav.pushViewController(vc, animated: true)
     }
 }

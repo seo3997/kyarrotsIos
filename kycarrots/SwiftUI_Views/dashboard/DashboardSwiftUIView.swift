@@ -6,6 +6,7 @@ struct DashboardSwiftUIView: View {
     
     var onShowNotifications: (() -> Void)?
     var onToggleMenu: (() -> Void)?
+    var onSelectOrder: ((DashboardOrder) -> Void)?
     
     var body: some View {
         ZStack {
@@ -88,7 +89,12 @@ struct DashboardSwiftUIView: View {
                                     .padding(.vertical, 40)
                                 } else {
                                     ForEach(viewModel.recentOrders) { order in
-                                        OrderDashboardRow(order: order)
+                                        Button(action: {
+                                            onSelectOrder?(order)
+                                        }) {
+                                            OrderDashboardRow(order: order)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
                                         if order.id != viewModel.recentOrders.last?.id {
                                             Divider().padding(.horizontal, 16)
                                         }
