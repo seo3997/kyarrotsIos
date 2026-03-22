@@ -34,12 +34,12 @@ class OrderMgtDetailViewModel: ObservableObject {
                     self.carriers = data["deliveryCompanyList"] as? [[String: Any]] ?? []
                     
                     // Set current carrier
-                    let currentCode = (self.order["DELIVERY_COMPANY_CODE"] ?? self.order["deliveryCompanyCode"] ?? "").asString()
-                    if let idx = self.carriers.firstIndex(where: { ($0["CODE"] ?? $0["code"] ?? "").asString() == currentCode }) {
+                    let currentCode = (self.order["deliveryCompanyCode"] ?? "").asString()
+                    if let idx = self.carriers.firstIndex(where: { ($0["code"] ?? "").asString() == currentCode }) {
                         self.selectedCarrierIndex = idx + 1 // Account for "선택하세요"
                     }
                     
-                    self.trackingNo = (self.order["TRACKING_NO"] ?? self.order["trackingNo"] ?? "").asString()
+                    self.trackingNo = (self.order["trackingNo"] ?? "").asString()
                 }
             } else {
                 await MainActor.run {
@@ -317,29 +317,29 @@ struct OrderMgtDetailView: View {
     }
     
     // MARK: - Helpers
-    private var orderNo: String { (viewModel.order["ORDER_NO"] ?? viewModel.order["orderNo"] ?? "").asString() }
-    private var orderDate: String { (viewModel.order["ORDERED_AT"] ?? viewModel.order["orderedAt"] ?? viewModel.order["ORDER_DATE"] ?? viewModel.order["orderDate"] ?? "").asString() }
+    private var orderNo: String { (viewModel.order["orderNo"] ?? "").asString() }
+    private var orderDate: String { (viewModel.order["orderedAt"] ?? viewModel.order["orderDate"] ?? "").asString() }
     private var statusNm: String {
-        let s = (viewModel.order["ORDER_STATUS_NM"] ?? viewModel.order["orderStatusNm"] ?? "").asString()
-        let d = (viewModel.order["BRANCH_DEPOSIT_STATUS_NM"] ?? viewModel.order["branchDepositStatusNm"] ?? "").asString()
+        let s = (viewModel.order["orderStatusNm"] ?? "").asString()
+        let d = (viewModel.order["branchDepositStatusNm"] ?? "").asString()
         if s.isEmpty {
-             return (viewModel.order["ORDER_STATUS"] ?? viewModel.order["orderStatus"] ?? "").asString()
+             return (viewModel.order["orderStatus"] ?? "").asString()
         }
         return d.isEmpty ? s : "\(s) (\(d))"
     }
     private var buyerInfo: String { 
-        let name = (viewModel.order["RECEIVER_NAME"] ?? viewModel.order["receiverName"] ?? viewModel.order["USER_NM"] ?? viewModel.order["userNm"] ?? viewModel.order["BRANCH_NAME"] ?? "").asString()
-        let phone = (viewModel.order["RECEIVER_PHONE"] ?? viewModel.order["receiverPhone"] ?? viewModel.order["TEL_NO"] ?? viewModel.order["telNo"] ?? viewModel.order["PHONE"] ?? "").asString()
+        let name = (viewModel.order["receiverName"] ?? viewModel.order["userNm"] ?? viewModel.order["branchName"] ?? "").asString()
+        let phone = (viewModel.order["receiverPhone"] ?? viewModel.order["telNo"] ?? viewModel.order["phone"] ?? "").asString()
         return name.isEmpty ? "미지정" : "\(name) (\(phone))"
     }
     private var address: String {
-        let zip = (viewModel.order["ZIP_CODE"] ?? viewModel.order["zipCode"] ?? "").asString()
-        let a1 = (viewModel.order["ADDRESS1"] ?? viewModel.order["address1"] ?? viewModel.order["ADDRESS_MAIN"] ?? "").asString()
-        let a2 = (viewModel.order["ADDRESS2"] ?? viewModel.order["address2"] ?? viewModel.order["ADDRESS_DETAIL"] ?? "").asString()
-        return "(\(zip)) \(a1) \(a2)"
+        let zip = (viewModel.order["zipCode"] ?? "").asString()
+        let a1 = (viewModel.order["address1"] ?? "").asString()
+        let a2 = (viewModel.order["address2"] ?? "").asString()
+        return zip.isEmpty ? "\(a1) \(a2)" : "(\(zip)) \(a1) \(a2)"
     }
     private var memo: String { 
-        let m = (viewModel.order["ORDER_MEMO"] ?? viewModel.order["orderMemo"] ?? "없음").asString()
+        let m = (viewModel.order["orderMemo"] ?? "없음").asString()
         return m.isEmpty ? "없음" : m 
     }
     private var carrierInfo: String {
