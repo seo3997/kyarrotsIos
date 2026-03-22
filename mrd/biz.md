@@ -38,10 +38,13 @@
    로그인권한이 ROLE_SELL,ROLE_PROJ 인경우만 노출
    주문관리:OrderMgtActivity.kt
    구매상세:OrderMgtDetailActivity.kt
+   /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/order/ 폴더에 구현되어 있음
 
 5. 대시보드
    대시보드 화면
    안드로이드 화면을 참조하여 동일한 기능으로 및 디자인을 구현한다.
+   /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/dashboard/ 폴더에 구현되어 있음
+   activity_dashboard.xml 와 동일한 항목 디자인을 구현한다.
    대시보드: DashboardActivity.kt = DashboardSwiftUIView.swift
 
 6. 프로젝트 구조 정리 (Mapping Guide)
