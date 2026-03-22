@@ -5,6 +5,7 @@ struct DashboardSwiftUIView: View {
     @Environment(\.dismiss) private var dismiss
     
     var onShowNotifications: (() -> Void)?
+    var onToggleMenu: (() -> Void)?
     
     var body: some View {
         ZStack {
@@ -14,7 +15,7 @@ struct DashboardSwiftUIView: View {
                 // Header (Navigation Bar)
                 HStack {
                     Button(action: {
-                        dismiss()
+                        onToggleMenu?()
                     }) {
                         Image(systemName: "line.3.horizontal")
                             .font(.title3)

@@ -363,6 +363,10 @@ private extension AppCoordinator {
         rootView.onShowNotifications = { [weak self] in
             self?.showNotificationList()
         }
+        rootView.onToggleMenu = { [weak self] in
+            guard let self = self, let menu = SideMenuManager.default.leftMenuNavigationController else { return }
+            self.nav.present(menu, animated: true)
+        }
         
         let vc = UIHostingController(rootView: rootView)
         vc.navigationItem.title = "대시보드"
