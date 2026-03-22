@@ -137,11 +137,22 @@ struct DashboardOrder: Identifiable {
         self.branchName = (dict["BRANCH_NAME"] ?? dict["branchName"] ?? "").asString()
         self.date = (dict["ORDERED_AT"] ?? dict["orderedAt"] ?? dict["ORDER_DATE"] ?? "").asString()
         
-        let amt = (dict["TOTAL_PAY_AMOUNT"] ?? dict["totalPayAmount"] ?? dict["SUPPLY_PRICE_SUM"] ?? 0) as? Double ?? 0
+        let rawAmt = dict["TOTAL_PAY_AMOUNT"] ?? dict["totalPayAmount"] ?? dict["SUPPLY_PRICE_SUM"] ?? dict["supplyPriceSum"] ?? 0
+        let amtValue: Double
+        if let dbl = rawAmt as? Double {
+            amtValue = dbl
+        } else if let str = rawAmt as? String {
+            amtValue = Double(str) ?? 0
+        } else if let num = rawAmt as? NSNumber {
+            amtValue = num.doubleValue
+        } else {
+            amtValue = 0
+        }
+        
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "ko_KR")
-        self.amount = formatter.string(from: NSNumber(value: Int(amt))) ?? "₩0"
+        self.amount = formatter.string(from: NSNumber(value: Int(amtValue))) ?? "₩0"
         
         self.status = (dict["ORDER_STATUS_NM"] ?? dict["orderStatusNm"] ?? dict["ORDER_STATUS"] ?? "").asString()
     }
