@@ -34,12 +34,12 @@ class OrderMgtDetailViewModel: ObservableObject {
                     self.carriers = data["deliveryCompanyList"] as? [[String: Any]] ?? []
                     
                     // Set current carrier
-                    let currentCode = (self.order["DELIVERY_COMPANY_CODE"] ?? self.order["deliveryCompanyCode"]).asString()
-                    if let idx = self.carriers.firstIndex(where: { ($0["CODE"] ?? $0["code"]).asString() == currentCode }) {
+                    let currentCode = (self.order["DELIVERY_COMPANY_CODE"] ?? self.order["deliveryCompanyCode"] ?? "").asString()
+                    if let idx = self.carriers.firstIndex(where: { ($0["CODE"] ?? $0["code"] ?? "").asString() == currentCode }) {
                         self.selectedCarrierIndex = idx + 1 // Account for "선택하세요"
                     }
                     
-                    self.trackingNo = (self.order["TRACKING_NO"] ?? self.order["trackingNo"]).asString()
+                    self.trackingNo = (self.order["TRACKING_NO"] ?? self.order["trackingNo"] ?? "").asString()
                 }
             } else {
                 await MainActor.run {
@@ -67,14 +67,22 @@ class OrderMgtDetailViewModel: ObservableObject {
                     await showError("송장 번호를 입력해주세요.")
                     return
                 }
-                let carrierCode = carriers[selectedCarrierIndex - 1]["CODE"] as? String ?? ""
+                let carrierCode = (carriers[selectedCarrierIndex - 1]["CODE"] ?? carriers[selectedCarrierIndex - 1]["code"]).asString()
                 success = await service.confirmDeposit(token: token, orderId: orderId, carrier: carrierCode, tracking: trackingNo)
                 
             case "BRANCH_DEPOSIT":
                 success = await service.requestBranchDeposit(token: token, orderId: orderId)
                 
             case "SHIPPING":
-                let carrierCode = selectedCarrierIndex > 0 ? (carriers[selectedCarrierIndex - 1]["CODE"] as? String ?? "") : ""
+                guard selectedCarrierIndex > 0 else {
+                    await showError("택배사를 선택해주세요.")
+                    return
+                }
+                guard !trackingNo.isEmpty else {
+                    await showError("송장 번호를 입력해주세요.")
+                    return
+                }
+                let carrierCode = (carriers[selectedCarrierIndex - 1]["CODE"] ?? carriers[selectedCarrierIndex - 1]["code"]).asString()
                 success = await service.updateShipping(token: token, orderId: orderId, carrier: carrierCode, tracking: trackingNo)
                 
             case "DELIVERY":
@@ -96,7 +104,7 @@ class OrderMgtDetailViewModel: ObservableObject {
                     self.actionSuccess = true
                     self.loadData()
                 } else {
-                    self.errorMessage = "작전 수행에 실패했습니다."
+                    self.errorMessage = "작업 수행에 실패했습니다."
                 }
             }
         }
@@ -120,176 +128,225 @@ struct OrderMgtDetailView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "F8F9FA").ignoresSafeArea()
+            Color(hex: "F1F5F9").ignoresSafeArea()
             
-            ScrollView {
-                VStack(spacing: 16) {
-                    // Status Badge
+            VStack(spacing: 0) {
+                // Header (Toolbar)
+                VStack(spacing: 0) {
+                    Spacer().frame(height: 44) // StatusBar area spacer (usually 44 on iPhones)
                     HStack {
-                        Text(statusNm)
-                            .font(.system(size: 14, weight: .bold))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.orange.opacity(0.1))
-                            .foregroundColor(.orange)
-                            .cornerRadius(8)
+                        Button(action: { dismiss() }) {
+                            Image(systemName: "chevron.left")
+                                .font(.title3.bold())
+                                .foregroundColor(.primary)
+                        }
                         Spacer()
-                        Text(orderNo)
-                            .font(.system(size: 14))
-                            .foregroundColor(.gray)
+                        Text("주문 상세 관리")
+                            .font(.system(size: 20, weight: .bold))
+                        Spacer()
+                        Color.clear.frame(width: 24)
                     }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    
-                    // Order Info
-                    VStack(alignment: .leading, spacing: 12) {
-                        InfoRow(label: "주문 일시", value: orderDate)
-                        InfoRow(label: "주문자", value: buyerInfo)
-                        InfoRow(label: "배송 주소", value: address)
-                        InfoRow(label: "배송 메모", value: memo)
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    
-                    // Shipping Input (VISIBLE only for HQ/Admin and specific statuses)
-                    if isHQOrAdmin && canInputShipping {
+                    .padding(.horizontal, 16)
+                    .frame(height: 56)
+                }
+                .background(Color.white)
+                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
+                
+                ScrollView {
+                    VStack(spacing: 12) {
+                        // 1. Order Basic Card
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(statusNm)
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.blue)
+                            Text("주문번호: \(orderNo)")
+                                .font(.system(size: 18, weight: .bold))
+                            Text("주문일시: \(orderDate)")
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+                        
+                        // 2. Management Actions Card
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("배송 정보 입력")
-                                .font(.headline)
+                            Text("📦 관리가능 처리")
+                                .font(.system(size: 17, weight: .bold))
                             
-                            Picker("택배사", selection: $viewModel.selectedCarrierIndex) {
-                                Text("선택하세요").tag(0)
-                                ForEach(0..<viewModel.carriers.count, id: \.self) { idx in
-                                    Text(viewModel.carriers[idx]["CODE_NM"] as? String ?? "").tag(idx + 1)
+                            if canConfirmDeposit {
+                                DetailActionButton(label: "입금 확인 (발송시작가능)", color: Color(hex: "4F46E5")) {
+                                    viewModel.performAction("DEPOSIT")
                                 }
                             }
-                            .pickerStyle(MenuPickerStyle())
-                            .frame(maxWidth: .infinity)
-                            .padding(8)
-                            .background(Color(hex: "F1F5F9"))
-                            .cornerRadius(8)
                             
-                            TextField("송장 번호 입력", text: $viewModel.trackingNo)
-                                .textFieldStyle(PlainTextFieldStyle())
-                                .padding()
-                                .background(Color(hex: "F1F5F9"))
-                                .cornerRadius(8)
-                            
-                            HStack {
-                                if canConfirmDeposit {
-                                    ActionButton(label: "입금 확인 및 발송", color: .orange) {
-                                        viewModel.performAction("DEPOSIT")
-                                    }
+                            if canRequestDeposit {
+                                DetailActionButton(label: "본사 입금 확인 요청", color: Color(hex: "8B5CF6")) {
+                                    viewModel.performAction("BRANCH_DEPOSIT")
                                 }
-                                if canUpdateShipping {
-                                    ActionButton(label: "배송 정보 수정", color: .blue) {
+                            }
+                            
+                            if canInputShipping {
+                                VStack(spacing: 12) {
+                                    // Carrier Spinner Replacement
+                                    Menu {
+                                        Picker("택배사", selection: $viewModel.selectedCarrierIndex) {
+                                            Text("선택하세요").tag(0)
+                                            ForEach(0..<viewModel.carriers.count, id: \.self) { idx in
+                                                Text(viewModel.carriers[idx]["CODE_NM"] as? String ?? "").tag(idx + 1)
+                                            }
+                                        }
+                                    } label: {
+                                        HStack {
+                                            Text(viewModel.selectedCarrierIndex > 0 ? (viewModel.carriers[viewModel.selectedCarrierIndex - 1]["CODE_NM"] as? String ?? "") : "선택하세요")
+                                                .font(.system(size: 15))
+                                                .foregroundColor(.primary)
+                                            Spacer()
+                                            Image(systemName: "chevron.down").font(.system(size: 12))
+                                        }
+                                        .padding()
+                                        .background(Color(hex: "F8FAFC"))
+                                        .cornerRadius(8)
+                                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(hex: "E2E8F0")))
+                                    }
+                                    
+                                    TextField("운송장 번호", text: $viewModel.trackingNo)
+                                        .font(.system(size: 15))
+                                        .keyboardType(.numberPad)
+                                        .padding()
+                                        .background(Color(hex: "F8FAFC"))
+                                        .cornerRadius(8)
+                                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(hex: "E2E8F0")))
+                                    
+                                    DetailActionButton(label: "배송 정보 업데이트", color: Color(hex: "10B981")) {
                                         viewModel.performAction("SHIPPING")
                                     }
                                 }
                             }
+                            
+                            if canConfirmDelivery {
+                                DetailActionButton(label: "배송 완료 처리", color: Color(hex: "F59E0B")) {
+                                    viewModel.performAction("DELIVERY")
+                                }
+                            }
+                            
+                            if canConfirmOrder {
+                                DetailActionButton(label: "주문 확정 처리", color: Color(hex: "6366F1")) {
+                                    viewModel.performAction("CONFIRM")
+                                }
+                            }
+                            
+                            if canCancel {
+                                DetailActionButton(label: "주문 취소", color: Color(hex: "EF4444")) {
+                                    viewModel.performAction("CANCEL")
+                                }
+                            }
                         }
-                        .padding()
+                        .padding(16)
                         .background(Color.white)
                         .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+                        
+                        // 3. Customer & Shipping Info Card
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("📋 주문 및 배송 정보")
+                                .font(.system(size: 17, weight: .bold))
+                            
+                            Text("주문자: \(buyerInfo)")
+                                .font(.system(size: 15))
+                            Text("주소: \(address)")
+                                .font(.system(size: 15))
+                            Text("배송메모: \(memo)")
+                                .font(.system(size: 15))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+                        
+                        // 4. Product Card
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("📦 상품 목록")
+                                .font(.system(size: 17, weight: .bold))
+                            
+                            ForEach(viewModel.items, id: \.self.description) { item in
+                                DetailItemRow(item: item)
+                                if item.description != viewModel.items.last?.description {
+                                    Divider()
+                                }
+                            }
+                            
+                            Divider().padding(.top, 4)
+                            
+                            HStack {
+                                Text("총 결제 금액")
+                                    .font(.system(size: 17, weight: .bold))
+                                Spacer()
+                                Text(totalAmount)
+                                    .font(.system(size: 22, weight: .heavy))
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .padding(16)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+                        .padding(.bottom, 40)
                     }
-                    
-                    // Item List
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("주문 상품")
-                            .font(.headline)
-                        
-                        ForEach(viewModel.items, id: \.self.description) { item in
-                            ItemRow(item: item)
-                            Divider()
-                        }
-                        
-                        HStack {
-                            Text("총 결제 금액")
-                                .font(.headline)
-                            Spacer()
-                            Text(totalAmount)
-                                .font(.title3.bold())
-                                .foregroundColor(.orange)
-                        }
-                        .padding(.top, 8)
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    
-                    // Primary Actions
-                    VStack(spacing: 12) {
-                        if canRequestDeposit {
-                            ActionButton(label: "본사 송금 확인 요청", color: .blue) {
-                                viewModel.performAction("BRANCH_DEPOSIT")
-                            }
-                        }
-                        
-                        if canConfirmDelivery {
-                            ActionButton(label: "배송 완료 처리", color: .green) {
-                                viewModel.performAction("DELIVERY")
-                            }
-                        }
-                        
-                        if canConfirmOrder {
-                            ActionButton(label: "주문 확정 처리", color: .orange) {
-                                viewModel.performAction("CONFIRM")
-                            }
-                        }
-                        
-                        if canCancel {
-                            ActionButton(label: "주문 취소", color: .red) {
-                                viewModel.performAction("CANCEL")
-                            }
-                        }
-                    }
-                    .padding(.bottom, 20)
+                    .padding(16)
                 }
-                .padding()
             }
             
             if viewModel.isLoading {
-                Color.black.opacity(0.1).ignoresSafeArea()
+                Color.black.opacity(0.2).ignoresSafeArea()
                 ProgressView()
+                    .padding(20)
+                    .background(Color.white)
+                    .cornerRadius(10)
             }
         }
-        .navigationTitle("주문 상세 관리")
-        .navigationBarTitleDisplayMode(.inline)
+        .edgesIgnoringSafeArea(.top)
+        .navigationBarHidden(true)
         .onAppear {
             viewModel.loadData()
-        }
-        .alert("결과", isPresented: $viewModel.actionSuccess) {
-            Button("확인") { viewModel.actionSuccess = false }
-        } message: {
-            Text("처리가 완료되었습니다.")
-        }
-        .alert("오류", isPresented: Binding(get: { viewModel.errorMessage != nil }, set: { _ in viewModel.errorMessage = nil })) {
-            Button("확인") { }
-        } message: {
-            if let msg = viewModel.errorMessage { Text(msg) }
         }
     }
     
     // MARK: - Helpers
-    private var orderNo: String { (viewModel.order["ORDER_NO"] ?? viewModel.order["orderNo"]).asString() }
-    private var orderDate: String { (viewModel.order["ORDERED_AT"] ?? viewModel.order["orderDate"] ?? "").asString() }
-    private var statusNm: String { (viewModel.order["ORDER_STATUS_NM"] ?? viewModel.order["orderStatusNm"]).asString() }
+    private var orderNo: String { (viewModel.order["ORDER_NO"] ?? viewModel.order["orderNo"] ?? "").asString() }
+    private var orderDate: String { (viewModel.order["ORDERED_AT"] ?? viewModel.order["orderedAt"] ?? viewModel.order["ORDER_DATE"] ?? viewModel.order["orderDate"] ?? "").asString() }
+    private var statusNm: String {
+        let s = (viewModel.order["ORDER_STATUS_NM"] ?? viewModel.order["orderStatusNm"] ?? "").asString()
+        let d = (viewModel.order["BRANCH_DEPOSIT_STATUS_NM"] ?? viewModel.order["branchDepositStatusNm"] ?? "").asString()
+        if s.isEmpty {
+             return (viewModel.order["ORDER_STATUS"] ?? viewModel.order["orderStatus"] ?? "").asString()
+        }
+        return d.isEmpty ? s : "\(s) (\(d))"
+    }
     private var buyerInfo: String { 
-        let name = (viewModel.order["RECEIVER_NAME"] ?? viewModel.order["USER_NM"] ?? "").asString()
-        let phone = (viewModel.order["RECEIVER_PHONE"] ?? viewModel.order["TEL_NO"] ?? "").asString()
-        return "\(name) (\(phone))"
+        let name = (viewModel.order["RECEIVER_NAME"] ?? viewModel.order["receiverName"] ?? viewModel.order["USER_NM"] ?? viewModel.order["userNm"] ?? viewModel.order["BRANCH_NAME"] ?? "").asString()
+        let phone = (viewModel.order["RECEIVER_PHONE"] ?? viewModel.order["receiverPhone"] ?? viewModel.order["TEL_NO"] ?? viewModel.order["telNo"] ?? viewModel.order["PHONE"] ?? "").asString()
+        return name.isEmpty ? "미지정" : "\(name) (\(phone))"
     }
     private var address: String {
-        let zip = (viewModel.order["ZIP_CODE"] ?? viewModel.order["zipCode"]).asString()
-        let a1 = (viewModel.order["ADDRESS1"] ?? viewModel.order["address1"]).asString()
-        let a2 = (viewModel.order["ADDRESS2"] ?? viewModel.order["address2"]).asString()
+        let zip = (viewModel.order["ZIP_CODE"] ?? viewModel.order["zipCode"] ?? "").asString()
+        let a1 = (viewModel.order["ADDRESS1"] ?? viewModel.order["address1"] ?? viewModel.order["ADDRESS_MAIN"] ?? "").asString()
+        let a2 = (viewModel.order["ADDRESS2"] ?? viewModel.order["address2"] ?? viewModel.order["ADDRESS_DETAIL"] ?? "").asString()
         return "(\(zip)) \(a1) \(a2)"
     }
     private var memo: String { 
-        let m = (viewModel.order["ORDER_MEMO"] ?? viewModel.order["orderMemo"]).asString()
+        let m = (viewModel.order["ORDER_MEMO"] ?? viewModel.order["orderMemo"] ?? "없음").asString()
         return m.isEmpty ? "없음" : m 
+    }
+    private var carrierInfo: String {
+        let carrier = (viewModel.order["DELIVERY_COMPANY_NM"] ?? viewModel.order["deliveryCompanyNm"] ?? "").asString()
+        let tracking = (viewModel.order["TRACKING_NO"] ?? viewModel.order["trackingNo"] ?? "").asString()
+        if carrier.isEmpty && tracking.isEmpty { return "" }
+        return "\(carrier) (\(tracking))"
     }
     private var totalAmount: String {
         let amt = Int(String(describing: viewModel.order["TOTAL_PAY_AMOUNT"] ?? viewModel.order["totalPayAmount"] ?? 0)) ?? 0
@@ -301,8 +358,8 @@ struct OrderMgtDetailView: View {
     
     // MARK: - Permissions
     private var role: String { LoginInfoUtil.getMemberCode() }
-    private var status: String { (viewModel.order["ORDER_STATUS"] ?? viewModel.order["orderStatus"]).asString() }
-    private var branchDepositStatus: String { (viewModel.order["BRANCH_DEPOSIT_STATUS"] ?? viewModel.order["branchDepositStatus"]).asString() }
+    private var status: String { (viewModel.order["ORDER_STATUS"] ?? viewModel.order["orderStatus"] ?? "").asString() }
+    private var branchDepositStatus: String { (viewModel.order["BRANCH_DEPOSIT_STATUS"] ?? viewModel.order["branchDepositStatus"] ?? "").asString() }
     
     private var isHQOrAdmin: Bool { role == Constants.ROLE_ADMIN || role == Constants.ROLE_SELL }
     private var canInputShipping: Bool { isHQOrAdmin && ["30", "50", "60"].contains(status) }
@@ -314,29 +371,37 @@ struct OrderMgtDetailView: View {
     private var canCancel: Bool { status != "40" && role != Constants.ROLE_SELL }
 }
 
-struct InfoRow: View {
+struct DetailActionButton: View {
     let label: String
-    let value: String
+    let color: Color
+    let action: () -> Void
     var body: some View {
-        HStack(alignment: .top) {
-            Text(label).font(.system(size: 13)).foregroundColor(.gray).frame(width: 80, alignment: .leading)
-            Text(value).font(.system(size: 13, weight: .medium)).frame(maxWidth: .infinity, alignment: .leading)
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+                .background(color)
+                .cornerRadius(8)
         }
     }
 }
 
-struct ItemRow: View {
+struct DetailItemRow: View {
     let item: [String: Any]
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text((item["PRODUCT_NAME"] ?? item["productName"] ?? "") as? String ?? "").font(.system(size: 14, weight: .bold))
-            HStack {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text((item["PRODUCT_NAME"] ?? item["productName"] ?? item["TITLE"] ?? "") as? String ?? "")
+                    .font(.system(size: 16, weight: .medium))
                 Text("\(Int(String(describing: item["QUANTITY"] ?? item["quantity"] ?? 0)) ?? 0)개")
-                Spacer()
-                Text(formattedPrice)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
             }
-            .font(.system(size: 13))
-            .foregroundColor(.gray)
+            Spacer()
+            Text(formattedPrice)
+                .font(.system(size: 16, weight: .bold))
         }
         .padding(.vertical, 4)
     }
@@ -347,16 +412,5 @@ struct ItemRow: View {
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: NSNumber(value: qty * price)) ?? "0원"
-    }
-}
-
-struct ActionButton: View {
-    let label: String
-    let color: Color
-    let action: () -> Void
-    var body: some View {
-        Button(action: action) {
-            Text(label).font(.system(size: 16, weight: .bold)).foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 50).background(color).cornerRadius(10)
-        }
     }
 }
