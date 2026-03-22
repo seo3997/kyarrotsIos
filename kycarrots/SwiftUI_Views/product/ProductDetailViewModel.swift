@@ -30,6 +30,8 @@ class ProductDetailViewModel: ObservableObject {
     @Published var activeSheet: ProductDetailSheet?
     @Published var chatRooms: [ChatRoomResponse] = []
     @Published var showChatBuyerSelection = false
+    @Published var roomsForSelection: [ChatRoomResponse] = []
+    @Published var showRoomSelectionSheet = false
     
     // Dependencies lds for Tabs
     @Published var selectedTab: Int = 0

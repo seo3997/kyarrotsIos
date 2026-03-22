@@ -185,15 +185,50 @@ struct ProductDetailSwiftUIView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .sheet(isPresented: $viewModel.showRoomSelectionSheet) {
+            NavigationView {
+                List(viewModel.roomsForSelection, id: \.id) { room in
+                    Button(action: {
+                        viewModel.showRoomSelectionSheet = false
+                        onOpenChat(room)
+                    }) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("구매자: \(room.buyerId)")
+                                    .fontWeight(.bold)
+                                if let date = room.createdAt {
+                                    Text("생성일: \(date)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+                .navigationTitle("채팅 대상 선택")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("닫기") { viewModel.showRoomSelectionSheet = false }
+                    }
+                }
+            }
+        }
         .confirmationDialog("채팅 채널 선택", isPresented: $viewModel.showChatBuyerSelection, titleVisibility: .visible) {
             Button("구매자에게 채팅") {
                 Task {
                     let rooms = await viewModel.getUserChatRooms(branchId: LoginInfoUtil.getBranchId())
                     if rooms.isEmpty { onShowAlert("안내", "채팅 요청이 없습니다") }
-                    else if rooms.count == 1, let room = (rooms.count == 1 ? rooms.first : nil) { 
-                        if let r = room { onOpenChat(r) }
+                    else if rooms.count == 1, let room = rooms.first {
+                        onOpenChat(room)
                     }
-                    else { onShowBuyerSelection(rooms) }
+                    else { 
+                        viewModel.roomsForSelection = rooms
+                        viewModel.showRoomSelectionSheet = true
+                    }
                 }
             }
             Button("본사와 채팅") {
@@ -241,7 +276,12 @@ struct ProductDetailSwiftUIView: View {
                 let rooms = await viewModel.getUserChatRooms(branchId: centerBranchId)
                 if rooms.isEmpty { onShowAlert("안내", "채팅 요청이 없습니다") }
                 else if rooms.count == 1, let room = rooms.first { onOpenChat(room) }
-                else { onShowBuyerSelection(rooms) }
+                else { 
+                    await MainActor.run {
+                        viewModel.roomsForSelection = rooms
+                        viewModel.showRoomSelectionSheet = true
+                    }
+                }
             }
         case Constants.ROLE_PROJ:
             // Match Android logic: "구매자에게 채팅" vs "본사와 채팅"
