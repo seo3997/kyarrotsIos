@@ -101,6 +101,9 @@ struct ChatSwiftUIView: View {
             viewModel.connect()
             await viewModel.loadHistory()
         }
+        .onDisappear {
+            viewModel.disconnect()
+        }
     }
 }
 

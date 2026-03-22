@@ -185,6 +185,28 @@ struct ProductDetailSwiftUIView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .confirmationDialog("채팅 채널 선택", isPresented: $viewModel.showChatBuyerSelection, titleVisibility: .visible) {
+            Button("구매자에게 채팅") {
+                Task {
+                    let rooms = await viewModel.getUserChatRooms(branchId: LoginInfoUtil.getBranchId())
+                    if rooms.isEmpty { onShowAlert("안내", "채팅 요청이 없습니다") }
+                    else if rooms.count == 1, let room = (rooms.count == 1 ? rooms.first : nil) { 
+                        if let r = room { onOpenChat(r) }
+                    }
+                    else { onShowBuyerSelection(rooms) }
+                }
+            }
+            Button("본사와 채팅") {
+                Task {
+                    let myBranchId = LoginInfoUtil.getBranchId()
+                    let centerId = Constants.CENTER_BRANCH_ID
+                    if let room = await viewModel.createOrGetChatRoom(buyerId: myBranchId, branchId: centerId) {
+                        onOpenChat(room)
+                    }
+                }
+            }
+            Button("취소", role: .cancel) { }
+        }
     }
     
     // MARK: - Logic Helpers
@@ -205,6 +227,7 @@ struct ProductDetailSwiftUIView: View {
         let myId = LoginInfoUtil.getUserId()
         let myBranchId = LoginInfoUtil.getBranchId()
         let centerBranchId = Constants.CENTER_BRANCH_ID
+        let pid = String(viewModel.productId)
 
         switch memberCode {
         case Constants.ROLE_PUB:
@@ -221,9 +244,8 @@ struct ProductDetailSwiftUIView: View {
                 else { onShowBuyerSelection(rooms) }
             }
         case Constants.ROLE_PROJ:
-            // For branch, we might need a picker like in original view
-            // Simplified for now to match the new structure
-            onShowAlert("안내", "채팅 대상 선택 로직은 추후 보강 예정입니다.")
+            // Match Android logic: "구매자에게 채팅" vs "본사와 채팅"
+            viewModel.showChatBuyerSelection = true
         default:
             break
         }

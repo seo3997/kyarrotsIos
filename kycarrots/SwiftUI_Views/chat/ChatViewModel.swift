@@ -43,7 +43,7 @@ final class ChatViewModel: ObservableObject {
         }
         
         // Match Android title format
-        self.otherId = "\(resolvedName)  님과의 대화"
+        self.otherId = "\(resolvedName) 님과의 대화"
         
         bindStomp()
     }
@@ -90,6 +90,11 @@ final class ChatViewModel: ObservableObject {
         StompManager.shared.connect(userId: currentUserId)
     }
     
+    func disconnect() {
+        StompManager.shared.unsubscribe(topicPath: topicPath)
+        StompManager.shared.disconnect()
+    }
+
     // MARK: - API Loading
     @MainActor
     func loadHistory() async {
