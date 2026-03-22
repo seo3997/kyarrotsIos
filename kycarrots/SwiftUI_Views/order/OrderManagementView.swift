@@ -18,18 +18,7 @@ class OrderManagementViewModel: ObservableObject {
     private let service: AppService
     
     // Android OrderMgtActivity.kt Status logic
-    let statusOptions = [
-        ("전체 상태", ""),
-        ("결제대기(10)", "10"),
-        ("결제완료(30)", "30"),
-        ("주문취소(40)", "40"),
-        ("배송준비(50)", "50"),
-        ("배송중(60)", "60"),
-        ("배송완료(70)", "70"),
-        ("반품요청(80)", "80"),
-        ("반품완료(89)", "89"),
-        ("주문확정(99)", "99")
-    ]
+    @Published var statusOptions: [(String, String)] = [("전체 상태", "")]
     
     init(service: AppService = AppService(repo: RemoteRepository())) {
         self.service = service
@@ -59,6 +48,20 @@ class OrderManagementViewModel: ObservableObject {
                 ) {
                     // Android: result["resultList"]
                     self.orders = data["resultList"] as? [[String: Any]] ?? []
+                    
+                    // Populate status options from server if available
+                    if let sList = data["orderStatusList"] as? [[String: Any]] {
+                        var opts: [(String, String)] = [("전체 상태", "")]
+                        for s in sList {
+                            let nm = (s["CODE_NM"] ?? s["codeNm"] ?? "").asString()
+                            let cd = (s["CODE"] ?? s["code"] ?? "").asString()
+                            if !nm.isEmpty && !cd.isEmpty {
+                                opts.append(("\(nm)(\(cd))", cd))
+                            }
+                        }
+                        self.statusOptions = opts
+                    }
+                    
                     self.isLoading = false
                 } else {
                     self.isLoading = false
