@@ -7,6 +7,7 @@ struct DashboardSwiftUIView: View {
     var onShowNotifications: (() -> Void)?
     var onToggleMenu: (() -> Void)?
     var onSelectOrder: ((DashboardOrder) -> Void)?
+    var onShowOrderMgt: (() -> Void)?
     
     var body: some View {
         ZStack {
@@ -68,7 +69,9 @@ struct DashboardSwiftUIView: View {
                                 Text("최근 주문 현황")
                                     .font(.system(size: 17, weight: .bold))
                                 Spacer()
-                                NavigationLink(destination: OrderManagementView()) {
+                                Button(action: {
+                                    onShowOrderMgt?()
+                                }) {
                                     Text("전체보기 >")
                                         .font(.system(size: 13))
                                         .foregroundColor(.secondary)

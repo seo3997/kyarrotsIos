@@ -370,6 +370,9 @@ private extension AppCoordinator {
         rootView.onSelectOrder = { [weak self] order in
             self?.showOrderMgtDetail(orderId: order.orderId)
         }
+        rootView.onShowOrderMgt = { [weak self] in
+            self?.showOrderManagement()
+        }
         
         let vc = UIHostingController(rootView: rootView)
         vc.navigationItem.title = "대시보드"
@@ -397,6 +400,17 @@ private extension AppCoordinator {
         let rootView = OrderMgtDetailView(orderId: orderId)
         let vc = UIHostingController(rootView: rootView)
         vc.navigationItem.title = "주문 상세 관리"
+        nav.pushViewController(vc, animated: true)
+    }
+
+    func showOrderManagement() {
+        var rootView = OrderManagementView()
+        rootView.onToggleMenu = { [weak self] in
+            guard let self = self, let menu = SideMenuManager.default.leftMenuNavigationController else { return }
+            self.nav.present(menu, animated: true)
+        }
+        let vc = UIHostingController(rootView: rootView)
+        vc.navigationItem.title = "주문 통합 관리"
         nav.pushViewController(vc, animated: true)
     }
 }
