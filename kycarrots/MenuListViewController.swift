@@ -1,5 +1,6 @@
 import UIKit
 import SwiftUI
+import SideMenu
 
 enum MenuItemType {
     case dashboard
@@ -246,10 +247,14 @@ final class MenuListViewController: UITableViewController {
                 nav.pushViewController(vc, animated: true)
                 
             case .orderManagement:
-                let vc = UIHostingController(rootView: OrderManagementView())
+                var rootView = OrderManagementView()
+                rootView.onToggleMenu = {
+                    guard let menu = SideMenuManager.default.leftMenuNavigationController else { return }
+                    nav.present(menu, animated: true)
+                }
+                let vc = UIHostingController(rootView: rootView)
                 vc.navigationItem.title = "주문관리"
                 vc.navigationItem.hidesBackButton = true // ✅ 뒤로가기 숨김 (햄버거만 노출)
-                vc.addLeftMenuButton()
                 nav.pushViewController(vc, animated: true)
                 
             case .notice:

@@ -7,55 +7,66 @@ class OrderManagementViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     @Published var selectedStatus: String = ""
-    @Published var startDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
-    @Published var endDate: Date = Date()
+    @Published var startDate: String? = nil
+    @Published var endDate: String? = nil
     @Published var searchKeyword: String = ""
+    
+    // For date picker display
+    @Published var startDateObj: Date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+    @Published var endDateObj: Date = Date()
     
     private let service: AppService
     
+    // Android OrderMgtActivity.kt Status logic
     let statusOptions = [
-        ("전체", ""),
-        ("입금대기", "10"),
-        ("승인대기", "20"),
-        ("배송준비", "30"),
-        ("취소", "40"),
-        ("입금완료", "50"),
-        ("배송중", "60"),
-        ("배송완료", "70"),
-        ("주문확정", "99")
+        ("전체 상태", ""),
+        ("결제대기(10)", "10"),
+        ("결제완료(30)", "30"),
+        ("주문취소(40)", "40"),
+        ("배송준비(50)", "50"),
+        ("배송중(60)", "60"),
+        ("배송완료(70)", "70"),
+        ("반품요청(80)", "80"),
+        ("반품완료(89)", "89"),
+        ("주문확정(99)", "99")
     ]
     
     init(service: AppService = AppService(repo: RemoteRepository())) {
         self.service = service
     }
     
+    @MainActor
     func loadOrders() {
         let token = TokenUtil.getToken()
         guard !token.isEmpty else { return }
-        isLoading = true
+        
+        self.isLoading = true
+        self.errorMessage = nil
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        let stDt = formatter.string(from: startDate)
-        let edDt = formatter.string(from: endDate)
+        let st = startDate ?? formatter.string(from: startDateObj)
+        let ed = endDate ?? formatter.string(from: endDateObj)
         
         Task {
-            if let data = await service.getOrderMgtList(
-                token: token,
-                status: selectedStatus.isEmpty ? nil : selectedStatus,
-                stDate: stDt,
-                edDate: edDt,
-                keyword: searchKeyword.isEmpty ? nil : searchKeyword
-            ) {
-                await MainActor.run {
+            do {
+                if let data = await service.getOrderMgtList(
+                    token: token,
+                    status: selectedStatus.isEmpty ? nil : selectedStatus,
+                    stDate: st,
+                    edDate: ed,
+                    keyword: searchKeyword.isEmpty ? nil : searchKeyword
+                ) {
+                    // Android: result["resultList"]
+                    self.orders = data["resultList"] as? [[String: Any]] ?? []
                     self.isLoading = false
-                    self.orders = data["list"] as? [[String: Any]] ?? []
-                }
-            } else {
-                await MainActor.run {
+                } else {
                     self.isLoading = false
                     self.errorMessage = "주문 목록을 불러오지 못했습니다."
                 }
+            } catch {
+                self.isLoading = false
+                self.errorMessage = error.localizedDescription
             }
         }
     }
@@ -63,60 +74,113 @@ class OrderManagementViewModel: ObservableObject {
 
 struct OrderManagementView: View {
     @StateObject var viewModel = OrderManagementViewModel()
-    @State private var showFilters = false
+    @State private var showStartDatePicker = false
+    @State private var showEndDatePicker = false
+    var onToggleMenu: (() -> Void)?
     
     var body: some View {
         ZStack {
             Color(hex: "F8F9FA").ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Search Bar
+                // Custom Header
                 HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
-                    TextField("주문번호, 주문자 검색", text: $viewModel.searchKeyword, onCommit: {
-                        viewModel.loadOrders()
-                    })
-                    .font(.system(size: 14))
-                    
-                    if !viewModel.searchKeyword.isEmpty {
-                        Button(action: {
-                            viewModel.searchKeyword = ""
-                            viewModel.loadOrders()
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
-                .padding(10)
-                .background(Color.white)
-                .cornerRadius(10)
-                .padding()
-                
-                // Active Filters Summary
-                HStack {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            OrderFilterChip(label: currentStatusLabel, isActive: !viewModel.selectedStatus.isEmpty) {
-                                showFilters = true
-                            }
-                            
-                            OrderFilterChip(label: dateRangeLabel, isActive: true) {
-                                showFilters = true
-                            }
-                        }
+                    Button(action: {
+                        print("Hamburger clicked!")
+                        onToggleMenu?()
+                    }) {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.title3)
+                            .foregroundColor(.primary)
                     }
                     Spacer()
-                    Button(action: { showFilters = true }) {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                            .font(.system(size: 20))
-                            .foregroundColor(.orange)
+                    Text("주문 통합 관리")
+                        .font(.system(size: 18, weight: .bold))
+                    Spacer()
+                    // Placeholder for balance or notification
+                    Color.clear.frame(width: 24, height: 24)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.white)
+                
+                // 1. Search & Filter Header (Emulating Android layout)
+                VStack(spacing: 12) {
+                    // Search Bar
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.blue)
+                        TextField("검색어 (주문번호, 지점명)", text: $viewModel.searchKeyword, onCommit: {
+                            viewModel.loadOrders()
+                        })
+                        .font(.system(size: 14))
+                        
+                        Button(action: {
+                            viewModel.loadOrders()
+                        }) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .foregroundColor(.blue)
+                                .font(.title3)
+                        }
+                    }
+                    .padding(10)
+                    .background(Color(hex: "F1F5F9"))
+                    .cornerRadius(8)
+                    
+                    HStack(spacing: 8) {
+                        // Status Picker
+                        Menu {
+                            Picker("상태", selection: $viewModel.selectedStatus) {
+                                ForEach(viewModel.statusOptions, id: \.1) { opt in
+                                    Text(opt.0).tag(opt.1)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text(viewModel.statusOptions.first(where: { $0.1 == viewModel.selectedStatus })?.0 ?? "상태 전체")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.down")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.horizontal, 12)
+                            .frame(height: 36)
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(hex: "E2E8F0"), lineWidth: 1))
+                        }
+                        .onChange(of: viewModel.selectedStatus) { _ in
+                            viewModel.loadOrders()
+                        }
+                        
+                        // Date Range Button
+                        Button(action: {
+                            showStartDatePicker = true
+                        }) {
+                            HStack {
+                                Text(dateRangeString)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.horizontal, 12)
+                            .frame(height: 36)
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(hex: "E2E8F0"), lineWidth: 1))
+                        }
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 10)
+                .padding(16)
+                .background(Color.white)
+                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                 
+                // 2. Order List
                 if viewModel.isLoading {
                     Spacer()
                     ProgressView()
@@ -127,68 +191,66 @@ struct OrderManagementView: View {
                         Image(systemName: "cart.badge.questionmark")
                             .font(.system(size: 48))
                             .foregroundColor(.gray.opacity(0.3))
-                        Text("검색 결과가 없습니다.")
+                        Text("주문 내역이 없습니다.")
                             .foregroundColor(.gray)
                     }
                     Spacer()
                 } else {
-                    List {
-                        ForEach(viewModel.orders, id: \.self.description) { order in
-                            NavigationLink(destination: OrderMgtDetailView(orderId: "\(order["ORDER_ID"] ?? order["orderId"] ?? "")")) {
-                                OrderMgtRow(order: order)
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(viewModel.orders, id: \.self.description) { order in
+                                NavigationLink(destination: OrderMgtDetailView(orderId: "\(order["ORDER_ID"] ?? order["orderId"] ?? "")")) {
+                                    OrderMgtRow(order: order)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
-                            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
                         }
+                        .padding(16)
                     }
-                    .listStyle(PlainListStyle())
                     .refreshable {
                         viewModel.loadOrders()
                     }
                 }
             }
         }
-        .navigationTitle("주문 관리")
-        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
+        .navigationTitle("주문 통합 관리")
+        .navigationBarHidden(true)
         .onAppear {
             viewModel.loadOrders()
         }
-        .sheet(isPresented: $showFilters) {
-            OrderFilterSheet(viewModel: viewModel)
+        .sheet(isPresented: $showStartDatePicker) {
+            DateRangePickerView(startDate: $viewModel.startDateObj, endDate: $viewModel.endDateObj) {
+                viewModel.loadOrders()
+            }
         }
     }
     
-    private var currentStatusLabel: String {
-        viewModel.statusOptions.first(where: { $0.1 == viewModel.selectedStatus })?.0 ?? "상태 전체"
-    }
-    
-    private var dateRangeLabel: String {
+    private var dateRangeString: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MM.dd"
-        return "\(formatter.string(from: viewModel.startDate)) ~ \(formatter.string(from: viewModel.endDate))"
+        formatter.dateFormat = "yy.MM.dd"
+        return "\(formatter.string(from: viewModel.startDateObj)) ~ \(formatter.string(from: viewModel.endDateObj))"
     }
 }
 
-struct OrderFilterChip: View {
-    let label: String
-    let isActive: Bool
-    let action: () -> Void
+// Separate View for Date Range Selection to avoid clutter
+struct DateRangePickerView: View {
+    @Binding var startDate: Date
+    @Binding var endDate: Date
+    @Environment(\.dismiss) var dismiss
+    var onApply: () -> Void
     
     var body: some View {
-        Button(action: action) {
-            Text(label)
-                .font(.system(size: 13, weight: isActive ? .bold : .regular))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(isActive ? Color.orange.opacity(0.1) : Color.white)
-                .foregroundColor(isActive ? .orange : .gray)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(isActive ? Color.orange : Color.gray.opacity(0.3), lineWidth: 1)
-                )
+        NavigationView {
+            Form {
+                DatePicker("시작일", selection: $startDate, displayedComponents: .date)
+                DatePicker("종료일", selection: $endDate, displayedComponents: .date)
+            }
+            .navigationTitle("기간 선택")
+            .navigationBarItems(trailing: Button("적용") {
+                onApply()
+                dismiss()
+            })
         }
-        .cornerRadius(16)
     }
 }
 
@@ -196,98 +258,84 @@ struct OrderMgtRow: View {
     let order: [String: Any]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(order["ORDER_STATUS_NM"] as? String ?? order["orderStatusNm"] as? String ?? "")
-                    .font(.system(size: 12, weight: .bold))
+                // Branch Name with Badge style
+                Text(order["BRANCH_NAME"] as? String ?? order["branchName"] as? String ?? order["USER_NM"] as? String ?? order["userNm"] as? String ?? "지점 미지정")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(.blue)
                     .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(statusColor.opacity(0.1))
-                    .foregroundColor(statusColor)
-                    .cornerRadius(4)
+                    .padding(.vertical, 4)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(6)
                 
                 Spacer()
                 
+                // Status mapping with color
+                Text(order["ORDER_STATUS_NM"] as? String ?? order["orderStatusNm"] as? String ?? "")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(statusColor)
+            }
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 6) {
                 Text(order["ORDER_DATE"] as? String ?? order["ORDERED_AT"] as? String ?? "")
                     .font(.system(size: 12))
-                    .foregroundColor(.gray)
-            }
-            
-            Text("주문번호: \(order["ORDER_NO"] as? String ?? "")")
-                .font(.system(size: 14, weight: .medium))
-            
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(order["BRANCH_NAME"] as? String ?? order["branchName"] as? String ?? "")
-                        .font(.system(size: 13))
-                    Text("주문자: \(order["RECEIVER_NAME"] as? String ?? order["receiverName"] as? String ?? order["USER_NM"] as? String ?? "")")
-                        .font(.system(size: 13))
-                        .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
+                
+                HStack {
+                    Text("주문번호:")
+                        .foregroundColor(.secondary)
+                    Text("\(order["ORDER_NO"] as? String ?? "")")
+                        .fontWeight(.medium)
                 }
+                .font(.system(size: 14))
                 
-                Spacer()
-                
-                Text(formatCurrency(order["TOTAL_PAY_AMOUNT"] ?? order["SUPPLY_PRICE_SUM"] ?? 0))
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.black)
+                HStack(alignment: .bottom) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("결제금액")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                        Text(formatCurrency(order["TOTAL_PAY_AMOUNT"] ?? order["SUPPLY_PRICE_SUM"] ?? 0))
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.primary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray.opacity(0.5))
+                }
             }
         }
-        .padding()
+        .padding(16)
         .background(Color.white)
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
     }
     
     private var statusColor: Color {
         let status = (order["ORDER_STATUS"] ?? order["orderStatus"]).asString()
         switch status {
-        case "10", "20": return .red
-        case "30", "50": return .blue
-        case "60", "70": return .green
+        case "10": return .red      // 결제대기
+        case "30": return .blue     // 결제완료
+        case "40": return .gray     // 주문취소
+        case "50": return .orange   // 배송준비
+        case "60": return .cyan     // 배송중
+        case "70": return .green    // 배송완료
+        case "99": return .indigo   // 주문확정
         default: return .gray
         }
     }
     
     private func formatCurrency(_ value: Any) -> String {
-        let amt = Int(String(describing: value)) ?? 0
+        let rawVal = String(describing: value)
+        let amt = Int(rawVal.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()) ?? 0
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: NSNumber(value: amt)) ?? "0원"
-    }
-}
-
-struct OrderFilterSheet: View {
-    @ObservedObject var viewModel: OrderManagementViewModel
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("주문 상태")) {
-                    Picker("상태 선택", selection: $viewModel.selectedStatus) {
-                        ForEach(viewModel.statusOptions, id: \.1) { opt in
-                            Text(opt.0).tag(opt.1)
-                        }
-                    }
-                    .pickerStyle(WheelPickerStyle())
-                }
-                
-                Section(header: Text("조회 기간")) {
-                    DatePicker("시작일", selection: $viewModel.startDate, displayedComponents: .date)
-                    DatePicker("종료일", selection: $viewModel.endDate, displayedComponents: .date)
-                }
-            }
-            .navigationTitle("상세 필터")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("적용") {
-                        viewModel.loadOrders()
-                        dismiss()
-                    }
-                }
-            }
-        }
     }
 }
