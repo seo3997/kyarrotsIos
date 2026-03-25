@@ -27,24 +27,8 @@ struct DashboardSwiftUIView: View {
                     Text(viewModel.dashboardTitle)
                         .font(.system(size: 18, weight: .bold))
                     Spacer()
-                    Button(action: {
+                    NotificationBellButton {
                         onShowNotifications?()
-                    }) {
-                        Image(systemName: "bell")
-                            .font(.system(size: 18))
-                            .foregroundColor(.primary)
-                            .overlay(alignment: .topTrailing) {
-                                if viewModel.unreadNotificationCount > 0 {
-                                    Text("\(min(viewModel.unreadNotificationCount, 99))")
-                                        .font(.system(size: 8, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .padding(3)
-                                        .frame(minWidth: 16, minHeight: 16)
-                                        .background(Color.red)
-                                        .clipShape(Circle())
-                                        .offset(x: 6, y: -6)
-                                }
-                            }
                     }
                 }
                 .padding()

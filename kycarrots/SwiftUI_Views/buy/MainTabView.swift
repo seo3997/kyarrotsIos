@@ -4,17 +4,7 @@ import SideMenu
 
 @MainActor
 class MainTabViewModel: ObservableObject {
-    @Published var unreadNotificationCount = 0
-    
-    func fetchUnreadCount() {
-        let userId = LoginInfoUtil.getUserId()
-        Task {
-            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
-            await MainActor.run {
-                self.unreadNotificationCount = count
-            }
-        }
-    }
+    // No longer needs unreadNotificationCount
 }
 
 struct MainTabView: View {
@@ -51,24 +41,8 @@ struct MainTabView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
+                NotificationBellButton {
                     onShowNotifications?()
-                }) {
-                    Image(systemName: "bell")
-                        .font(.system(size: 18))
-                        .foregroundColor(.primary)
-                        .overlay(alignment: .topTrailing) {
-                            if viewModel.unreadNotificationCount > 0 {
-                                Text("\(min(viewModel.unreadNotificationCount, 99))\(viewModel.unreadNotificationCount > 99 ? "+" : "")")
-                                    .font(.system(size: 8, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(3)
-                                    .frame(minWidth: 16, minHeight: 16)
-                                    .background(Color.red)
-                                    .clipShape(Circle())
-                                    .offset(x: 6, y: -6)
-                            }
-                        }
                 }
             }
         }
@@ -99,8 +73,10 @@ struct MainTabView: View {
                 UITabBar.appearance().scrollEdgeAppearance = appearance
             }
             
-            // 초기 데이터 로드
-            viewModel.fetchUnreadCount()
+            UITabBar.appearance().standardAppearance = appearance
+            if #available(iOS 15.0, *) {
+                UITabBar.appearance().scrollEdgeAppearance = appearance
+            }
         }
     }
     

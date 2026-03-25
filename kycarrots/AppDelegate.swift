@@ -214,6 +214,7 @@ extension AppDelegate {
                 try ctx.save()
                 print("✅ push 저장 완료:", pushId)
                 NotificationBadgeHelper.refreshBadgeCount(userId: userId)
+                NotificationCenter.default.post(name: .didReceiveNewPush, object: nil)
             } catch {
                 print("❌ push 저장 실패:", error)
             }

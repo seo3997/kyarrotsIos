@@ -7,8 +7,6 @@ class ProductListViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var isLastPage = false
     @Published var selectedStatus: SaleStatus = .onSale
-    @Published var unreadNotificationCount: Int = 0
-    
     private var pageNo = 1
     private let appService = AppServiceProvider.shared
     
@@ -53,14 +51,6 @@ class ProductListViewModel: ObservableObject {
                 print("getAdvertiseList error: \(error)")
             }
             isLoading = false
-        }
-    }
-    
-    func fetchUnreadCount() {
-        let userId = LoginInfoUtil.getUserId()
-        Task {
-            let count = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
-            self.unreadNotificationCount = count
         }
     }
 }

@@ -11,7 +11,6 @@ struct WebSwiftUIView: View {
     @State private var webView = WKWebView()
     
     // Notification logic
-    @State private var unreadCount = 0
     var onShowNotifications: (() -> Void)?
     
     // Toast simulation
@@ -33,45 +32,14 @@ struct WebSwiftUIView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
+                NotificationBellButton {
                     onShowNotifications?()
-                }) {
-                    Image(systemName: "bell")
-                        .font(.system(size: 18))
-                        .foregroundColor(.primary)
-                        .overlay(alignment: .topTrailing) {
-                            if unreadCount > 0 {
-                                Text("\(min(unreadCount, 99))")
-                                    .font(.system(size: 8, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(3)
-                                    .frame(minWidth: 16, minHeight: 16)
-                                    .background(Color.red)
-                                    .clipShape(Circle())
-                                    .offset(x: 6, y: -6)
-                            }
-                        }
                 }
             }
         }
-        .onAppear {
-            fetchUnreadCount()
-        }
-        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김 (햄버거 메뉴만 노출)
+        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
         .alert(isPresented: $showToast) {
             Alert(title: Text(toastMessage ?? ""), message: nil, dismissButton: .default(Text("확인")))
-        }
-    }
-    
-    private func fetchUnreadCount() {
-        // Implementation similar to Dashboard (CoreData or Repository)
-        guard let userId = UserDefaults.standard.string(forKey: "LogIn_ID") else { return }
-        let repo = CoreDataPushRepository()
-        do {
-            let count = try repo.countUnread(userId: userId)
-            self.unreadCount = count
-        } catch {
-            print("Failed to fetch unread count: \(error)")
         }
     }
 }
