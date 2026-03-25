@@ -89,9 +89,7 @@ extension CDPushNotification {
             type: self.type ?? "",
             title: self.title ?? "",
             body: self.body,
-            productId: self.productId == 0 ? nil : self.productId,
-            sellerId: self.sellerId,
-            roomId: self.roomId,
+            targetId: self.targetId,
             deeplink: self.deeplink,
             isRead: self.isRead,
             createdAt: self.createdAt ?? Date()

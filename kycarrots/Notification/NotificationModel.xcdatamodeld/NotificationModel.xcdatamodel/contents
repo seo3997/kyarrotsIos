@@ -6,9 +6,7 @@
         <attribute name="deeplink" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isRead" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="productId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="roomId" optional="YES" attributeType="String"/>
-        <attribute name="sellerId" optional="YES" attributeType="String"/>
+        <attribute name="targetId" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
         <attribute name="userId" attributeType="String"/>

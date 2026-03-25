@@ -105,6 +105,7 @@ struct NotificationListSwiftUIView: View {
             }
         }
         .navigationTitle("알림 리스트")
+        .navigationBarHidden(false) // ✅ 네비게이션 바 명시적 표시
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

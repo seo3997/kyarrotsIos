@@ -123,6 +123,14 @@ final class AppCoordinator {
             if let detail = makeProductDetailVC(from: deepLink) {
                 nav.pushViewController(detail, animated: true)
             }
+        case .order:
+            if let orderId = deepLink.targetId {
+                if memberCode == "ROLE_SELL" || memberCode == "ROLE_PROJ" || memberCode == "ROLE_ADMIN" {
+                    showOrderMgtDetail(orderId: orderId)
+                } else {
+                    showOrderDetail(orderId: orderId)
+                }
+            }
         }
     }
 
@@ -223,17 +231,27 @@ final class AppCoordinator {
             guard let self = self else { return }
             
             switch item.type {
-            case NotifType.CHAT:
-                if let roomId = item.roomId, !roomId.isEmpty {
-                    // roomId에서 나머지 정보 추출 (productId_buyerId_sellerId 형태라면)
+            case "chat", "CHAT":
+                if let roomId = item.targetId, !roomId.isEmpty {
+                    // roomId에서 나머지 정보 추출 (productId_buyerId_branchId 형태)
                     let components = roomId.components(separatedBy: "_")
                     if components.count >= 3 {
                         self.openChat(roomId: roomId, buyerId: components[1], branchId: components[2], productId: components[0])
                     }
                 }
-            case NotifType.PRODUCT_REGISTERED, NotifType.PRODUCT_APPROVED, NotifType.PRODUCT_REJECTED, "PRODUCT":
-                if let pid = item.productId {
-                    self.showProductDetail(pid: pid, userId: item.sellerId ?? "", title: "상품 상세")
+            case "product", "PRODUCT", "PRODUCT_REGISTERED", "PRODUCT_APPROVED", "PRODUCT_REJECTED":
+                if let pidStr = item.targetId, let pid = Int64(pidStr) {
+                    self.showProductDetail(pid: pid, userId: "0", title: "상품 상세")
+                }
+            case "order", "ORDER":
+                if let orderId = item.targetId {
+                    // memberCode 확인 로직이 필요함. AppCoordinator.shared?.currentMemberCode 혹은 UserDefaults
+                    let memberCode = UserDefaults.standard.string(forKey: "Member_CD") ?? ""
+                    if memberCode == "ROLE_SELL" || memberCode == "ROLE_PROJ" || memberCode == "ROLE_ADMIN" {
+                        self.showOrderMgtDetail(orderId: orderId)
+                    } else {
+                        self.showOrderDetail(orderId: orderId)
+                    }
                 }
             default:
                 if let deeplink = item.deeplink, let url = URL(string: deeplink) {
@@ -264,10 +282,21 @@ private extension AppCoordinator {
     }
 
     func makeChatVC(from deepLink: PushDeepLink) -> UIViewController? {
-        guard let roomId = deepLink.roomId, !roomId.isEmpty,
-              let buyerId = deepLink.buyerId, !buyerId.isEmpty,
-              let branchId = deepLink.sellerId, !branchId.isEmpty,
-              let productId = deepLink.productId, !productId.isEmpty else {
+        guard let roomId = deepLink.targetId, !roomId.isEmpty else {
+            return nil
+        }
+        
+        let parts = roomId.components(separatedBy: "_")
+        var productId = ""
+        var buyerId = ""
+        var branchId = ""
+        
+        if parts.count >= 3 {
+             productId = parts[0]
+             buyerId = parts[1]
+             branchId = parts[2]
+        } else {
+            // fallback 혹은 예외처리
             return nil
         }
 
@@ -286,11 +315,12 @@ private extension AppCoordinator {
     }
 
     func makeProductDetailVC(from deepLink: PushDeepLink) -> UIViewController? {
-        guard let productIdStr = deepLink.productId,
+        guard let productIdStr = deepLink.targetId,
               let pid = Int64(productIdStr), pid > 0 else {
             return nil
         }
-        return makeProductDetailVC(productId: pid, userId: deepLink.sellerId ?? "0", title: deepLink.msg ?? "")
+        // Android equivalent: AdDetailActivity.EXTRA_PRODUCT_ID
+        return makeProductDetailVC(productId: pid, userId: "0", title: "상품 상세")
     }
 
     func makeProductDetailVC(productId: Int64, userId: String, title: String) -> UIViewController {

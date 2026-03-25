@@ -13,5 +13,6 @@ enum NotifType {
     static let PRODUCT_REGISTERED = "PRODUCT_REGISTERED"
     static let PRODUCT_APPROVED = "PRODUCT_APPROVED"
     static let PRODUCT_REJECTED = "PRODUCT_REJECTED"
+    static let ORDER = "ORDER"
     static let SYS = "SYS"
 }

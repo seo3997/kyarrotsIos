@@ -15,9 +15,7 @@ struct PushNotification: Hashable {
     let type: String
     let title: String
     let body: String?
-    let productId: Int64?
-    let sellerId: String?
-    let roomId: String?
+    let targetId: String?
     let deeplink: String?
 
     var isRead: Bool
@@ -29,9 +27,7 @@ struct PushNotification: Hashable {
         type: String,
         title: String,
         body: String?,
-        productId: Int64?,
-        sellerId: String?,
-        roomId: String?,
+        targetId: String?,
         deeplink: String?,
         isRead: Bool = false,
         createdAt: Date = Date()
@@ -41,9 +37,7 @@ struct PushNotification: Hashable {
         self.type = type
         self.title = title
         self.body = body
-        self.productId = productId
-        self.sellerId = sellerId
-        self.roomId = roomId
+        self.targetId = targetId
         self.deeplink = deeplink
         self.isRead = isRead
         self.createdAt = createdAt

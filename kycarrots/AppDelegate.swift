@@ -197,12 +197,8 @@ extension AppDelegate {
             let body  = (userInfo["body"] as? String) ?? bodyFromAps ?? (userInfo["msg"] as? String)
 
             let type = (userInfo["type"] as? String) ?? ""
-            let roomId = userInfo["roomId"] as? String
-            let sellerId = userInfo["sellerId"] as? String
+            let targetId = userInfo["targetId"] as? String
             let deeplink = userInfo["deeplink"] as? String
-
-            let productIdStr = userInfo["productId"] as? String
-            let productIdVal: Int64 = Int64(productIdStr ?? "") ?? 0
 
             let userId = UserDefaults.standard.string(forKey: "LogIn_ID") ?? ""
 
@@ -212,9 +208,7 @@ extension AppDelegate {
             row.type = type
             row.title = title
             row.body = body
-            row.productId = productIdVal
-            row.sellerId = sellerId
-            row.roomId = roomId
+            row.targetId = targetId
             row.deeplink = deeplink
             row.isRead = false
             row.createdAt = Date()
