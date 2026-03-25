@@ -9,6 +9,7 @@ class DashboardViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var hqNotice: String = ""
     @Published var dashboardTitle: String = "대시보드"
+    @Published var unreadNotificationCount: Int = 0
     
     private let appService = AppServiceProvider.shared
     
@@ -28,6 +29,10 @@ class DashboardViewModel: ObservableObject {
                 if let result = try await appService.getDashboardMgtData(token: token) {
                     processDashboardData(result)
                 }
+                
+                // Fetch unread count
+                let userId = LoginInfoUtil.getUserId()
+                self.unreadNotificationCount = await NotificationBadgeHelper.fetchUnreadCount(userId: userId)
             } catch {
                 print("Dashboard Load Error:", error)
             }

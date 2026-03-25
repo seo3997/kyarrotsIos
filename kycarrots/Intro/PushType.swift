@@ -4,6 +4,7 @@ enum PushType: String {
     case chat
     case product
     case order
+    case sys
 }
 
 struct PushDeepLink {
@@ -12,12 +13,12 @@ struct PushDeepLink {
     let msg: String?
 
     static func from(userInfo: [AnyHashable: Any]) -> PushDeepLink? {
-        guard let typeStr = (userInfo["type"] as? String)?.lowercased(),
-              let type = PushType(rawValue: typeStr) else { return nil }
+        let typeStr = (userInfo["type"] as? String)?.lowercased() ?? ""
+        let type = PushType(rawValue: typeStr) ?? .sys
 
         // targetId 직접 추출
         let targetId = userInfo["targetId"] as? String
-
+        
         return PushDeepLink(
             type: type,
             targetId: targetId,

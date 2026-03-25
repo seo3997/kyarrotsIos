@@ -189,13 +189,13 @@ final class IntroViewController: UIViewController {
     }
 
     func subscribeTopicIfNeeded(memberCode: String) {
-        guard memberCode == Constants.ROLE_PUB else { return }
+        guard !memberCode.isEmpty else { return }
 
-        Messaging.messaging().subscribe(toTopic: Constants.ROLE_PUB) { error in
+        Messaging.messaging().subscribe(toTopic: memberCode) { error in
             if let error = error {
-                print("FCM ROLE_PUB 토픽 구독 실패:", error)
+                print("FCM \(memberCode) 토픽 구독 실패:", error)
             } else {
-                print("FCM ROLE_PUB 토픽 구독 성공")
+                print("FCM \(memberCode) 토픽 구독 성공")
             }
         }
     }

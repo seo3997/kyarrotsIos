@@ -37,21 +37,20 @@ struct WebSwiftUIView: View {
                     onShowNotifications?()
                 }) {
                     Image(systemName: "bell")
-                        .imageScale(.medium)
-                        .foregroundColor(.black)
-                        .overlay(
-                            Group {
-                                if unreadCount > 0 {
-                                    Text("\(min(unreadCount, 99))")
-                                        .font(.system(size: 8, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .padding(4)
-                                        .background(Circle().fill(Color.red))
-                                        .offset(x: 8, y: -8)
-                                }
-                            },
-                            alignment: .topTrailing
-                        )
+                        .font(.system(size: 18))
+                        .foregroundColor(.primary)
+                        .overlay(alignment: .topTrailing) {
+                            if unreadCount > 0 {
+                                Text("\(min(unreadCount, 99))")
+                                    .font(.system(size: 8, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(3)
+                                    .frame(minWidth: 16, minHeight: 16)
+                                    .background(Color.red)
+                                    .clipShape(Circle())
+                                    .offset(x: 6, y: -6)
+                            }
+                        }
                 }
             }
         }

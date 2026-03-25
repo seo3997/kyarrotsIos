@@ -58,4 +58,13 @@ enum NotificationBadgeHelper {
     static func applyAppIconBadge(_ count: Int) {
         UIApplication.shared.applicationIconBadgeNumber = max(0, count)
     }
+
+    /// DB에서 최신 안읽은 개수 조회 후 앱 뱃지에 자동 반영
+    static func refreshBadgeCount(userId: String) {
+        guard !userId.isEmpty else { return }
+        Task {
+            let count = await fetchUnreadCount(userId: userId)
+            await applyAppIconBadge(count)
+        }
+    }
 }

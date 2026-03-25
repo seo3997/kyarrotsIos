@@ -91,10 +91,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         print("📩 background fetch push:", userInfo)
-
-        // 필요하면 저장(지금은 주석 유지)
-        // savePushToLocalDb(userInfo: userInfo)
-
+        savePushToLocalDb(userInfo: userInfo)
         completionHandler(.newData)
     }
     
@@ -216,6 +213,7 @@ extension AppDelegate {
             do {
                 try ctx.save()
                 print("✅ push 저장 완료:", pushId)
+                NotificationBadgeHelper.refreshBadgeCount(userId: userId)
             } catch {
                 print("❌ push 저장 실패:", error)
             }

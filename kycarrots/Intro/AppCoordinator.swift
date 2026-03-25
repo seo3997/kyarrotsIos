@@ -131,6 +131,8 @@ final class AppCoordinator {
                     showOrderDetail(orderId: orderId)
                 }
             }
+        case .sys:
+            showNotificationList()
         }
     }
 
@@ -419,6 +421,9 @@ private extension AppCoordinator {
         }
         rootView.onSelectOrder = { [weak self] orderId in
             self?.showOrderDetail(orderId: orderId)
+        }
+        rootView.onShowNotifications = { [weak self] in
+            self?.showNotificationList()
         }
         let hostingVC = UIHostingController(rootView: rootView)
         hostingVC.navigationItem.title = "상품리스트"

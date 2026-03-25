@@ -205,9 +205,12 @@ class SettingsViewModel: ObservableObject {
 
     
     func logout() {
+        let memberCode = LoginInfoUtil.getMemberCode()
+        if !memberCode.isEmpty {
+            Messaging.messaging().unsubscribe(fromTopic: memberCode)
+        }
         LoginInfoUtil.clearLoginInfo()
         TokenUtil.clearToken()
-        Messaging.messaging().unsubscribe(fromTopic: Constants.ROLE_PUB)
         DispatchQueue.main.async {
             UIApplication.shared.appCoordinator?.showLogin(pendingDeepLink: nil)
         }

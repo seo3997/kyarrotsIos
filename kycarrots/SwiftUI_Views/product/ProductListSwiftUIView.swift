@@ -92,19 +92,21 @@ struct ProductListSwiftUIView: View {
                 Button(action: {
                     onShowNotifications?()
                 }) {
-                    ZStack(alignment: .topTrailing) {
-                        Image(systemName: "bell")
-                        
-                        if viewModel.unreadNotificationCount > 0 {
-                            Text("\(min(viewModel.unreadNotificationCount, 99))\(viewModel.unreadNotificationCount > 99 ? "+" : "")")
-                                .font(.system(size: 8, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(4)
-                                .background(Color.red)
-                                .clipShape(Circle())
-                                .offset(x: 10, y: -10)
+                    Image(systemName: "bell")
+                        .font(.system(size: 18))
+                        .foregroundColor(.primary)
+                        .overlay(alignment: .topTrailing) {
+                            if viewModel.unreadNotificationCount > 0 {
+                                Text("\(min(viewModel.unreadNotificationCount, 99))\(viewModel.unreadNotificationCount > 99 ? "+" : "")")
+                                    .font(.system(size: 8, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(3)
+                                    .frame(minWidth: 16, minHeight: 16)
+                                    .background(Color.red)
+                                    .clipShape(Circle())
+                                    .offset(x: 6, y: -6)
+                            }
                         }
-                    }
                 }
             }
         }
