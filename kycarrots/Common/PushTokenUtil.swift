@@ -6,13 +6,23 @@ import FirebaseMessaging
 
 struct PushTokenUtil {
 
-    // 마지막으로 "서버 저장 성공한" FCM 토큰
-    private static let KEY = "push_fcm_token"
+    // 마지막으로 "서버 저장 성공한" 정보들
+    private static let KEY_TOKEN = "push_fcm_token"
+    private static let KEY_USER_ID = "push_last_user_id"
     private static let defaults = UserDefaults.standard
 
-    static func get() -> String { defaults.string(forKey: KEY) ?? "" }
-    static func save(_ token: String) { defaults.set(token, forKey: KEY) }
-    static func clear() { defaults.removeObject(forKey: KEY) }
+    static func get() -> String { defaults.string(forKey: KEY_TOKEN) ?? "" }
+    static func getLastUserId() -> String { defaults.string(forKey: KEY_USER_ID) ?? "" }
+    
+    static func save(_ token: String, _ userId: String) {
+        defaults.set(token, forKey: KEY_TOKEN)
+        defaults.set(userId, forKey: KEY_USER_ID)
+    }
+    
+    static func clear() {
+        defaults.removeObject(forKey: KEY_TOKEN)
+        defaults.removeObject(forKey: KEY_USER_ID)
+    }
 
     /// ✅ 실제 서버 업로드 + 성공 시 로컬 저장
     static func uploadPushTokenToServer(_ fcmToken: String) async -> Bool {
@@ -24,9 +34,9 @@ struct PushTokenUtil {
             return false
         }
 
-        // ✅ 중복이면 서버 호출 스킵
-        if get() == fcmToken {
-            print("⏭️ same token → upload skip")
+        // ✅ 토큰과 유저 아이디가 모두 일치할 때만 스킵 (Android와 동일 로직)
+        if get() == fcmToken && getLastUserId() == userId {
+            print("⏭️ same token & user → upload skip")
             return true
         }
 
@@ -40,15 +50,17 @@ struct PushTokenUtil {
         let ok = await AppServiceProvider.shared.savePushToken(req)
         print(ok ? "✅ iOS PushToken 서버 저장 성공" : "❌ iOS PushToken 서버 저장 실패")
 
-        if ok { save(fcmToken) }   // ✅ 성공 시만 로컬 저장
+        if ok { save(fcmToken, userId) }   // ✅ 성공 시만 로컬 저장
         return ok
     }
 
     /// ✅ Android의 ensureTokenRegistered와 동일:
-    /// 로컬에 토큰이 없을 때만 "현재 FCM 토큰"을 조회해서 서버 업로드 시도
+    /// 로컬에 토큰이 없거나, 유저가 바뀌었을 때 "현재 FCM 토큰"을 조회해서 서버 업로드 시도
     static func ensureTokenRegistered() {
-        if !get().isEmpty {
-            print("✅ last token exists → skip getToken")
+        let userId = UserDefaults.standard.string(forKey: "LogIn_ID") ?? ""
+
+        if !get().isEmpty && getLastUserId() == userId && !userId.isEmpty {
+            print("✅ last token & user match → skip getToken")
             return
         }
 
