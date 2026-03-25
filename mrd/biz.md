@@ -57,3 +57,26 @@
    PaymentWebViewActivity,PaymentWebView.swift,토스페이먼트 결제창 (WKWebView)
    OrderMgtActivity,OrderManagementView.swift,관리자용 주문 목록 (권한 제한)
    DashboardActivity,DashboardView.swift,통계 및 요약 화면
+
+7. 상풍상세에서 문의하기 버튼 로직 점검
+   iOs 소스: /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/product/ProductDetailSwiftUIView.swift
+   iOs 채팅화면: /Users/soo/kyarrotsIos/kycarrots/SwiftUI_Views/chat/ChatSwiftUIView.swift
+
+   안드로이드 소스: /Users/soo/Kycarrots/src/main/java/com/kycarrots/app/ui/product/ProductDetailActivity.kt
+   안드로이드 채팅화면: /Users/soo/Kycarrots/src/main/java/com/kycarrots/app/ui/chat/ChatActivity.kt
+
+   문의하기 버튼 클릭시 안드로이드와 동일하게 동작하는지 확인한다.
+   채팅방 생성로직 확인
+
+   7-1. room*id 생성 로직 정의
+   room_id는 고유 식별을 위해 [상품ID]*[참여 주체 1]\_[참여 주체 2] 구조로 생성합니다.
+
+   용자 권한 대상 room_id 구성 방식
+   구매자 (ROLE_PUB) 소속 지점 productId + userId + branchId
+   지점 (ROLE_PROJ) 본사 productId + branchId + 본사branchId(2)
+   본사 (ROLE_SELL) 지점 선택 productId + targetBranchId + 본사branchId(2)
+
+   7-2. 챗팅 흐름 (Communication Flow)
+   구매자: 오직 본인이 소속된 지점(ROLE_PROJ) 관리자와만 대화 가능.
+   지점: 본인 지점의 구매자(ROLE_PUB) 및 본사(ROLE_SELL) 관리자와 대화 가능.
+   본사: 시스템 내 모든 지점(ROLE_PROJ) 관리자와 대화 가능.
