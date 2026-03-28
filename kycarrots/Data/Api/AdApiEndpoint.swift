@@ -266,13 +266,13 @@ enum AdApiEndpoint: Endpoint {
         case let .getOrderMgtDetail(orderId, _):
             return "api/order/\(orderId)"
         case .updateOrderStatus:
-            return "/api/order/mgt/update/status"
+            return "api/order/status"
         case .confirmDeposit:
-            return "/api/order/mgt/confirm/deposit"
+            return "api/order/confirmDeposit"
         case .requestBranchDeposit:
-            return "/api/order/mgt/request/deposit"
+            return "api/order/requestBranchDeposit"
         case .updateShipping:
-            return "/api/order/mgt/update/shipping"
+            return "api/order/updateShipping"
         }
     }
 
