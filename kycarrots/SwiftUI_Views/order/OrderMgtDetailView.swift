@@ -21,31 +21,36 @@ class OrderMgtDetailViewModel: ObservableObject {
     }
     
     func loadData() {
+        Task {
+            await loadDataAsync()
+        }
+    }
+
+    func loadDataAsync() async {
         let token = TokenUtil.getToken()
         guard !token.isEmpty else { return }
-        isLoading = true
         
-        Task {
-            if let data = await service.getOrderMgtDetail(orderId: orderId, token: token) {
-                await MainActor.run {
-                    self.isLoading = false
-                    self.order = data["resultVo"] as? [String: Any] ?? [:]
-                    self.items = data["orderItemList"] as? [[String: Any]] ?? []
-                    self.carriers = data["deliveryCompanyList"] as? [[String: Any]] ?? []
-                    
-                    // Set current carrier
-                    let currentCode = (self.order["deliveryCompanyCode"] ?? "").asString()
-                    if let idx = self.carriers.firstIndex(where: { ($0["code"] ?? "").asString() == currentCode }) {
-                        self.selectedCarrierIndex = idx + 1 // Account for "선택하세요"
-                    }
-                    
-                    self.trackingNo = (self.order["trackingNo"] ?? "").asString()
+        await MainActor.run { self.isLoading = true }
+        
+        if let data = await service.getOrderMgtDetail(orderId: orderId, token: token) {
+            await MainActor.run {
+                self.isLoading = false
+                self.order = data["resultVo"] as? [String: Any] ?? [:]
+                self.items = data["orderItemList"] as? [[String: Any]] ?? []
+                self.carriers = data["deliveryCompanyList"] as? [[String: Any]] ?? []
+                
+                // Set current carrier
+                let currentCode = (self.order["deliveryCompanyCode"] ?? "").asString()
+                if let idx = self.carriers.firstIndex(where: { ($0["code"] ?? "").asString() == currentCode }) {
+                    self.selectedCarrierIndex = idx + 1 // Account for "선택하세요"
                 }
-            } else {
-                await MainActor.run {
-                    self.isLoading = false
-                    self.errorMessage = "상세 정보를 불러오지 못했습니다."
-                }
+                
+                self.trackingNo = (self.order["trackingNo"] ?? "").asString()
+            }
+        } else {
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = "상세 정보를 불러오지 못했습니다."
             }
         }
     }
@@ -99,11 +104,14 @@ class OrderMgtDetailViewModel: ObservableObject {
             }
             
             await MainActor.run {
-                self.isLoading = false
                 if success {
                     self.actionSuccess = true
-                    self.loadData()
+                    Task {
+                        await self.loadDataAsync()
+                        self.isLoading = false
+                    }
                 } else {
+                    self.isLoading = false
                     self.errorMessage = "작업 수행에 실패했습니다."
                 }
             }
