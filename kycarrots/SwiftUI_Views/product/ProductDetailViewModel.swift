@@ -56,8 +56,9 @@ class ProductDetailViewModel: ObservableObject {
     // Member Info
     private let memberCode = LoginInfoUtil.getMemberCode()
     
-    init(productId: Int64) {
+    init(productId: Int64, initialTab: Int = 0) {
         self.productId = productId
+        self.selectedTab = initialTab
         self.baseShippingFee = LoginInfoUtil.getBaseShippingFee()
         self.freeShippingThreshold = LoginInfoUtil.getFreeShippingThreshold()
         self.isBuyer = (LoginInfoUtil.getMemberCode() == Constants.ROLE_PUB)

@@ -163,11 +163,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 extension AppDelegate {
 
     func savePushToLocalDb(userInfo: [AnyHashable: Any]) {
-        guard let idStr = userInfo["id"] as? String,
-              let pushId = UUID(uuidString: idStr) else {
-            print("❌ push id 없음 -> 저장 스킵. userInfo=", userInfo)
-            return
-        }
+        // ✅ push id 추출 (없으면 gcm.message_id 시도, 그래도 없으면 새로 생성하여 저장 누락 방지)
+        let idVal = userInfo["id"] ?? userInfo["gcm.message_id"] ?? userInfo["google.message_id"]
+        let idStr = idVal as? String ?? ""
+        
+        let pushId = UUID(uuidString: idStr) ?? UUID()
 
         let ctx = PersistenceController.shared.container.viewContext
         ctx.perform {
@@ -195,7 +195,13 @@ extension AppDelegate {
 
             let type = (userInfo["type"] as? String) ?? ""
             let targetId = userInfo["targetId"] as? String
-            let deeplink = userInfo["deeplink"] as? String
+            var deeplink = userInfo["deeplink"] as? String
+            
+            // ✅ "product" 타입일 경우 deeplink 수동 생성 (Android 로직과 동기화)
+            if type.lowercased() == "product" && (deeplink == nil || deeplink?.isEmpty == true) {
+                let pid = targetId ?? ""
+                deeplink = "app://product/\(pid)"
+            }
 
             let userId = UserDefaults.standard.string(forKey: "LogIn_ID") ?? ""
 

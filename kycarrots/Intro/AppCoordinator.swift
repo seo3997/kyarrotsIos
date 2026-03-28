@@ -136,8 +136,8 @@ final class AppCoordinator {
         }
     }
 
-    func showProductDetail(pid: Int64, userId: String, title: String) {
-        let vc = makeProductDetailVC(productId: pid, userId: userId, title: title)
+    func showProductDetail(pid: Int64, userId: String, title: String, initialTab: Int = 0) {
+        let vc = makeProductDetailVC(productId: pid, userId: userId, title: title, initialTab: initialTab)
         nav.pushViewController(vc, animated: true)
     }
     
@@ -241,9 +241,16 @@ final class AppCoordinator {
                         self.openChat(roomId: roomId, buyerId: components[1], branchId: components[2], productId: components[0])
                     }
                 }
-            case "product", "PRODUCT", "PRODUCT_REGISTERED", "PRODUCT_APPROVED", "PRODUCT_REJECTED":
+            case "product", "PRODUCT", "PRODUCT_REGISTERED", "PRODUCT_APPROVED", "PRODUCT_REJECTED", "PRODUCT_INQUIRY", "PRODUCT_REVIEW", "PRODUCT_QNA":
                 if let pidStr = item.targetId, let pid = Int64(pidStr) {
-                    self.showProductDetail(pid: pid, userId: "0", title: "상품 상세")
+                    var initialTab = 0
+                    let upperType = item.type.uppercased()
+                    if upperType.contains("REVIEW") {
+                        initialTab = 1
+                    } else if upperType.contains("INQUIRY") || upperType.contains("QNA") {
+                        initialTab = 2
+                    }
+                    self.showProductDetail(pid: pid, userId: "0", title: "상품 상세", initialTab: initialTab)
                 }
             case "order", "ORDER":
                 if let orderId = item.targetId {
@@ -322,11 +329,11 @@ private extension AppCoordinator {
             return nil
         }
         // Android equivalent: AdDetailActivity.EXTRA_PRODUCT_ID
-        return makeProductDetailVC(productId: pid, userId: "0", title: "상품 상세")
+        return makeProductDetailVC(productId: pid, userId: "0", title: "상품 상세", initialTab: 0)
     }
 
-    func makeProductDetailVC(productId: Int64, userId: String, title: String) -> UIViewController {
-        let viewModel = ProductDetailViewModel(productId: productId)
+    func makeProductDetailVC(productId: Int64, userId: String, title: String, initialTab: Int = 0) -> UIViewController {
+        let viewModel = ProductDetailViewModel(productId: productId, initialTab: initialTab)
         var rootView = ProductDetailSwiftUIView(viewModel: viewModel) { [weak self] pid in
             // Handle Edit
             let vc = MakeAdMainViewController(service: AppServiceProvider.shared, productId: String(pid))
