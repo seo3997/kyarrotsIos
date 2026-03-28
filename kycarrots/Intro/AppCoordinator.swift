@@ -252,10 +252,10 @@ final class AppCoordinator {
                     }
                     self.showProductDetail(pid: pid, userId: "0", title: "상품 상세", initialTab: initialTab)
                 }
-            case "order", "ORDER":
+            case let t where t.uppercased().contains("ORDER"):
                 if let orderId = item.targetId {
-                    // memberCode 확인 로직이 필요함. AppCoordinator.shared?.currentMemberCode 혹은 UserDefaults
-                    let memberCode = UserDefaults.standard.string(forKey: "Member_CD") ?? ""
+                    // ✅ memberCode 확인 로직 수정 (로그인 정보 유틸 사용)
+                    let memberCode = LoginInfoUtil.getMemberCode()
                     if memberCode == "ROLE_SELL" || memberCode == "ROLE_PROJ" || memberCode == "ROLE_ADMIN" {
                         self.showOrderMgtDetail(orderId: orderId)
                     } else {

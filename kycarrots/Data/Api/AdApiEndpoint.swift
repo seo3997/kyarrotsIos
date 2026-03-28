@@ -294,11 +294,12 @@ enum AdApiEndpoint: Endpoint {
              .getDefaultWholesaler,
              .getReviewList,
              .getQnaList,
-              .getOrderHistory,
-              .getAddressList,
-              .getDashboardData,
-              .getOrderMgtList,
-              .getOrderMgtDetail:
+             .getOrderDetail,
+             .getOrderHistory,
+             .getAddressList,
+             .getDashboardData,
+             .getOrderMgtList,
+             .getOrderMgtDetail:
             return .get
 
         case .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:
