@@ -103,14 +103,13 @@ class OrderMgtDetailViewModel: ObservableObject {
             default: break
             }
             
-            await MainActor.run {
-                if success {
+            if success {
+                await loadDataAsync()
+                await MainActor.run {
                     self.actionSuccess = true
-                    Task {
-                        await self.loadDataAsync()
-                        self.isLoading = false
-                    }
-                } else {
+                }
+            } else {
+                await MainActor.run {
                     self.isLoading = false
                     self.errorMessage = "작업 수행에 실패했습니다."
                 }
@@ -321,6 +320,12 @@ struct OrderMgtDetailView: View {
         .navigationBarHidden(true)
         .onAppear {
             viewModel.loadData()
+        }
+        .alert(isPresented: .init(get: { viewModel.actionSuccess }, set: { if !$0 { viewModel.actionSuccess = false } })) {
+            Alert(title: Text("알림"), message: Text("처리가 완료되었습니다."), dismissButton: .default(Text("확인")))
+        }
+        .alert(isPresented: .init(get: { viewModel.errorMessage != nil }, set: { if !$0 { viewModel.errorMessage = nil } })) {
+            Alert(title: Text("알림"), message: Text(viewModel.errorMessage ?? "오류가 발생했습니다."), dismissButton: .default(Text("확인")))
         }
     }
     
