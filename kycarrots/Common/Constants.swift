@@ -23,7 +23,7 @@ struct Constants {
     }
 
     /// 현재 서버 설정 (Android Constants.kt의 currentServer 대응)
-    private static let currentServer: ServerType = .DEV
+    private static let currentServer: ServerType = .PROD
 
     // MARK: - Base URL (Android Constants.kt BASE_URL 대응)
     static var BASE_URL: String {
@@ -33,7 +33,7 @@ struct Constants {
         case .DEV:
             return "http://www.kycarrots.com:9000/"
         case .PROD:
-            return "http://52.231.229.156:9000/"
+            return "http://www.asagong.com/"
         }
     }
 
@@ -45,7 +45,7 @@ struct Constants {
         case .DEV:
             return "ws://www.kycarrots.com:9000/chat-ws?userId="
         case .PROD:
-            return "ws://52.231.229.156:9000/chat-ws?userId="
+            return "ws://www.asagong.com/chat-ws?userId="
         }
     }
     

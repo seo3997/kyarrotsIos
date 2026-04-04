@@ -16,8 +16,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farm_intro" translatesAutoresizingMaskIntoConstraints="NO" id="gzh-hO-qob">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="asagong_intro" translatesAutoresizingMaskIntoConstraints="NO" id="llo-qe-Tyv">
+                                <rect key="frame" x="0.0" y="118" width="393" height="666"/>
                             </imageView>
                             <view alpha="0.25" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FPB-gn-Q5N">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
@@ -36,13 +36,13 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="gzh-hO-qob" secondAttribute="bottom" id="25t-Da-ddc"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="llo-qe-Tyv" secondAttribute="trailing" id="4wn-Xh-hdr"/>
                             <constraint firstItem="FPB-gn-Q5N" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="Jt1-GL-EpJ"/>
-                            <constraint firstAttribute="trailing" secondItem="gzh-hO-qob" secondAttribute="trailing" id="SUK-eb-HoA"/>
-                            <constraint firstItem="gzh-hO-qob" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="cf2-Lw-XL5"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="llo-qe-Tyv" secondAttribute="bottom" id="Jzt-3V-ecU"/>
                             <constraint firstAttribute="trailing" secondItem="FPB-gn-Q5N" secondAttribute="trailing" id="gXP-1o-khn"/>
+                            <constraint firstItem="llo-qe-Tyv" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="gbf-GI-uxw"/>
                             <constraint firstAttribute="bottom" secondItem="FPB-gn-Q5N" secondAttribute="bottom" id="nik-vC-lUZ"/>
-                            <constraint firstItem="gzh-hO-qob" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="y0s-t3-ClJ"/>
+                            <constraint firstItem="llo-qe-Tyv" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="wO6-aa-fgb"/>
                             <constraint firstItem="FPB-gn-Q5N" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="zOr-Up-rtx"/>
                         </constraints>
                     </view>
@@ -53,7 +53,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="farm_intro" width="412" height="917"/>
+        <image name="asagong_intro" width="501.33334350585938" height="920"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

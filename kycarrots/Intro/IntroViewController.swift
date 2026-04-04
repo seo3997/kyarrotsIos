@@ -11,7 +11,7 @@ final class IntroViewController: UIViewController {
 
     // ✅ UI (전부 코드)
     private let backgroundImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "farm_intro")) // ← Assets 이름
+        let iv = UIImageView(image: UIImage(named: "asagong_intro")) // ← Assets 이름
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         return iv
