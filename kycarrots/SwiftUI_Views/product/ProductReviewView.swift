@@ -126,6 +126,7 @@ struct ReviewRow: View {
                     HStack(spacing: 8) {
                         ForEach(urls, id: \.self) { url in
                             KFImage(URL(string: url))
+                                .retry(maxCount: 3, interval: .seconds(2))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 80, height: 80)
