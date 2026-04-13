@@ -67,9 +67,10 @@ final class MenuListViewController: UITableViewController {
     }
         
     private func setupTableView() {
-        tableView.backgroundColor = .systemGroupedBackground
+        tableView.backgroundColor = .white
         tableView.separatorStyle = .none
-        tableView.contentInset.top = 40
+        tableView.contentInset.top = 20
+        tableView.rowHeight = 54 // 행 높이 고정으로 통일감 부여
         
         // 헤더 뷰 최초 설정
         updateHeaderInfo()
@@ -77,51 +78,76 @@ final class MenuListViewController: UITableViewController {
     
     private func updateHeaderInfo() {
         let header = MenuHeaderView()
-        header.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 120)
+        header.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 140) // 높이 약간 늘림
         tableView.tableHeaderView = header
     }
-    
+
     final class MenuHeaderView: UIView {
         private let nameLabel = UILabel()
         private let subLabel = UILabel()
-        private let avatar = UIImageView(image: UIImage(systemName: "person.crop.circle"))
+        private let avatar = UIImageView()
         
         override init(frame: CGRect) {
             super.init(frame: frame)
+            setupUI()
+        }
+        
+        private func setupUI() {
+            backgroundColor = .white
+            
             avatar.contentMode = .scaleAspectFill
             avatar.clipsToBounds = true
             avatar.layer.cornerRadius = 30
             avatar.backgroundColor = .systemGray6
-            avatar.tintColor = .systemGray2
-            
-            nameLabel.text = LoginInfoUtil.getUserNm()
-            nameLabel.font = .boldSystemFont(ofSize: 20)
-            subLabel.text = LoginInfoUtil.getUserId()
+            avatar.layer.borderWidth = 1
+            avatar.layer.borderColor = UIColor.systemGray5.cgColor
             
             if let localImage = ProfileImageUtil.getLocalProfileImage() {
                 avatar.image = localImage
             } else {
-                avatar.image = UIImage(systemName: "person.fill")
+                avatar.image = UIImage(systemName: "person.crop.circle.fill")
+                avatar.tintColor = .systemGray3
             }
+            
+            nameLabel.text = LoginInfoUtil.getUserNm() ?? "로그인 필요"
+            nameLabel.font = .systemFont(ofSize: 18, weight: .bold)
+            nameLabel.textColor = .label
+            
+            subLabel.text = LoginInfoUtil.getUserId() ?? "이메일 정보 없음"
             subLabel.textColor = .secondaryLabel
             subLabel.font = .systemFont(ofSize: 13)
             
-            let vstack = UIStackView(arrangedSubviews: [avatar, nameLabel, subLabel])
-            vstack.axis = .vertical
-            vstack.alignment = .leading
-            vstack.spacing = 8
+            let labelStack = UIStackView(arrangedSubviews: [nameLabel, subLabel])
+            labelStack.axis = .vertical
+            labelStack.alignment = .center
+            labelStack.spacing = 4
             
-            addSubview(vstack)
+            let mainStack = UIStackView(arrangedSubviews: [avatar, labelStack])
+            mainStack.axis = .vertical
+            mainStack.alignment = .center
+            mainStack.spacing = 10
             
-            vstack.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(mainStack)
+            mainStack.translatesAutoresizingMaskIntoConstraints = false
             avatar.translatesAutoresizingMaskIntoConstraints = false
             
             NSLayoutConstraint.activate([
-                vstack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                vstack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-                vstack.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-                avatar.heightAnchor.constraint(equalToConstant: 60),
-                avatar.widthAnchor.constraint(equalTo: avatar.heightAnchor)
+                mainStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+                mainStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+                avatar.widthAnchor.constraint(equalToConstant: 70),
+                avatar.heightAnchor.constraint(equalToConstant: 70)
+            ])
+            
+            // 하단 구분선
+            let line = UIView()
+            line.backgroundColor = .systemGray6
+            addSubview(line)
+            line.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                line.leadingAnchor.constraint(equalTo: leadingAnchor),
+                line.trailingAnchor.constraint(equalTo: trailingAnchor),
+                line.bottomAnchor.constraint(equalTo: bottomAnchor),
+                line.heightAnchor.constraint(equalToConstant: 1)
             ])
         }
         
@@ -129,7 +155,7 @@ final class MenuListViewController: UITableViewController {
             fatalError("init(coder:) has not been implemented")
         }
     }
-    
+
     // MARK: - Table Sections
     override func numberOfSections(in tableView: UITableView) -> Int {
         return menuSections.count
@@ -145,25 +171,50 @@ final class MenuListViewController: UITableViewController {
         return sectionTitles[section]
     }
     
-    override func tableView(_ tableView: UITableView,
-                            willDisplayHeaderView view: UIView, forSection section: Int) {
-        guard let header = view as? UITableViewHeaderFooterView else { return }
-        header.textLabel?.font = .boldSystemFont(ofSize: 13)
-        header.textLabel?.textColor = .secondaryLabel
-        header.textLabel?.frame = header.frame
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if sectionTitles[section].isEmpty { return nil }
+        
+        let headerView = UIView()
+        let label = UILabel()
+        label.text = sectionTitles[section]
+        label.font = .systemFont(ofSize: 12, weight: .bold)
+        label.textColor = .secondaryLabel
+        headerView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20),
+            label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+        ])
+        return headerView
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return sectionTitles[section].isEmpty ? 0 : 40
     }
     
     // MARK: - Cell
     override func tableView(_ tableView: UITableView,
                             cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "MenuCell")
         let item = menuSections[indexPath.section][indexPath.row]
         
-        cell.imageView?.image = UIImage(systemName: item.icon)
+        // 아이콘 설정
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        cell.imageView?.image = UIImage(systemName: item.icon, withConfiguration: config)
+        cell.imageView?.tintColor = UIColor(red: 0.2, green: 0.2, blue: 0.3, alpha: 1.0) // 진한 네이비/그레이 톤
+        
+        // 텍스트 설정
         cell.textLabel?.text = item.title
+        cell.textLabel?.font = .systemFont(ofSize: 16)
+        cell.textLabel?.textColor = .label
+        
         cell.backgroundColor = .clear
+        
+        // 선택 배경 설정
+        let selectedBg = UIView()
+        selectedBg.backgroundColor = UIColor.systemGray6.withAlphaComponent(0.5)
+        cell.selectedBackgroundView = selectedBg
         
         return cell
     }

@@ -9,16 +9,6 @@ class SettingsViewModel: ObservableObject {
     // User Edit Form
     @Published var editName: String = ""
     @Published var editContact: String = ""
-    @Published var selectedCityCode: String = "" {
-        didSet {
-            // Triggered also when programatically set, so we use onChange in View instead if preferred, or handle cautiously.
-        }
-    }
-    @Published var selectedTownCode: String = ""
-    
-    // Dropdowns
-    @Published var cities: [TxtListDataInfo] = []
-    @Published var towns: [TxtListDataInfo] = []
     
     // Push settings
     @Published var isPushOn: Bool = UserDefaults.standard.object(forKey: "push_enabled") as? Bool ?? true {
@@ -49,9 +39,54 @@ class SettingsViewModel: ObservableObject {
     @Published var isFirstLoad: Bool = true
     
     private let appService = AppServiceProvider.shared
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
         loadLocalProfileImage()
+        setupContactFormatter()
+    }
+    
+    private func setupContactFormatter() {
+        $editContact
+            .sink { [weak self] newValue in
+                guard let self = self else { return }
+                
+                // 1. Filter numbers only
+                let filtered = newValue.filter { $0.isNumber }
+                
+                // 2. Limit to 11 digits
+                let digits = String(filtered.prefix(11))
+                
+                // 3. Format with hyphens
+                var formatted = ""
+                if digits.count <= 3 {
+                    formatted = digits
+                } else if digits.count <= 6 {
+                    // 010123 -> 010-123
+                    let first = digits.prefix(3)
+                    let mid = digits.dropFirst(3)
+                    formatted = "\(first)-\(mid)"
+                } else if digits.count <= 10 {
+                    // 0101234567 -> 010-123-4567
+                    let first = digits.prefix(3)
+                    let mid = digits.dropFirst(3).prefix(3)
+                    let last = digits.dropFirst(6)
+                    formatted = "\(first)-\(mid)-\(last)"
+                } else {
+                    // 01012345678 -> 010-1234-5678
+                    let first = digits.prefix(3)
+                    let mid = digits.dropFirst(3).prefix(4)
+                    let last = digits.dropFirst(7)
+                    formatted = "\(first)-\(mid)-\(last)"
+                }
+                
+                if formatted != newValue {
+                    DispatchQueue.main.async {
+                        self.editContact = formatted
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
     
     @MainActor
@@ -68,15 +103,6 @@ class SettingsViewModel: ObservableObject {
                     self.editName = info.userNm ?? ""
                     self.editContact = info.cttpc ?? ""
                     
-                    // 1. Load city list
-                    await self.loadCities()
-                    self.selectedCityCode = info.areaCode ?? ""
-                    
-                    // 2. Load town list for the city
-                    if !self.selectedCityCode.isEmpty {
-                        await self.loadTowns(cityCode: self.selectedCityCode)
-                        self.selectedTownCode = info.areaSeCodeS ?? ""
-                    }
                 }
                 self.isFirstLoad = false
             } catch {
@@ -86,27 +112,6 @@ class SettingsViewModel: ObservableObject {
         }
     }
     
-    @MainActor
-    func loadCities() async {
-        let list = await appService.getCodeList(groupId: "R010070")
-        self.cities = list
-    }
-    
-    @MainActor
-    func loadTowns(cityCode: String) async {
-        let list = await appService.getSCodeList(groupId: "R010070", mcode: cityCode)
-        self.towns = list
-    }
-    
-    @MainActor
-    func loadTownsIfCityChanged(cityCode: String) {
-        Task {
-            self.towns = []
-            if !cityCode.isEmpty {
-                await loadTowns(cityCode: cityCode)
-            }
-        }
-    }
     
     @MainActor
     func saveUserInfo() {
@@ -114,7 +119,7 @@ class SettingsViewModel: ObservableObject {
         guard !token.isEmpty else { return }
         guard let info = userInfo else { return }
         
-        if editName.isEmpty || editContact.isEmpty || selectedCityCode.isEmpty || selectedTownCode.isEmpty {
+        if editName.isEmpty || editContact.isEmpty {
             showToastMessage("모든 정보를 입력해주세요.")
             return
         }
@@ -122,8 +127,6 @@ class SettingsViewModel: ObservableObject {
         var updatedUser = info
         updatedUser.userNm = editName
         updatedUser.cttpc = editContact
-        updatedUser.areaCode = selectedCityCode
-        updatedUser.areaSeCodeS = selectedTownCode
         
         Task {
             let success = await appService.updateUser(token: token, user: updatedUser)
@@ -236,21 +239,30 @@ struct SettingsView: View {
                     // 프로필 섹션
                     VStack(spacing: 16) {
                         PhotosPicker(selection: $viewModel.selectedPhotoItem, matching: .images, photoLibrary: .shared()) {
-                            if let profileImage = viewModel.profileImage {
-                                profileImage
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 80, height: 80)
-                                    .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color.gray, lineWidth: 1))
-                            } else {
-                                Image(systemName: "person.crop.circle")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 80, height: 80)
-                                    .foregroundColor(.secondary)
-                                    .background(Color(white: 0.9))
-                                    .clipShape(Circle())
+                            ZStack(alignment: .bottomTrailing) {
+                                if let profileImage = viewModel.profileImage {
+                                    profileImage
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 80, height: 80)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.gray.opacity(0.3), lineWidth: 1))
+                                } else {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 80, height: 80)
+                                        .foregroundColor(Color(white: 0.8))
+                                        .background(Color(white: 0.95))
+                                        .clipShape(Circle())
+                                }
+                                
+                                // 카메라 아이콘 표시
+                                Image(systemName: "camera.circle.fill")
+                                    .symbolRenderingMode(.multicolor)
+                                    .font(.system(size: 24))
+                                    .background(Circle().fill(Color.white))
+                                    .offset(x: 4, y: 4)
                             }
                         }
                         
@@ -284,34 +296,6 @@ struct SettingsView: View {
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                             }
                             
-                            HStack {
-                                Text("주소")
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.secondary)
-                                    .frame(width: 60, alignment: .leading)
-                                
-                                Picker("시/도", selection: $viewModel.selectedCityCode) {
-                                    Text("시/도").tag("")
-                                    ForEach(viewModel.cities, id: \.strIdx) { city in
-                                        Text(city.strMsg ?? "").tag(city.strIdx ?? "")
-                                    }
-                                }
-                                .pickerStyle(MenuPickerStyle())
-                                .onChange(of: viewModel.selectedCityCode) { newValue in
-                                    if !viewModel.isFirstLoad {
-                                        viewModel.selectedTownCode = ""
-                                        viewModel.loadTownsIfCityChanged(cityCode: newValue)
-                                    }
-                                }
-                                
-                                Picker("구/군", selection: $viewModel.selectedTownCode) {
-                                    Text("구/군").tag("")
-                                    ForEach(viewModel.towns, id: \.strIdx) { town in
-                                        Text(town.strMsg ?? "").tag(town.strIdx ?? "")
-                                    }
-                                }
-                                .pickerStyle(MenuPickerStyle())
-                            }
                                                         
                             Button(action: {
                                 viewModel.saveUserInfo()
