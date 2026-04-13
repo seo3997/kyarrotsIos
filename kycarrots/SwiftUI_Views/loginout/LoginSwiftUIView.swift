@@ -16,10 +16,10 @@ struct LoginSwiftUIView: View {
                 Spacer()
                 
                 // Logo
-                Image("logo3")
+                Image("logo4")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 100)
+                    .frame(height: 180)
                 
                 Spacer().frame(height: 40)
                 
