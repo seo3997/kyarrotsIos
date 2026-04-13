@@ -245,27 +245,11 @@ final class RemoteRepository {
         )
     }
 
-    // MARK: - 도매상
-    func getWholesalers(memberCode: String) async throws -> [OpUserVO] {
-        try await api.request(
-            AdApiEndpoint.getWholesalers(memberCode: memberCode),
-            as: [OpUserVO].self
-        )
+
+    func getBranchList() async throws -> [BranchInfoVo] {
+        try await api.request(AdApiEndpoint.getBranchList, as: [BranchInfoVo].self)
     }
 
-    func getDefaultWholesaler(userId: String) async throws -> Int64 {
-        try await api.request(
-            AdApiEndpoint.getDefaultWholesaler(userId: userId),
-            as: Int64.self
-        )
-    }
-    
-    func setDefaultWholesaler(userId: String, wholesalerNo: String) async throws -> SimpleResultResponse {
-        try await api.request(
-            AdApiEndpoint.setDefaultWholesaler(userId: userId, wholesalerNo: wholesalerNo),
-            as: SimpleResultResponse.self
-        )
-    }
 
     // MARK: - 이메일 인증
     func sendEmailCode(_ req: EmailSendReq) async throws -> SimpleResultResponse {

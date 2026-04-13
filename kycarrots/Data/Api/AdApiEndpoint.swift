@@ -91,9 +91,6 @@ enum AdApiEndpoint: Endpoint {
     case createPurchase(body: PurchaseHistoryRequest)
 
     // 도매상(중간센터)
-    case getWholesalers(memberCode: String)
-    case getDefaultWholesaler(userId: String)
-    case setDefaultWholesaler(userId: String, wholesalerNo: String)
 
     // 이메일 인증 / 온보딩 / 소셜
     case sendEmailCode(req: EmailSendReq)
@@ -109,6 +106,8 @@ enum AdApiEndpoint: Endpoint {
     case getOrderDetail(orderId: String)
     case cancelPayment(req: OrderCancelRequest)
     case requestReturn(req: OrderReturnRequest)
+
+    case getBranchList
 
     // 주소록 (Address)
     case getAddressList(token: String)
@@ -217,11 +216,6 @@ enum AdApiEndpoint: Endpoint {
         case .createPurchase:
             return "api/purchases"
 
-        case .getWholesalers:
-            return "api/members/wholesalers"
-        case .getDefaultWholesaler,
-             .setDefaultWholesaler:
-            return "api/members/default-wholesaler"
 
         case .sendEmailCode:
             return "api/email/send-code"
@@ -273,6 +267,8 @@ enum AdApiEndpoint: Endpoint {
             return "api/order/requestBranchDeposit"
         case .updateShipping:
             return "api/order/updateShipping"
+        case .getBranchList:
+            return "api/branch/list"
         }
     }
 
@@ -290,8 +286,6 @@ enum AdApiEndpoint: Endpoint {
              .getInterestItems,
              .getPurchaseItems,
              .getChatBuyers,
-             .getWholesalers,
-             .getDefaultWholesaler,
              .getReviewList,
              .getQnaList,
              .getOrderDetail,
@@ -299,7 +293,8 @@ enum AdApiEndpoint: Endpoint {
              .getAddressList,
              .getDashboardData,
              .getOrderMgtList,
-             .getOrderMgtDetail:
+             .getOrderMgtDetail,
+             .getBranchList:
             return .get
 
         case .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:
@@ -408,18 +403,6 @@ enum AdApiEndpoint: Endpoint {
             ]
 
         // 도매상
-        case let .getWholesalers(memberCode):
-            return ["memberCode": memberCode]
-
-        case let .getDefaultWholesaler(userId):
-            return ["userId": userId]
-
-        case let .setDefaultWholesaler(userId, wholesalerNo):
-            return [
-                "userId": userId,
-                "wholesalerNo": wholesalerNo
-            ]
-
         // @FormUrlEncoded email-check / userinfo → query 로 매핑
         case let .checkEmailDuplicate(email):
             return ["email": email]

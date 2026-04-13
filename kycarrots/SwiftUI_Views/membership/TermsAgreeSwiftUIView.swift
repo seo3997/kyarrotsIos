@@ -9,6 +9,9 @@ struct TermsAgreeSwiftUIView: View {
     @State private var showZoom1 = false
     @State private var showZoom2 = false
     
+    @State private var isLoading1 = true
+    @State private var isLoading2 = true
+    
     var onNext: () -> Void
     var onCancel: () -> Void
     var onShowZoom: (String, String) -> Void
@@ -62,16 +65,23 @@ struct TermsAgreeSwiftUIView: View {
                             }
                         }
                         
-                        MiniWebView(url: URL(string: terms1Url)) {
-                            onShowZoom("이용약관", terms1Url)
+                        ZStack {
+                            MiniWebView(url: URL(string: terms1Url), isLoading: $isLoading1) {
+                                onShowZoom("이용약관", terms1Url)
+                            }
+                            .frame(height: 230)
+                            .background(Color(white: 0.95))
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                            
+                            if isLoading1 {
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                            }
                         }
-                        .frame(height: 230)
-                        .background(Color(white: 0.95))
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                        )
                     }
                     
                     // 개인정보 수집 이용 동의
@@ -94,16 +104,23 @@ struct TermsAgreeSwiftUIView: View {
                             }
                         }
                         
-                        MiniWebView(url: URL(string: terms2Url)) {
-                            onShowZoom("개인정보 수집·이용 동의", terms2Url)
+                        ZStack {
+                            MiniWebView(url: URL(string: terms2Url), isLoading: $isLoading2) {
+                                onShowZoom("개인정보 수집·이용 동의", terms2Url)
+                            }
+                            .frame(height: 230)
+                            .background(Color(white: 0.95))
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                            
+                            if isLoading2 {
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                            }
                         }
-                        .frame(height: 230)
-                        .background(Color(white: 0.95))
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                        )
                     }
                 }
                 .padding(.horizontal)
@@ -148,10 +165,12 @@ struct TermsAgreeSwiftUIView: View {
 // 미니 웹뷰 (약관 박스용)
 struct MiniWebView: UIViewRepresentable {
     let url: URL?
+    @Binding var isLoading: Bool
     var onTap: () -> Void
     
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
+        webView.navigationDelegate = context.coordinator
         webView.scrollView.isScrollEnabled = true
         webView.isUserInteractionEnabled = true
         
@@ -168,22 +187,47 @@ struct MiniWebView: UIViewRepresentable {
     func updateUIView(_ uiView: WKWebView, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(onTap: onTap)
+        Coordinator(parent: self)
     }
     
-    class Coordinator: NSObject, UIGestureRecognizerDelegate {
-        var onTap: () -> Void
+    class Coordinator: NSObject, UIGestureRecognizerDelegate, WKNavigationDelegate {
+        var parent: MiniWebView
         
-        init(onTap: @escaping () -> Void) {
-            self.onTap = onTap
+        init(parent: MiniWebView) {
+            self.parent = parent
         }
         
         @objc func handleTap() {
-            onTap()
+            parent.onTap()
         }
         
         func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
             return true
+        }
+        
+        // WKNavigationDelegate methods
+        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = true
+            }
+        }
+        
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = false
+            }
+        }
+        
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = false
+            }
+        }
+        
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = false
+            }
         }
     }
 }

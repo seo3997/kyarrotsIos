@@ -186,18 +186,11 @@ final class AppService {
         (try? await repo.getChatBuyers(productId: productId, branchId: branchId)) ?? []
     }
 
-    // 도매상
-    func getWholesalers(memberCode: String) async -> [OpUserVO] {
-        (try? await repo.getWholesalers(memberCode: memberCode)) ?? []
+    // 판매지점리스트
+    func getBranchList() async -> [BranchInfoVo] {
+        (try? await repo.getBranchList()) ?? []
     }
 
-    func getDefaultWholesaler(userId: String) async throws -> Int64 {
-        try await repo.getDefaultWholesaler(userId: userId)
-    }
-    
-    func setDefaultWholesaler(userId: String, wholesalerNo: String) async -> Bool {
-        (try? await repo.setDefaultWholesaler(userId: userId, wholesalerNo: wholesalerNo).result) ?? false
-    }
 
     // 이메일 인증
     func sendEmailCode(_ req: EmailSendReq) async -> Bool {

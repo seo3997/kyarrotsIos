@@ -19,6 +19,9 @@ class MembershipViewModel: ObservableObject {
     @Published var selectedTown: TxtListDataInfo?
     @Published var selectedRole: String?
     
+    @Published var branchList: [BranchInfoVo] = []
+    @Published var selectedBranch: BranchInfoVo? = nil
+    
     @Published var isEmailChecked = false
     @Published var isLoading = false
     @Published var toastMessage: String?
@@ -32,6 +35,7 @@ class MembershipViewModel: ObservableObject {
     
     init(service: AppService) {
         self.service = service
+        self.selectedRole = "구매자"
         
         // 이메일 변경 시 중복확인 리셋
         $email
@@ -69,6 +73,13 @@ class MembershipViewModel: ObservableObject {
         let list = await service.getSCodeList(groupId: "R010070", mcode: cityCode)
         self.townList = list
         self.selectedTown = nil
+    }
+    
+    func fetchBranchList() async {
+        let list = await service.getBranchList()
+        await MainActor.run {
+            self.branchList = list
+        }
     }
     
     func checkEmail() async {
@@ -113,6 +124,11 @@ class MembershipViewModel: ObservableObject {
         user.memberCode = roleOptions[selectedRole ?? ""]
         user.provider = "PWD"
         user.referrerId = ""
+        guard let branchId = selectedBranch?.branchId else {
+            // 여기서 에러 로그를 남기거나 fatalError를 발생시킵니다.
+            fatalError("에러 발생: selectedBranch 또는 branchId가 없습니다!")
+        }
+        user.branchId = String(branchId)
         user.userAge = ""
         
         isLoading = true
@@ -143,7 +159,7 @@ class MembershipViewModel: ObservableObject {
             showToast(message: "유효한 전화번호를 입력하세요."); return false
         }
         if gender == 0 { showToast(message: "성별을 선택하세요."); return false }
-        if selectedCity == nil || selectedTown == nil { showToast(message: "지역을 모두 선택하세요."); return false }
+        if selectedBranch == nil { showToast(message: "지점을 선택하세요."); return false }
         if selectedRole == nil { showToast(message: "사용자구분을 선택하세요."); return false }
         return true
     }
@@ -241,21 +257,21 @@ struct MembershipSwiftUIView: View {
                         }
                         .pickerStyle(SegmentedPickerStyle())
                     }
-                    
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("지역")
+                        Text("지점 선택")
                             .font(.system(size: 14, weight: .semibold))
                         HStack {
                             Menu {
-                                ForEach(viewModel.cityList, id: \.strIdx) { city in
-                                    Button(city.strMsg) {
-                                        viewModel.selectedCity = city
-                                        Task { await viewModel.loadTownList(cityCode: city.strIdx) }
+                                ForEach(viewModel.branchList, id: \.branchId) { branch in
+                                    Button(branch.branchName ?? "이름 없음") {
+                                        viewModel.selectedBranch = branch
                                     }
                                 }
                             } label: {
                                 HStack {
-                                    Text(viewModel.selectedCity?.strMsg ?? "시/도 선택")
+                                    Text(viewModel.selectedBranch?.branchName ?? "지점을 선택하세요")
+                                        .font(.system(size: 15))
+                                        .foregroundColor(viewModel.selectedBranch == nil ? .gray : .primary)
                                     Spacer()
                                     Image(systemName: "chevron.down").font(.system(size: 12))
                                 }
@@ -265,53 +281,9 @@ struct MembershipSwiftUIView: View {
                                 .background(Color(UIColor.secondarySystemBackground))
                                 .cornerRadius(8)
                             }
-                            
-                            Menu {
-                                ForEach(viewModel.townList, id: \.strIdx) { town in
-                                    Button(town.strMsg) {
-                                        viewModel.selectedTown = town
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Text(viewModel.selectedTown?.strMsg ?? "구/군 선택")
-                                    Spacer()
-                                    Image(systemName: "chevron.down").font(.system(size: 12))
-                                }
-                                .padding(.horizontal, 12)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 38)
-                                .background(Color(UIColor.secondarySystemBackground))
-                                .cornerRadius(8)
-                                .opacity(viewModel.selectedCity == nil ? 0.5 : 1.0)
-                            }
-                            .disabled(viewModel.selectedCity == nil)
                         }
                     }
                     
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("사용자구분")
-                            .font(.system(size: 14, weight: .semibold))
-                        Menu {
-                            let roles = Array(viewModel.roleOptions.keys).sorted()
-                            ForEach(roles, id: \.self) { role in
-                                Button(role) {
-                                    viewModel.selectedRole = role
-                                }
-                            }
-                        } label: {
-                            HStack {
-                                Text(viewModel.selectedRole ?? "사용자구분 선택")
-                                Spacer()
-                                Image(systemName: "chevron.down").font(.system(size: 12))
-                            }
-                            .padding(.horizontal, 12)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 38)
-                            .background(Color(UIColor.secondarySystemBackground))
-                            .cornerRadius(8)
-                        }
-                    }
                     
                     Button(action: {
                         Task {
@@ -343,7 +315,7 @@ struct MembershipSwiftUIView: View {
             }
         }
         .onAppear {
-            Task { await viewModel.loadCityList() }
+            Task { await viewModel.fetchBranchList() }
         }
         .alert(isPresented: $viewModel.showToast) {
             Alert(title: Text(viewModel.toastMessage ?? ""), message: nil, dismissButton: .default(Text("확인")))

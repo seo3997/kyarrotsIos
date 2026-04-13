@@ -39,4 +39,6 @@ struct OpUserVO: Codable {
     var updtDt: String?
     var provider: String?
     var providerUserId: String?
+    var branchId: String?               // 지점 ID
+    var joinAppPackage: String?          // 가입 앱 패키지
 }
