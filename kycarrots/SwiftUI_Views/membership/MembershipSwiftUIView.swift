@@ -235,13 +235,25 @@ struct MembershipSwiftUIView: View {
                                 .cornerRadius(8)
                             }
                             
-                            TextField("", text: $viewModel.phoneMid)
+                            TextField("", text: Binding(
+                                get: { viewModel.phoneMid },
+                                set: { newValue in
+                                    let filtered = newValue.filter { $0.isNumber }
+                                    viewModel.phoneMid = String(filtered.prefix(4))
+                                }
+                            ))
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.numberPad)
                             
                             Text("-")
                             
-                            TextField("", text: $viewModel.phoneLast)
+                            TextField("", text: Binding(
+                                get: { viewModel.phoneLast },
+                                set: { newValue in
+                                    let filtered = newValue.filter { $0.isNumber }
+                                    viewModel.phoneLast = String(filtered.prefix(4))
+                                }
+                            ))
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.numberPad)
                         }
