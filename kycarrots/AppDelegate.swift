@@ -41,6 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         if let key = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
             KakaoSDK.initSDK(appKey: key)
         }
+
+        // ✅ 앱 시작 시 뱃지 카운트 동기화
+        if let userId = UserDefaults.standard.string(forKey: "LogIn_ID") {
+            NotificationBadgeHelper.refreshBadgeCount(userId: userId)
+        }
         
         return true
     }

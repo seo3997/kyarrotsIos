@@ -232,8 +232,9 @@ final class AppCoordinator {
         var rootView = NotificationListSwiftUIView(viewModel: viewModel) { [weak self] item in
             guard let self = self else { return }
             
-            switch item.type {
-            case "chat", "CHAT":
+            let upperType = item.type.uppercased()
+            switch upperType {
+            case "CHAT":
                 if let roomId = item.targetId, !roomId.isEmpty {
                     // roomId에서 나머지 정보 추출 (productId_buyerId_branchId 형태)
                     let components = roomId.components(separatedBy: "_")
@@ -241,10 +242,9 @@ final class AppCoordinator {
                         self.openChat(roomId: roomId, buyerId: components[1], branchId: components[2], productId: components[0])
                     }
                 }
-            case "product", "PRODUCT", "PRODUCT_REGISTERED", "PRODUCT_APPROVED", "PRODUCT_REJECTED", "PRODUCT_INQUIRY", "PRODUCT_REVIEW", "PRODUCT_QNA":
+            case "PRODUCT", "PRODUCT_REGISTERED", "PRODUCT_APPROVED", "PRODUCT_REJECTED", "PRODUCT_INQUIRY", "PRODUCT_REVIEW", "PRODUCT_QNA":
                 if let pidStr = item.targetId, let pid = Int64(pidStr) {
                     var initialTab = 0
-                    let upperType = item.type.uppercased()
                     if upperType.contains("REVIEW") {
                         initialTab = 1
                     } else if upperType.contains("INQUIRY") || upperType.contains("QNA") {
@@ -328,8 +328,17 @@ private extension AppCoordinator {
               let pid = Int64(productIdStr), pid > 0 else {
             return nil
         }
-        // Android equivalent: AdDetailActivity.EXTRA_PRODUCT_ID
-        return makeProductDetailVC(productId: pid, userId: "0", title: "상품 상세", initialTab: 0)
+        
+        // ✅ 알림 타입에 따라 타겟 탭 결정
+        var initialTab = 0
+        let upperType = deepLink.originalType.uppercased()
+        if upperType.contains("REVIEW") {
+            initialTab = 1
+        } else if upperType.contains("INQUIRY") || upperType.contains("QNA") {
+            initialTab = 2
+        }
+        
+        return makeProductDetailVC(productId: pid, userId: "0", title: "상품 상세", initialTab: initialTab)
     }
 
     func makeProductDetailVC(productId: Int64, userId: String, title: String, initialTab: Int = 0) -> UIViewController {

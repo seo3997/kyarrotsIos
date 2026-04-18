@@ -28,6 +28,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         coordinator.start(launchDeepLink: deepLink)
     }
     
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        // ✅ 앱이 포그라운드로 올라올 때마다 뱃지 카운트 동기화
+        if let userId = UserDefaults.standard.string(forKey: "LogIn_ID") {
+            NotificationBadgeHelper.refreshBadgeCount(userId: userId)
+        }
+    }
+
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else { return }
 

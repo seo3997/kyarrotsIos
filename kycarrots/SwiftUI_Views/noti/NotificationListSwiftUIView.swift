@@ -30,7 +30,8 @@ class NotificationListViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.items = rows
                     self.isLoading = false
-                    // Update global badge count if needed
+                    // ✅ 앱 아이콘 뱃지 갱신
+                    NotificationBadgeHelper.refreshBadgeCount(userId: userId)
                 }
             } catch {
                 print("Notification load failed: \(error)")
@@ -46,6 +47,10 @@ class NotificationListViewModel: ObservableObject {
             try repo.delete(id: item.id)
             if let index = items.firstIndex(where: { $0.id == item.id }) {
                 items.remove(at: index)
+                // ✅ 앱 아이콘 뱃지 갱신
+                if let userId = userIdProvider() {
+                    NotificationBadgeHelper.refreshBadgeCount(userId: userId)
+                }
             }
         } catch {
             print("Delete failed: \(error)")
@@ -57,6 +62,10 @@ class NotificationListViewModel: ObservableObject {
             try repo.markRead(id: item.id)
             if let index = items.firstIndex(where: { $0.id == item.id }) {
                 items[index].isRead = true
+                // ✅ 앱 아이콘 뱃지 갱신
+                if let userId = userIdProvider() {
+                    NotificationBadgeHelper.refreshBadgeCount(userId: userId)
+                }
             }
         } catch {
             print("Mark read failed: \(error)")
