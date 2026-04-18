@@ -26,17 +26,20 @@ struct PushTokenUtil {
 
     /// ✅ 실제 서버 업로드 + 성공 시 로컬 저장
     static func uploadPushTokenToServer(_ fcmToken: String) async -> Bool {
-        let userId = UserDefaults.standard.string(forKey: "LogIn_ID") ?? ""
-        let userNo = UserDefaults.standard.string(forKey: "LogIn_NO") ?? ""
+        let userId = LoginInfoUtil.getUserId()
+        let userNo = LoginInfoUtil.getUserNo()
+        let memberCode = LoginInfoUtil.getMemberCode()
 
         guard !userId.isEmpty else {
             print("⚠️ 로그인 전 상태 → 푸시 토큰 서버 저장 스킵")
             return false
         }
 
-        // ✅ 토큰과 유저 아이디가 모두 일치할 때만 스킵 (Android와 동일 로직)
+        // ✅ 토큰과 유저 아이디가 모두 일치할 때만 스킵
         if get() == fcmToken && getLastUserId() == userId {
             print("⏭️ same token & user → upload skip")
+            // 업로드 스킵하더라도 토픽 구독은 보장
+            subscribeToMemberTopic(memberCode)
             return true
         }
 
@@ -50,17 +53,35 @@ struct PushTokenUtil {
         let ok = await AppServiceProvider.shared.savePushToken(req)
         print(ok ? "✅ iOS PushToken 서버 저장 성공" : "❌ iOS PushToken 서버 저장 실패")
 
-        if ok { save(fcmToken, userId) }   // ✅ 성공 시만 로컬 저장
+        if ok { 
+            save(fcmToken, userId)
+            subscribeToMemberTopic(memberCode)
+        }
         return ok
+    }
+
+    /// ✅ Android의 subscribeToTopic과 동일: memberCode 기반 토픽 구독
+    static func subscribeToMemberTopic(_ memberCode: String) {
+        guard !memberCode.isEmpty else { return }
+        
+        Messaging.messaging().subscribe(toTopic: memberCode) { error in
+            if let error = error {
+                print("❌ FCM \(memberCode) 토픽 구독 실패:", error.localizedDescription)
+            } else {
+                print("✅ FCM \(memberCode) 토픽 구독 성공")
+            }
+        }
     }
 
     /// ✅ Android의 ensureTokenRegistered와 동일:
     /// 로컬에 토큰이 없거나, 유저가 바뀌었을 때 "현재 FCM 토큰"을 조회해서 서버 업로드 시도
     static func ensureTokenRegistered() {
-        let userId = UserDefaults.standard.string(forKey: "LogIn_ID") ?? ""
+        let userId = LoginInfoUtil.getUserId()
+        let memberCode = LoginInfoUtil.getMemberCode()
 
         if !get().isEmpty && getLastUserId() == userId && !userId.isEmpty {
             print("✅ last token & user match → skip getToken")
+            subscribeToMemberTopic(memberCode)
             return
         }
 

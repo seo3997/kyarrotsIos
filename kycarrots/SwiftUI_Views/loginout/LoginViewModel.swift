@@ -56,6 +56,7 @@ class LoginViewModel: ObservableObject {
                 if let token = response.token {
                     TokenUtil.saveToken(token)
                 }
+                PushTokenUtil.ensureTokenRegistered()
                 onLoginSuccess()
                 
             case StaticDataInfo.RESULT_NO_USER, StaticDataInfo.RESULT_NO_DATA:
@@ -183,6 +184,7 @@ class LoginViewModel: ObservableObject {
                    let jwt = auth.token, !jwt.isEmpty {
                     LoginInfoUtil.saveLoginInfo(auth, email: auth.loginId, password: auth.loginPwd)
                     TokenUtil.saveToken(jwt)
+                    PushTokenUtil.ensureTokenRegistered()
                     onLoginSuccess()
                     return
                 }
