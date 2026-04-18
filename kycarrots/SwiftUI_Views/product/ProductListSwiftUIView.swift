@@ -89,9 +89,7 @@ struct ProductListSwiftUIView: View {
         .navigationTitle("상품리스트")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NotificationBellButton {
-                    onShowNotifications?()
-                }
+                NotificationBellButton(onTap: onShowNotifications)
             }
         }
         .navigationBarHidden(false) // ✅ 네비게이션 바 다시 표시 (상세에서 돌아올 때 복구)

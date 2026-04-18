@@ -32,9 +32,7 @@ struct WebSwiftUIView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NotificationBellButton {
-                    onShowNotifications?()
-                }
+                NotificationBellButton(onTap: onShowNotifications)
             }
         }
         .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김

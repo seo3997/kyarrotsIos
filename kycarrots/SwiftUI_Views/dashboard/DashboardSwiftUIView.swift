@@ -27,9 +27,7 @@ struct DashboardSwiftUIView: View {
                     Text(viewModel.dashboardTitle)
                         .font(.system(size: 18, weight: .bold))
                     Spacer()
-                    NotificationBellButton {
-                        onShowNotifications?()
-                    }
+                    NotificationBellButton(onTap: onShowNotifications)
                 }
                 .padding()
                 .background(Color.white)

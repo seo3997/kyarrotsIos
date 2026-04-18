@@ -80,6 +80,7 @@ struct OrderManagementView: View {
     @State private var showStartDatePicker = false
     @State private var showEndDatePicker = false
     var onToggleMenu: (() -> Void)?
+    var onShowNotifications: (() -> Void)?
     
     var body: some View {
         ZStack {
@@ -100,8 +101,9 @@ struct OrderManagementView: View {
                     Text("주문 통합 관리")
                         .font(.system(size: 18, weight: .bold))
                     Spacer()
-                    // Placeholder for balance or notification
-                    Color.clear.frame(width: 24, height: 24)
+                    NotificationBellButton {
+                        onShowNotifications?()
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)

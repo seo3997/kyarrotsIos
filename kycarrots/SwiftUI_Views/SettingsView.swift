@@ -230,6 +230,7 @@ class SettingsViewModel: ObservableObject {
 
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
+    var onShowNotifications: (() -> Void)?
     
     var body: some View {
         ZStack {
@@ -399,6 +400,14 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("프로필 / 설정")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NotificationBellButton {
+                    onShowNotifications?()
+                }
+            }
+        }
         .navigationBarHidden(false) // ✅ 네비게이션 바 강제 표시
         .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
         .alert("로그아웃", isPresented: $viewModel.showLogoutAlert) {

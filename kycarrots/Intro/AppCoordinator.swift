@@ -451,6 +451,9 @@ private extension AppCoordinator {
             guard let self = self, let menu = SideMenuManager.default.leftMenuNavigationController else { return }
             self.nav.present(menu, animated: true)
         }
+        rootView.onShowNotifications = { [weak self] in
+            self?.showNotificationList()
+        }
         let vc = UIHostingController(rootView: rootView)
         vc.navigationItem.title = "주문 통합 관리"
         nav.pushViewController(vc, animated: true)

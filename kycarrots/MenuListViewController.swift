@@ -285,13 +285,20 @@ final class MenuListViewController: UITableViewController {
                             title: item.title ?? ""
                         )
                     }
+                    rootView.onShowNotifications = {
+                        AppCoordinator.shared?.showNotificationList()
+                    }
                     let vc = UIHostingController(rootView: rootView)
                     vc.navigationItem.title = "상품리스트"
                     vc.addLeftMenuButton() // ✅ 햄버거 메뉴 버튼 추가
                     nav.pushViewController(vc, animated: true)
                 }
             case .settings:
-                let vc = UIHostingController(rootView: SettingsView())
+                var rootView = SettingsView()
+                rootView.onShowNotifications = {
+                    AppCoordinator.shared?.showNotificationList()
+                }
+                let vc = UIHostingController(rootView: rootView)
                 vc.navigationItem.title = selected.title
                 vc.navigationItem.hidesBackButton = true // ✅ 뒤로가기 숨김
                 vc.addLeftMenuButton() // ✅ 햄버거 메뉴 추가
@@ -302,6 +309,9 @@ final class MenuListViewController: UITableViewController {
                 rootView.onToggleMenu = {
                     guard let menu = SideMenuManager.default.leftMenuNavigationController else { return }
                     nav.present(menu, animated: true)
+                }
+                rootView.onShowNotifications = {
+                    AppCoordinator.shared?.showNotificationList()
                 }
                 let vc = UIHostingController(rootView: rootView)
                 vc.navigationItem.title = "주문관리"
