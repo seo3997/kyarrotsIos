@@ -47,7 +47,7 @@ struct ProductReviewView: View {
                 .padding(.bottom, 16)
 
             // 2. Scrollable Content Area
-            ScrollView {
+            VStack {
                 VStack(alignment: .leading, spacing: 0) {
                     if viewModel.reviews.isEmpty {
                         VStack {

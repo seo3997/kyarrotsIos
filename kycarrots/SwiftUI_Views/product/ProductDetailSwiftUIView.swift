@@ -19,98 +19,146 @@ struct ProductDetailSwiftUIView: View {
     var onShowAlert: (String, String) -> Void
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Button(action: {
-                    AppCoordinator.shared?.popBack()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.title3)
-                        .foregroundColor(.primary)
-                }
-                Spacer()
-                Text("상품정보")
-                    .font(.headline)
-                Spacer()
-                if canEditProduct {
-                    Button(action: { onEditProduct(viewModel.productId) }) {
-                        Text("수정")
-                            .font(.subheadline)
-                            .foregroundColor(.accentColor)
-                    }
-                }
-            }
-            .padding()
-            .background(Color(UIColor.systemBackground))
-            
-            // 2. Main Image Section
-            if let detail = viewModel.productDetail {
-                let mainImg = detail.imageMetas.first(where: { $0.represent == 1 }) ?? detail.imageMetas.first
-                KFImage(URL(string: mainImg?.imageUrl ?? ""))
-                    .resizable()
-                    .placeholder {
-                        Rectangle().fill(Color.gray.opacity(0.1))
-                            .overlay(ProgressView())
-                    }
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 300)
-                    .clipped()
-            }
-            
-            // 3. Tab Bar Section
-            HStack(spacing: 0) {
-                ForEach(["상품설명", "상품리뷰", "상품문의"].enumerated().map({$0}), id: \.offset) { index, title in
-                    Button(action: {
-                        print("👉 [View] Tab tapped: \(index) (\(title))")
-                        withAnimation {
-                            viewModel.selectedTab = index
-                        }
-                    }) {
-                        VStack(spacing: 8) {
-                            Text(title)
-                                .font(.system(size: 15, weight: viewModel.selectedTab == index ? .bold : .medium))
-                                .foregroundColor(viewModel.selectedTab == index ? .primary : .secondary)
+        ZStack(alignment: .top) {
+            // Main Scrollable Content
+            ScrollView(showsIndicators: false) {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    // 1. Parallax Image Section
+                    if let detail = viewModel.productDetail {
+                        let mainImg = detail.imageMetas.first(where: { $0.represent == 1 }) ?? detail.imageMetas.first
+                        
+                        GeometryReader { geo in
+                            let minY = geo.frame(in: .global).minY
+                            let height = 450 + (minY > 0 ? minY : 0)
                             
-                            // Underline
-                            Rectangle()
-                                .fill(viewModel.selectedTab == index ? Color.accentColor : Color.clear)
-                                .frame(height: 2)
+                            KFImage(URL(string: mainImg?.imageUrl ?? ""))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: geo.size.width, height: height)
+                                .offset(y: minY > 0 ? -minY : 0)
+                                .clipped()
                         }
+                        .frame(height: 450)
+                        
+                        // 2. Product Title & Info
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(alignment: .top) {
+                                Text(detail.product.title)
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .lineLimit(2)
+                                
+                                Spacer()
+                                
+                                StatusControlView(viewModel: viewModel, product: detail.product)
+                            }
+                        }
+                        .padding(24)
+                        .background(Color(UIColor.systemBackground))
+                        .cornerRadius(24, corners: [.topLeft, .topRight])
+                        .offset(y: -30)
                     }
-                    .buttonStyle(PlainButtonStyle())
-                    .frame(maxWidth: .infinity)
+                    
+                    // 3. Sticky Tab Bar Section
+                    Section(header: 
+                        VStack(spacing: 0) {
+                            HStack(spacing: 0) {
+                                ForEach(["상품설명", "상품리뷰", "상품문의"].enumerated().map({$0}), id: \.offset) { index, title in
+                                    Button(action: {
+                                        withAnimation(.spring()) {
+                                            viewModel.selectedTab = index
+                                        }
+                                    }) {
+                                        VStack(spacing: 12) {
+                                            Text(title)
+                                                .font(.system(size: 16, weight: viewModel.selectedTab == index ? .bold : .medium))
+                                                .foregroundColor(viewModel.selectedTab == index ? .primary : .secondary)
+                                            
+                                            Rectangle()
+                                                .fill(viewModel.selectedTab == index ? Color.accentColor : Color.clear)
+                                                .frame(height: 3)
+                                                .padding(.horizontal, 8)
+                                        }
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .frame(maxWidth: .infinity)
+                                }
+                            }
+                            .padding(.top, 8)
+                            .background(Color(UIColor.systemBackground))
+                            
+                            Divider()
+                        }
+                        .offset(y: -31)
+                    ) {
+                        // 4. Tab Content
+                        VStack(spacing: 0) {
+                            switch viewModel.selectedTab {
+                            case 0:
+                                ProductDescriptionView(viewModel: viewModel)
+                            case 1:
+                                ProductReviewView(viewModel: viewModel)
+                            case 2:
+                                ProductQnaView(viewModel: viewModel)
+                            default:
+                                EmptyView()
+                            }
+                        }
+                        .padding(.bottom, 120)
+                        .offset(y: -31)
+                        .background(Color(UIColor.systemBackground))
+                    }
                 }
             }
-            .padding(.top, 8)
-            .background(Color(UIColor.systemBackground))
+            .ignoresSafeArea(edges: .top)
             
-            Divider()
-
-            // Tab Content
-            ZStack(alignment: .bottom) {
-                // Main Content Area
-                VStack(spacing: 0) {
-                    switch viewModel.selectedTab {
-                    case 0:
-                        ProductDescriptionView(viewModel: viewModel)
-                    case 1:
-                        ProductReviewView(viewModel: viewModel)
-                    case 2:
-                        ProductQnaView(viewModel: viewModel)
-                    default:
-                        EmptyView()
+            // 5. Fixed Navigation Header (Top Bar)
+            VStack(spacing: 0) {
+                HStack {
+                    Button(action: {
+                        AppCoordinator.shared?.popBack()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.title3.bold())
+                            .foregroundColor(.primary)
+                            .padding(8)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("상품정보")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    if canEditProduct {
+                        Button(action: { onEditProduct(viewModel.productId) }) {
+                            Text("수정")
+                                .font(.subheadline.bold())
+                                .foregroundColor(.accentColor)
+                        }
+                    } else {
+                        Spacer().frame(width: 44)
                     }
                 }
-                .frame(maxHeight: .infinity)
+                .padding(.horizontal)
+                .padding(.bottom, 12)
+                .frame(maxWidth: .infinity)
+                .background(.ultraThinMaterial)
                 
-                // Fixed Bottom Action Bar (L276 style)
+                Divider()
+            }
+            .padding(.top, 44) // Adjust for status bar
+            .ignoresSafeArea(edges: .top)
+            
+            // 6. Fixed Bottom Action Bar
+            VStack(spacing: 0) {
+                Spacer()
                 if let product = viewModel.productDetail?.product {
                     VStack(spacing: 0) {
                         Divider()
                         HStack(spacing: 12) {
-                            // Favorite (Only for ROLE_PUB)
                             if isBuyer {
                                 Button(action: { viewModel.toggleFavorite() }) {
                                     Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
@@ -118,11 +166,10 @@ struct ProductDetailSwiftUIView: View {
                                         .foregroundColor(viewModel.isFavorite ? .red : .gray)
                                         .padding(12)
                                         .background(Color(UIColor.systemGray6))
-                                        .cornerRadius(8)
+                                        .cornerRadius(12)
                                 }
                             }
                             
-                            // Chat
                             Button(action: { 
                                 NotificationCenter.default.post(name: NSNotification.Name("OpenChatRequested"), object: nil)
                             }) {
@@ -130,12 +177,11 @@ struct ProductDetailSwiftUIView: View {
                                     .font(.system(size: 16, weight: .bold))
                                     .foregroundColor(.primary)
                                     .frame(maxWidth: .infinity)
-                                    .frame(height: 50)
+                                    .frame(height: 54)
                                     .background(Color(UIColor.systemGray6))
-                                    .cornerRadius(8)
+                                    .cornerRadius(12)
                             }
                             
-                            // Buy Button (Only for ROLE_PUB)
                             if isBuyer {
                                 NavigationLink(destination: OrderCheckoutView(
                                     viewModel: OrderCheckoutViewModel(
@@ -149,18 +195,21 @@ struct ProductDetailSwiftUIView: View {
                                         .font(.system(size: 18, weight: .bold))
                                         .foregroundColor(.white)
                                         .frame(maxWidth: .infinity)
-                                        .frame(height: 50)
+                                        .frame(height: 54)
                                         .background(Color.blue)
-                                        .cornerRadius(8)
-                                        .shadow(color: .blue.opacity(0.3), radius: 4, x: 0, y: 4)
+                                        .cornerRadius(12)
+                                        .shadow(color: .blue.opacity(0.3), radius: 6, x: 0, y: 6)
                                 }
                             }
                         }
-                        .padding(16)
-                        .background(Color(UIColor.systemBackground))
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
+                        .padding(.bottom, 40)
+                        .background(Color(UIColor.systemBackground).shadow(radius: 10, y: -5))
                     }
                 }
             }
+            .ignoresSafeArea(edges: .bottom)
         }
         .navigationBarHidden(true)
         .sheet(item: $viewModel.activeSheet) { sheetType in
@@ -289,5 +338,58 @@ struct ProductDetailSwiftUIView: View {
         default:
             break
         }
+    }
+}
+
+struct StatusControlView: View {
+    @ObservedObject var viewModel: ProductDetailViewModel
+    var product: ProductVo
+    
+    var body: some View {
+        if viewModel.isBuyer {
+            Text(product.saleStatusNm ?? "판매중")
+                .font(.system(size: 15, weight: .bold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.blue.opacity(0.1))
+                .foregroundColor(.blue)
+                .cornerRadius(6)
+        } else {
+            Menu {
+                ForEach(viewModel.statusOptions, id: \.strIdx) { option in
+                    Button(option.strMsg) {
+                        viewModel.updateProductStatus(selectedCode: option.strIdx)
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Text(viewModel.selectedStatus?.strMsg ?? product.saleStatusNm ?? "상태 설정")
+                    Image(systemName: "chevron.down").font(.system(size: 10))
+                }
+                .font(.system(size: 15, weight: .bold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.blue.opacity(0.1))
+                .foregroundColor(.blue)
+                .cornerRadius(6)
+            }
+        }
+    }
+}
+
+// MARK: - Extensions for UI
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}
+
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
     }
 }

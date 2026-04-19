@@ -46,7 +46,7 @@ struct ProductQnaView: View {
                 .padding(.bottom, 16)
 
             // 2. Scrollable Content Area
-            ScrollView {
+            VStack {
                 VStack(alignment: .leading, spacing: 0) {
                     if viewModel.qnas.isEmpty {
                         VStack {
