@@ -400,8 +400,8 @@ final class RemoteRepository {
     }
 
     // MARK: - 주소록 (Address)
-    func getAddressList(token: String) async throws -> [TbAddressBookVo] {
-        try await api.request(AdApiEndpoint.getAddressList(token: token), as: [TbAddressBookVo].self)
+    func getAddressList(token: String) async throws -> AddressListResponse {
+        try await api.request(AdApiEndpoint.getAddressList(token: token), as: AddressListResponse.self)
     }
 
     func addAddress(token: String, address: TbAddressBookVo) async throws -> SimpleResultResponse {

@@ -210,20 +210,22 @@ struct OrderCheckoutView: View {
     @State private var showPayConfirm = false
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             Color(hex: "F1F5F9").ignoresSafeArea()
 
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     productSection
                     addressSection
                     amountSection
                     paymentButton
                 }
+                .padding(.top, 64) // 헤더 높이만큼 패딩 추가
             }
+            
+            headerView
         }
-        .navigationTitle("주문서 작성")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
         .onAppear {
             viewModel.calculateAmounts()
             viewModel.loadAddresses()
@@ -280,6 +282,41 @@ struct OrderCheckoutView: View {
     }
 
     // MARK: - Subviews
+
+    private var headerView: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: {
+                    AppCoordinator.shared?.popBack()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(8)
+                }
+                
+                Spacer()
+                
+                Text("주문서")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.black)
+                
+                Spacer()
+                
+                // 균형을 위한 더미 뷰
+                Color.clear.frame(width: 44, height: 44)
+            }
+            .padding(.horizontal, 8)
+            .padding(.bottom, 10)
+            .frame(maxWidth: .infinity)
+            .background(Color.white)
+            
+            Divider()
+        }
+        .padding(.top, 44) // 상태바 영역 고려
+        .background(Color.white)
+        .ignoresSafeArea(edges: .top)
+    }
     
     private var productSection: some View {
         SectionCard {

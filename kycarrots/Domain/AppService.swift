@@ -284,7 +284,7 @@ final class AppService {
 
     // MARK: - 주소록 (Address)
     func getAddressList(token: String) async -> [TbAddressBookVo] {
-        (try? await repo.getAddressList(token: token)) ?? []
+        (try? await repo.getAddressList(token: token).addresses) ?? []
     }
 
     func addAddress(token: String, address: TbAddressBookVo) async -> Bool {
