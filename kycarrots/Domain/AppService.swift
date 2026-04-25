@@ -191,6 +191,10 @@ final class AppService {
         (try? await repo.getBranchList()) ?? []
     }
 
+    func getBranchInfo(branchId: Int64) async -> BranchInfoVo? {
+        try? await repo.getBranchInfo(branchId: branchId)
+    }
+
 
     // 이메일 인증
     func sendEmailCode(_ req: EmailSendReq) async -> Bool {

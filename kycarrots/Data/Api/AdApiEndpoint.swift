@@ -108,6 +108,7 @@ enum AdApiEndpoint: Endpoint {
     case requestReturn(req: OrderReturnRequest)
 
     case getBranchList
+    case getBranchInfo(branchId: Int64)
 
     // 주소록 (Address)
     case getAddressList(token: String)
@@ -269,6 +270,8 @@ enum AdApiEndpoint: Endpoint {
             return "api/order/updateShipping"
         case .getBranchList:
             return "api/branch/list"
+        case .getBranchInfo:
+            return "api/branch/info"
         }
     }
 
@@ -294,7 +297,8 @@ enum AdApiEndpoint: Endpoint {
              .getDashboardData,
              .getOrderMgtList,
              .getOrderMgtDetail,
-             .getBranchList:
+             .getBranchList,
+             .getBranchInfo:
             return .get
 
         case .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:
@@ -449,6 +453,9 @@ enum AdApiEndpoint: Endpoint {
             return ["token": token, "orderId": orderId]
         case let .updateShipping(token, orderId, carrier, tracking):
             return ["token": token, "orderId": orderId, "carrier": carrier, "trackingNo": tracking]
+
+        case let .getBranchInfo(branchId):
+            return ["branchId": String(branchId)]
 
         default:
             return nil

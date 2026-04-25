@@ -6,7 +6,7 @@ final class ChatViewModel: ObservableObject {
     // MARK: - Inputs (from Coordinator/View Init)
     let roomId: String
     let currentUserId: String
-    let otherId: String
+    @Published var otherId: String = ""
     private let branchId: String // 본사 판별을 위해 저장
     
     // MARK: - State
@@ -47,7 +47,21 @@ final class ChatViewModel: ObservableObject {
         // Match Android title format
         self.otherId = "\(resolvedName) 님과의 대화"
         
+        if memberCode == Constants.ROLE_SELL {
+            resolveBranchName(buyerId: buyerId)
+        }
+        
         bindStomp()
+    }
+    
+    private func resolveBranchName(buyerId: String) {
+        Task { @MainActor in
+            if let bid = Int64(buyerId),
+               let info = await AppServiceProvider.shared.getBranchInfo(branchId: bid),
+               let bName = info.branchName {
+                self.otherId = "\(bName) 님과의 대화"
+            }
+        }
     }
     
     deinit {

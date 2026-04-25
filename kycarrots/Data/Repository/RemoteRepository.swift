@@ -250,6 +250,10 @@ final class RemoteRepository {
         try await api.request(AdApiEndpoint.getBranchList, as: [BranchInfoVo].self)
     }
 
+    func getBranchInfo(branchId: Int64) async throws -> BranchInfoVo {
+        try await api.request(AdApiEndpoint.getBranchInfo(branchId: branchId), as: BranchInfoVo.self)
+    }
+
 
     // MARK: - 이메일 인증
     func sendEmailCode(_ req: EmailSendReq) async throws -> SimpleResultResponse {
