@@ -12,6 +12,7 @@ struct ChatMessageResponse: Decodable {
     let id: Int64
     let roomId: String
     let senderId: String
+    let senderGroup: String?
     let message: String
     let createdAt: String
     let time: String

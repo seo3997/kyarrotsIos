@@ -67,11 +67,12 @@ final class ChatViewModel: ObservableObject {
         
         stomp.onMessage = { [weak self] received in
             guard let self = self else { return }
-            // Ignore my own reflection if any (server usually handles this)
+            
+            // 내가 보낸 메시지가 서버를 통해 다시 돌아온 경우 무시 (이미 sendMessage에서 로컬 추가함)
             if received.senderId == self.currentUserId { return }
             
             var msg = received
-            msg.isMe = false
+            msg.isMe = (received.senderGroup == LoginInfoUtil.getMemberCode())
             
             DispatchQueue.main.async {
                 self.chatMessages.append(msg)
@@ -112,7 +113,8 @@ final class ChatViewModel: ObservableObject {
                     roomId: m.roomId,
                     type: "text",
                     time: m.time,
-                    isMe: m.senderId == self.currentUserId
+                    senderGroup: m.senderGroup,
+                    isMe: m.senderGroup == LoginInfoUtil.getMemberCode()
                 )
             }
         } catch {
@@ -132,6 +134,7 @@ final class ChatViewModel: ObservableObject {
             roomId: roomId,
             type: "text",
             time: now,
+            senderGroup: LoginInfoUtil.getMemberCode(),
             isMe: true
         )
         
