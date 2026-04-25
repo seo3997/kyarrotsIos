@@ -7,6 +7,7 @@ final class ChatViewModel: ObservableObject {
     let roomId: String
     let currentUserId: String
     let otherId: String
+    private let branchId: String // 본사 판별을 위해 저장
     
     // MARK: - State
     @Published var chatMessages: [ChatMessage] = []
@@ -20,6 +21,7 @@ final class ChatViewModel: ObservableObject {
     init(roomId: String, currentUserId: String, buyerId: String, branchId: String) {
         self.roomId = roomId
         self.currentUserId = currentUserId
+        self.branchId = branchId // 저장
         
         // resolve otherId (Match Android resolveOtherId logic)
         let memberCode = LoginInfoUtil.getMemberCode()
@@ -118,6 +120,7 @@ final class ChatViewModel: ObservableObject {
                     type: "text",
                     time: m.time,
                     senderGroup: m.senderGroup,
+                    receiveGroup: m.receiveGroup,
                     isMe: m.senderGroup == LoginInfoUtil.getMemberCode()
                 )
             }
@@ -131,6 +134,22 @@ final class ChatViewModel: ObservableObject {
         let text = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
         
+        let memberCode = LoginInfoUtil.getMemberCode()
+        
+        // 사용자 지정 규칙 반영
+        let receiveGroup: String
+        switch memberCode {
+        case Constants.ROLE_PUB:
+            receiveGroup = Constants.ROLE_PROJ
+        case Constants.ROLE_SELL:
+            receiveGroup = Constants.ROLE_PROJ
+        case Constants.ROLE_PROJ:
+            // 상대방이 본사('2')면 ROLE_SELL, 아니면 ROLE_PUB
+            receiveGroup = (branchId == Constants.CENTER_BRANCH_ID) ? Constants.ROLE_SELL : Constants.ROLE_PUB
+        default:
+            receiveGroup = Constants.ROLE_PROJ
+        }
+        
         let now = Self.formatNow()
         let msg = ChatMessage(
             senderId: currentUserId,
@@ -138,7 +157,8 @@ final class ChatViewModel: ObservableObject {
             roomId: roomId,
             type: "text",
             time: now,
-            senderGroup: LoginInfoUtil.getMemberCode(),
+            senderGroup: memberCode,
+            receiveGroup: receiveGroup,
             isMe: true
         )
         

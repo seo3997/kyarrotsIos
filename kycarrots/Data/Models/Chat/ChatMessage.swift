@@ -15,12 +15,13 @@ struct ChatMessage: Codable {
     let type: String
     let time: String
     let senderGroup: String?
+    let receiveGroup: String?
 
     // UI 전용
     var isMe: Bool? = false
 
     enum CodingKeys: String, CodingKey {
-        case senderId, message, roomId, type, time, senderGroup
+        case senderId, message, roomId, type, time, senderGroup, receiveGroup
         // isMe는 인코딩/디코딩 제외
     }
 }

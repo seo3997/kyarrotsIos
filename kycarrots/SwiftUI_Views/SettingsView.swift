@@ -209,8 +209,19 @@ class SettingsViewModel: ObservableObject {
     
     func logout() {
         let memberCode = LoginInfoUtil.getMemberCode()
+        let branchId = LoginInfoUtil.getBranchId()
+        
+        // 1. ROLE 기반 토픽 해제 (ROLE_SELL 등)
         if !memberCode.isEmpty {
+            print("FCM_UNSUB: Unsubscribing from role topic: \(memberCode)")
             Messaging.messaging().unsubscribe(fromTopic: memberCode)
+        }
+        
+        // 2. 지점별 토픽 해제
+        if !branchId.isEmpty {
+            let branchTopic = "BRANCH_\(branchId)_\(Constants.ROLE_PROJ)"
+            print("FCM_UNSUB: Unsubscribing from branch topic: \(branchTopic)")
+            Messaging.messaging().unsubscribe(fromTopic: branchTopic)
         }
         LoginInfoUtil.clearLoginInfo()
         TokenUtil.clearToken()
