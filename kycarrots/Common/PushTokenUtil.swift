@@ -64,11 +64,25 @@ struct PushTokenUtil {
     static func subscribeToMemberTopic(_ memberCode: String) {
         guard !memberCode.isEmpty else { return }
         
+        // 1. 권한별 토픽 구독 (ROLE_PUB, ROLE_SELL 등)
         Messaging.messaging().subscribe(toTopic: memberCode) { error in
             if let error = error {
                 print("❌ FCM \(memberCode) 토픽 구독 실패:", error.localizedDescription)
             } else {
                 print("✅ FCM \(memberCode) 토픽 구독 성공")
+            }
+        }
+
+        // 2. 지점별 토픽 구독 (지점 권한 ROLE_PROJ 인 경우)
+        let branchId = LoginInfoUtil.getBranchId()
+        if memberCode == "ROLE_PROJ" {
+            let branchTopic = "BRANCH_\(branchId)_ROLE_PROJ"
+            Messaging.messaging().subscribe(toTopic: branchTopic) { error in
+                if let error = error {
+                    print("❌ FCM \(branchTopic) 지점 토픽 구독 실패:", error.localizedDescription)
+                } else {
+                    print("✅ FCM \(branchTopic) 지점 토픽 구독 성공")
+                }
             }
         }
     }
