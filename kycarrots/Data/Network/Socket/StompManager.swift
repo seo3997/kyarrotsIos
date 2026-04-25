@@ -97,6 +97,39 @@ final class StompManager {
         socket?.write(string: StompFrame.send(destination: destination, body: json))
     }
 
+    func sendEnterRoom(roomId: String, userId: String) {
+        guard isConnected else { return }
+        let payload: [String: String] = ["roomId": roomId, "senderId": userId]
+        guard let data = try? JSONSerialization.data(withJSONObject: payload),
+              let json = String(data: data, encoding: .utf8)
+        else { return }
+        
+        let destination = "/app/chat.enter.\(roomId)"
+        socket?.write(string: StompFrame.send(destination: destination, body: json))
+    }
+
+    func sendExitRoom(roomId: String, userId: String) {
+        guard isConnected else { return }
+        let payload: [String: String] = ["roomId": roomId, "senderId": userId]
+        guard let data = try? JSONSerialization.data(withJSONObject: payload),
+              let json = String(data: data, encoding: .utf8)
+        else { return }
+        
+        let destination = "/app/chat.exit.\(roomId)"
+        socket?.write(string: StompFrame.send(destination: destination, body: json))
+    }
+
+    func sendExitMe(userId: String) {
+        guard isConnected else { return }
+        let payload: [String: String] = ["senderId": userId]
+        guard let data = try? JSONSerialization.data(withJSONObject: payload),
+              let json = String(data: data, encoding: .utf8)
+        else { return }
+        
+        let destination = "/app/chat.me.exit"
+        socket?.write(string: StompFrame.send(destination: destination, body: json))
+    }
+
     // MARK: - WebSocket Event Handling
 
     private func handleEvent(_ event: WebSocketEvent) {

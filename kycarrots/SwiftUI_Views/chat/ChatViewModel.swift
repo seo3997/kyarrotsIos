@@ -49,6 +49,7 @@ final class ChatViewModel: ObservableObject {
     }
     
     deinit {
+        StompManager.shared.sendExitRoom(roomId: roomId, userId: currentUserId)
         StompManager.shared.unsubscribe(topicPath: topicPath)
         StompManager.shared.disconnect()
     }
@@ -62,6 +63,8 @@ final class ChatViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.isConnected = true
                 stomp.subscribe(topicPath: self.topicPath)
+                // 명시적 진입 신호
+                stomp.sendEnterRoom(roomId: self.roomId, userId: self.currentUserId)
             }
         }
         
@@ -92,6 +95,7 @@ final class ChatViewModel: ObservableObject {
     }
     
     func disconnect() {
+        StompManager.shared.sendExitRoom(roomId: roomId, userId: currentUserId)
         StompManager.shared.unsubscribe(topicPath: topicPath)
         StompManager.shared.disconnect()
     }
