@@ -61,6 +61,11 @@ struct PurchaseHistoryView: View {
                 viewModel.fetchPurchaseList(isRefresh: true)
             }
         }
+        .alert("알림", isPresented: $viewModel.actionSuccess) {
+            Button("확인") { viewModel.actionSuccess = false }
+        } message: {
+            Text(viewModel.successMessage ?? "처리가 완료되었습니다.")
+        }
         .alert("알림", isPresented: Binding(get: { viewModel.errorMessage != nil }, set: { _ in viewModel.errorMessage = nil })) {
             Button("확인") { }
         } message: {

@@ -65,7 +65,12 @@ struct Constants {
 
 extension Optional where Wrapped == Any {
     func asString() -> String {
-        if let val = self { return String(describing: val) }
+        if let val = self {
+            if val is NSNull { return "" }
+            let str = String(describing: val)
+            if str == "<null>" || str == "null" { return "" }
+            return str
+        }
         return ""
     }
 }

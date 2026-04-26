@@ -278,12 +278,12 @@ final class AppService {
         try? await repo.getOrderDetail(orderId: orderId)
     }
 
-    func cancelPayment(req: OrderCancelRequest) async -> Bool {
-        (try? await repo.cancelPayment(req: req).success) ?? false
+    func cancelPayment(req: OrderCancelRequest) async -> PaymentCancelResponse? {
+        try? await repo.cancelPayment(req: req)
     }
 
-    func requestReturn(req: OrderReturnRequest) async -> Bool {
-        (try? await repo.requestReturn(req: req).success) ?? false
+    func requestReturn(req: OrderReturnRequest) async -> PaymentCancelResponse? {
+        try? await repo.requestReturn(req: req)
     }
 
     // MARK: - 주소록 (Address)
@@ -316,20 +316,20 @@ final class AppService {
         try? await repo.getOrderMgtDetail(orderId: orderId, token: token)
     }
 
-    func updateOrderStatus(token: String, orderId: String, status: String) async -> Bool {
-        (try? await repo.updateOrderStatus(token: token, orderId: orderId, status: status).result) ?? false
+    func updateOrderStatus(token: String, orderId: String, status: String) async -> SimpleResultResponse? {
+        try? await repo.updateOrderStatus(token: token, orderId: orderId, status: status)
     }
 
-    func confirmDeposit(token: String, orderId: String, carrier: String, tracking: String) async -> Bool {
-        (try? await repo.confirmDeposit(token: token, orderId: orderId, carrier: carrier, tracking: tracking).result) ?? false
+    func confirmDeposit(token: String, orderId: String, carrier: String, tracking: String) async -> SimpleResultResponse? {
+        try? await repo.confirmDeposit(token: token, orderId: orderId, carrier: carrier, tracking: tracking)
     }
 
-    func requestBranchDeposit(token: String, orderId: String) async -> Bool {
-        (try? await repo.requestBranchDeposit(token: token, orderId: orderId).result) ?? false
+    func requestBranchDeposit(token: String, orderId: String) async -> SimpleResultResponse? {
+        try? await repo.requestBranchDeposit(token: token, orderId: orderId)
     }
 
-    func updateShipping(token: String, orderId: String, carrier: String, tracking: String) async -> Bool {
-        (try? await repo.updateShipping(token: token, orderId: orderId, carrier: carrier, tracking: tracking).result) ?? false
+    func updateShipping(token: String, orderId: String, carrier: String, tracking: String) async -> SimpleResultResponse? {
+        try? await repo.updateShipping(token: token, orderId: orderId, carrier: carrier, tracking: tracking)
     }
 
 

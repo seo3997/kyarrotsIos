@@ -94,10 +94,15 @@ final class ApiClient {
             throw ApiError.requestFailed(statusCode: http.statusCode, data: data)
         }
 
+        let effectiveData = data.isEmpty ? "{}".data(using: .utf8)! : data
+        
         do {
-            return try decoder.decode(T.self, from: data)
+            return try decoder.decode(T.self, from: effectiveData)
         } catch {
             print("❌ Decoding error:", error)
+            #if DEBUG
+            print("📦 Raw data that failed decoding: \(String(data: effectiveData, encoding: .utf8) ?? "binary")")
+            #endif
             throw ApiError.decodingFailed
         }
     }

@@ -6,6 +6,8 @@ class PurchaseHistoryViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var isLastPage = false
     @Published var errorMessage: String? = nil
+    @Published var actionSuccess: Bool = false
+    @Published var successMessage: String? = nil
     
     private var pageNo = 0
     private let appService = AppServiceProvider.shared
@@ -60,12 +62,20 @@ class PurchaseHistoryViewModel: ObservableObject {
         let req = OrderCancelRequest(orderId: orderId, cancelReason: "고객 변심", userNo: userNo)
         
         Task {
-            let success = await appService.cancelPayment(req: req)
-            await MainActor.run {
-                self.isLoading = false
-                if success {
-                    self.fetchPurchaseList(isRefresh: true)
-                } else {
+            if let res = await appService.cancelPayment(req: req) {
+                await MainActor.run {
+                    self.isLoading = false
+                    if res.success {
+                        self.successMessage = res.message
+                        self.actionSuccess = true
+                        self.fetchPurchaseList(isRefresh: true)
+                    } else {
+                        self.errorMessage = res.message ?? "취소 처리에 실패했습니다."
+                    }
+                }
+            } else {
+                await MainActor.run {
+                    self.isLoading = false
                     self.errorMessage = "취소 처리에 실패했습니다."
                 }
             }
@@ -99,12 +109,20 @@ class PurchaseHistoryViewModel: ObservableObject {
         )
         
         Task {
-            let success = await appService.requestReturn(req: req)
-            await MainActor.run {
-                self.isLoading = false
-                if success {
-                    self.fetchPurchaseList(isRefresh: true)
-                } else {
+            if let res = await appService.requestReturn(req: req) {
+                await MainActor.run {
+                    self.isLoading = false
+                    if res.success {
+                        self.successMessage = res.message
+                        self.actionSuccess = true
+                        self.fetchPurchaseList(isRefresh: true)
+                    } else {
+                        self.errorMessage = res.message ?? "반품 요청에 실패했습니다."
+                    }
+                }
+            } else {
+                await MainActor.run {
+                    self.isLoading = false
                     self.errorMessage = "반품 요청에 실패했습니다."
                 }
             }

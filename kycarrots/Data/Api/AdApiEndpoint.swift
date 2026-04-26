@@ -448,11 +448,11 @@ enum AdApiEndpoint: Endpoint {
         case let .updateOrderStatus(token, orderId, status):
             return ["token": token, "orderId": orderId, "status": status]
         case let .confirmDeposit(token, orderId, carrier, tracking):
-            return ["token": token, "orderId": orderId, "carrier": carrier, "trackingNo": tracking]
+            return ["token": token, "orderId": orderId, "carrier": carrier, "tracking": tracking]
         case let .requestBranchDeposit(token, orderId):
             return ["token": token, "orderId": orderId]
         case let .updateShipping(token, orderId, carrier, tracking):
-            return ["token": token, "orderId": orderId, "carrier": carrier, "trackingNo": tracking]
+            return ["token": token, "orderId": orderId, "carrier": carrier, "tracking": tracking]
 
         case let .getBranchInfo(branchId):
             return ["branchId": String(branchId)]

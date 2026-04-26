@@ -9,8 +9,18 @@ class OrderMgtDetailViewModel: ObservableObject {
     @Published var selectedCarrierIndex: Int = 0
     @Published var trackingNo: String = ""
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-    @Published var actionSuccess: Bool = false
+    // Alert handling
+    enum AlertType: Identifiable {
+        case success(String)
+        case error(String)
+        var id: String {
+            switch self {
+            case .success(let m): return "succ_\(m)"
+            case .error(let m): return "err_\(m)"
+            }
+        }
+    }
+    @Published var activeAlert: AlertType?
     
     private let service: AppService
     private let orderId: String
@@ -40,17 +50,20 @@ class OrderMgtDetailViewModel: ObservableObject {
                 self.carriers = data["deliveryCompanyList"] as? [[String: Any]] ?? []
                 
                 // Set current carrier
-                let currentCode = (self.order["deliveryCompanyCode"] ?? "").asString()
-                if let idx = self.carriers.firstIndex(where: { ($0["code"] ?? "").asString() == currentCode }) {
+                let currentCode = (self.order["DELIVERY_COMPANY_CODE"] ?? self.order["deliveryCompanyCode"] ?? "").asString()
+                if let idx = self.carriers.firstIndex(where: {
+                    let code = ($0["CODE"] ?? $0["code"] ?? "").asString()
+                    return code == currentCode
+                }) {
                     self.selectedCarrierIndex = idx + 1 // Account for "선택하세요"
                 }
                 
-                self.trackingNo = (self.order["trackingNo"] ?? "").asString()
+                self.trackingNo = (self.order["TRACKING_NO"] ?? self.order["trackingNo"] ?? "").asString()
             }
         } else {
             await MainActor.run {
                 self.isLoading = false
-                self.errorMessage = "상세 정보를 불러오지 못했습니다."
+                self.activeAlert = .error("상세 정보를 불러오지 못했습니다.")
             }
         }
     }
@@ -62,6 +75,8 @@ class OrderMgtDetailViewModel: ObservableObject {
         
         Task {
             var success = false
+            var serverMessage: String? = nil
+            
             switch type {
             case "DEPOSIT":
                 guard selectedCarrierIndex > 0 else {
@@ -72,11 +87,19 @@ class OrderMgtDetailViewModel: ObservableObject {
                     await showError("송장 번호를 입력해주세요.")
                     return
                 }
-                let carrierCode = (carriers[selectedCarrierIndex - 1]["CODE"] ?? carriers[selectedCarrierIndex - 1]["code"]).asString()
-                success = await service.confirmDeposit(token: token, orderId: orderId, carrier: carrierCode, tracking: trackingNo)
+                let carrier = carriers[selectedCarrierIndex - 1]
+                let carrierCode = (carrier["CODE"] ?? carrier["code"] ?? "").asString()
+                
+                if let res = await service.confirmDeposit(token: token, orderId: orderId, carrier: carrierCode, tracking: trackingNo) {
+                    success = res.result
+                    serverMessage = res.message
+                }
                 
             case "BRANCH_DEPOSIT":
-                success = await service.requestBranchDeposit(token: token, orderId: orderId)
+                if let res = await service.requestBranchDeposit(token: token, orderId: orderId) {
+                    success = res.result
+                    serverMessage = res.message
+                }
                 
             case "SHIPPING":
                 guard selectedCarrierIndex > 0 else {
@@ -87,18 +110,32 @@ class OrderMgtDetailViewModel: ObservableObject {
                     await showError("송장 번호를 입력해주세요.")
                     return
                 }
-                let carrierCode = (carriers[selectedCarrierIndex - 1]["CODE"] ?? carriers[selectedCarrierIndex - 1]["code"]).asString()
-                success = await service.updateShipping(token: token, orderId: orderId, carrier: carrierCode, tracking: trackingNo)
+                let carrier = carriers[selectedCarrierIndex - 1]
+                let carrierCode = (carrier["CODE"] ?? carrier["code"] ?? "").asString()
+                
+                if let res = await service.updateShipping(token: token, orderId: orderId, carrier: carrierCode, tracking: trackingNo) {
+                    success = res.result
+                    serverMessage = res.message
+                }
                 
             case "DELIVERY":
-                success = await service.updateOrderStatus(token: token, orderId: orderId, status: "70")
+                if let res = await service.updateOrderStatus(token: token, orderId: orderId, status: "70") {
+                    success = res.result
+                    serverMessage = res.message
+                }
                 
             case "CONFIRM":
-                success = await service.updateOrderStatus(token: token, orderId: orderId, status: "99")
+                if let res = await service.updateOrderStatus(token: token, orderId: orderId, status: "99") {
+                    success = res.result
+                    serverMessage = res.message
+                }
                 
             case "CANCEL":
                 let req = OrderCancelRequest(orderId: orderId, cancelReason: "관리자 취소", userNo: Int64(LoginInfoUtil.getUserNo()) ?? 0)
-                success = await service.cancelPayment(req: req)
+                if let res = await service.cancelPayment(req: req) {
+                    success = res.success
+                    serverMessage = res.message
+                }
                 
             default: break
             }
@@ -106,12 +143,12 @@ class OrderMgtDetailViewModel: ObservableObject {
             if success {
                 await loadDataAsync()
                 await MainActor.run {
-                    self.actionSuccess = true
+                    self.activeAlert = .success(serverMessage ?? "처리가 완료되었습니다.")
                 }
             } else {
                 await MainActor.run {
                     self.isLoading = false
-                    self.errorMessage = "작업 수행에 실패했습니다."
+                    self.activeAlert = .error(serverMessage ?? "작업 수행에 실패했습니다.")
                 }
             }
         }
@@ -120,7 +157,7 @@ class OrderMgtDetailViewModel: ObservableObject {
     private func showError(_ msg: String) async {
         await MainActor.run {
             self.isLoading = false
-            self.errorMessage = msg
+            self.activeAlert = .error(msg)
         }
     }
 }
@@ -321,11 +358,13 @@ struct OrderMgtDetailView: View {
         .onAppear {
             viewModel.loadData()
         }
-        .alert(isPresented: .init(get: { viewModel.actionSuccess }, set: { if !$0 { viewModel.actionSuccess = false } })) {
-            Alert(title: Text("알림"), message: Text("처리가 완료되었습니다."), dismissButton: .default(Text("확인")))
-        }
-        .alert(isPresented: .init(get: { viewModel.errorMessage != nil }, set: { if !$0 { viewModel.errorMessage = nil } })) {
-            Alert(title: Text("알림"), message: Text(viewModel.errorMessage ?? "오류가 발생했습니다."), dismissButton: .default(Text("확인")))
+        .alert(item: $viewModel.activeAlert) { type in
+            switch type {
+            case .success(let msg):
+                return Alert(title: Text("알림"), message: Text(msg), dismissButton: .default(Text("확인")))
+            case .error(let msg):
+                return Alert(title: Text("오류"), message: Text(msg), dismissButton: .default(Text("확인")))
+            }
         }
     }
     

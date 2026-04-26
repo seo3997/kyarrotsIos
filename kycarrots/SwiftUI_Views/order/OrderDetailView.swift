@@ -6,8 +6,18 @@ class OrderDetailViewModel: ObservableObject {
     @Published var items: [OrderDetailItem] = []
     
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-    @Published var actionSuccess: Bool = false
+    @Published var activeAlert: AlertType?
+    
+    enum AlertType: Identifiable {
+        case success(String)
+        case error(String)
+        var id: String {
+            switch self {
+            case .success(let m): return "succ_\(m)"
+            case .error(let m): return "err_\(m)"
+            }
+        }
+    }
     
     private let service: AppService
     private let orderId: String
@@ -30,7 +40,7 @@ class OrderDetailViewModel: ObservableObject {
             } else {
                 await MainActor.run {
                     self.isLoading = false
-                    self.errorMessage = "상세 정보를 불러오지 못했습니다."
+                    self.activeAlert = .error("상세 정보를 불러오지 못했습니다.")
                 }
             }
         }
@@ -42,14 +52,20 @@ class OrderDetailViewModel: ObservableObject {
         let req = OrderCancelRequest(orderId: orderId, cancelReason: "사용자 취소", userNo: userNo)
         
         Task {
-            let success = await service.cancelPayment(req: req)
-            await MainActor.run {
-                self.isLoading = false
-                if success {
-                    self.actionSuccess = true
-                    self.loadData()
-                } else {
-                    self.errorMessage = "주문 취소에 실패했습니다."
+            if let res = await service.cancelPayment(req: req) {
+                await MainActor.run {
+                    self.isLoading = false
+                    if res.success {
+                        self.activeAlert = .success(res.message ?? "처리가 완료되었습니다.")
+                        self.loadData()
+                    } else {
+                        self.activeAlert = .error(res.message ?? "주문 취소에 실패했습니다.")
+                    }
+                }
+            } else {
+                await MainActor.run {
+                    self.isLoading = false
+                    self.activeAlert = .error("주문 취소에 실패했습니다.")
                 }
             }
         }
@@ -167,15 +183,13 @@ struct OrderDetailView: View {
         .onAppear {
             viewModel.loadData()
         }
-        .alert("결과", isPresented: $viewModel.actionSuccess) {
-            Button("확인") { viewModel.actionSuccess = false }
-        } message: {
-            Text("처리가 완료되었습니다.")
-        }
-        .alert("오류", isPresented: Binding(get: { viewModel.errorMessage != nil }, set: { _ in viewModel.errorMessage = nil })) {
-            Button("확인") { }
-        } message: {
-            if let msg = viewModel.errorMessage { Text(msg) }
+        .alert(item: $viewModel.activeAlert) { type in
+            switch type {
+            case .success(let msg):
+                return Alert(title: Text("결과"), message: Text(msg), dismissButton: .default(Text("확인")))
+            case .error(let msg):
+                return Alert(title: Text("오류"), message: Text(msg), dismissButton: .default(Text("확인")))
+            }
         }
     }
     
