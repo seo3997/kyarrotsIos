@@ -72,7 +72,7 @@ class DashboardViewModel: ObservableObject {
             items = [
                 .init(label: "미처리 주문", value: formatNumber(statsMap["unprocessedOrders"]), color: .blue, icon: "clock.fill"),
                 .init(label: "지점 미입금액", value: formatCurrency(statsMap["branchPendingAmount"]), color: .red, icon: "exclamationmark.triangle.fill"),
-                .init(label: "출고 대기", value: formatNumber(statsMap["shipmentPending"]), color: .green, icon: "shippingbox.fill"),
+                .init(label: "오늘의 수금액", value: formatCurrency(statsMap["todayCollectionAmount"]), color: .green, icon: "wonsign.circle.fill"),
                 .init(label: "배송 중", value: formatNumber(statsMap["inTransit"]), color: .cyan, icon: "truck.box.fill")
             ]
             
