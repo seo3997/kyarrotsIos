@@ -19,20 +19,8 @@ class OnboardingViewModel: ObservableObject {
     @Published var passwordConfirm = ""
     @Published var birth = ""
     @Published var phoneFirst = "010"
-    @Published var phoneMid = "" {
-        didSet {
-            if phoneMid.count > 4 {
-                phoneMid = String(phoneMid.prefix(4))
-            }
-        }
-    }
-    @Published var phoneLast = "" {
-        didSet {
-            if phoneLast.count > 4 {
-                phoneLast = String(phoneLast.prefix(4))
-            }
-        }
-    }
+    @Published var phoneMid = ""
+    @Published var phoneLast = ""
     @Published var gender = 0 // 0: None, 1: Male, 2: Female
     
     @Published var branchList: [BranchInfoVo] = []
@@ -92,6 +80,7 @@ class OnboardingViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+            
     }
     
     func loadInitialData() async {

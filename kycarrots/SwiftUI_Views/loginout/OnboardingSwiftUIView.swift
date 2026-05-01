@@ -8,14 +8,52 @@ struct OnboardingSwiftUIView: View {
     private var phoneMidBinding: Binding<String> {
         Binding(
             get: { viewModel.phoneMid },
-            set: { viewModel.phoneMid = String($0.prefix(4)) }
+            set: { newValue in
+                let filtered = newValue.filter { $0.isNumber }
+                let capped = String(filtered.prefix(4))
+                
+                if filtered.count > 4 {
+                    // 4자리 초과 시 즉시 알림 노출
+                    viewModel.toastMessage = "전화번호는 4자리까지 입력 가능합니다."
+                    viewModel.showToast = true
+                }
+                
+                if viewModel.phoneMid != capped {
+                    viewModel.phoneMid = capped
+                } else if filtered.count > 4 {
+                    // 값이 같더라도 UI 갱신을 위해 강제 트리거
+                    let current = viewModel.phoneMid
+                    viewModel.phoneMid = ""
+                    DispatchQueue.main.async {
+                        viewModel.phoneMid = current
+                    }
+                }
+            }
         )
     }
 
     private var phoneLastBinding: Binding<String> {
         Binding(
             get: { viewModel.phoneLast },
-            set: { viewModel.phoneLast = String($0.prefix(4)) }
+            set: { newValue in
+                let filtered = newValue.filter { $0.isNumber }
+                let capped = String(filtered.prefix(4))
+                
+                if filtered.count > 4 {
+                    viewModel.toastMessage = "전화번호는 4자리까지 입력 가능합니다."
+                    viewModel.showToast = true
+                }
+                
+                if viewModel.phoneLast != capped {
+                    viewModel.phoneLast = capped
+                } else if filtered.count > 4 {
+                    let current = viewModel.phoneLast
+                    viewModel.phoneLast = ""
+                    DispatchQueue.main.async {
+                        viewModel.phoneLast = current
+                    }
+                }
+            }
         )
     }
     
