@@ -78,11 +78,11 @@ struct OnboardingSwiftUIView: View {
                                         .font(.system(size: 13, weight: .bold))
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 8)
-                                        .background(viewModel.isEmailChecked ? Color.gray : Color.blue)
+                                        .background(viewModel.isFormVisible ? Color.gray : Color.blue)
                                         .foregroundColor(.white)
                                         .cornerRadius(6)
                                 }
-                                .disabled(viewModel.isEmailChecked)
+                                .disabled(viewModel.isFormVisible)
                             }
                             
                             if !viewModel.emailStatusMessage.isEmpty {

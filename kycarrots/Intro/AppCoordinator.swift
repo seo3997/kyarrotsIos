@@ -64,7 +64,7 @@ final class AppCoordinator {
             self?.showOnboarding(provider: provider, pid: pid, name: name, email: email, url: url, pending: pendingDeepLink)
         }
         viewModel.onShowMembership = { [weak self] in
-            self?.showTermsAgree()
+            self?.showTermsAgree(customOnNext: nil)
         }
         viewModel.onShowFindAccount = { [weak self] in
             self?.showFindAccount()
@@ -83,6 +83,12 @@ final class AppCoordinator {
             presetEmail: email,
             presetNickname: name
         )
+        viewModel.onShowTerms = { [weak self] onAgree in
+            self?.showTermsAgree {
+                self?.nav.popViewController(animated: true)
+                onAgree()
+            }
+        }
         let rootView = OnboardingSwiftUIView(viewModel: viewModel) { [weak self] in
             self?.showIntro(launchDeepLink: pending, animated: true)
         }
@@ -205,10 +211,14 @@ final class AppCoordinator {
         nav.pushViewController(vc, animated: true)
     }
 
-    func showTermsAgree() {
+    func showTermsAgree(customOnNext: (() -> Void)? = nil) {
         let rootView = TermsAgreeSwiftUIView(
             onNext: { [weak self] in
-                self?.showMembership()
+                if let custom = customOnNext {
+                    custom()
+                } else {
+                    self?.showMembership()
+                }
             },
             onCancel: { [weak self] in
                 self?.nav.popViewController(animated: true)

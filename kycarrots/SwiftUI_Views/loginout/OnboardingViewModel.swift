@@ -34,6 +34,9 @@ class OnboardingViewModel: ObservableObject {
     @Published var emailStatusMessage = ""
     @Published var lastCheckedEmail: String? = nil
     
+    // MARK: - Navigation Callbacks
+    var onShowTerms: (@escaping () -> Void) -> Void = { _ in }
+    
     let phoneFirstOptions = ["010", "011", "016", "017", "018", "019"]
     
     private var cancellables = Set<AnyCancellable>()
@@ -89,6 +92,15 @@ class OnboardingViewModel: ObservableObject {
     
     func checkEmail(onLinkSuccess: @escaping () -> Void) async {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // 이미 중복 확인이 완료된 상태라면 약관 동의 화면만 다시 노출
+        if isEmailChecked && trimmedEmail == lastCheckedEmail {
+            onShowTerms { [weak self] in
+                self?.isFormVisible = true
+            }
+            return
+        }
+
         guard isValidEmail(trimmedEmail) else {
             showToast(message: "유효한 이메일을 입력하세요.")
             return
@@ -102,7 +114,11 @@ class OnboardingViewModel: ObservableObject {
                 self.lastCheckedEmail = trimmedEmail
                 isEmailChecked = true
                 emailStatusMessage = "사용 가능한 이메일입니다."
-                isFormVisible = true
+                
+                // Show terms agreement before showing registration form
+                onShowTerms { [weak self] in
+                    self?.isFormVisible = true
+                }
             } else {
                 // Existing user -> Link social
                 isEmailChecked = false
