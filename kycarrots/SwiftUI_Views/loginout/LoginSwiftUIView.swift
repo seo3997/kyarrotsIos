@@ -58,7 +58,7 @@ struct LoginSwiftUIView: View {
                         viewModel.loginWithKakao()
                     }) {
                         HStack {
-                            Image("ic_kakao_logo") // Assuming this exists or using icon
+                            Image("ic_kakao_logo")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 24, height: 24)
@@ -70,6 +70,15 @@ struct LoginSwiftUIView: View {
                         .frame(height: 50)
                         .background(Color(red: 254/255, green: 229/255, blue: 0))
                         .cornerRadius(10)
+                    }
+                    
+                    Button(action: {
+                        viewModel.unlinkKakao()
+                    }) {
+                        Text("카카오 연결 해제")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(.top, 4)
                     }
                 }
                 .padding(.horizontal, 40)

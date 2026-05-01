@@ -206,6 +206,63 @@ class LoginViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Kakao Unlink
+    func unlinkKakao() {
+        isLoading = true
+        
+        UserApi.shared.me { [weak self] user, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                Task { @MainActor in
+                    self.isLoading = false
+                    self.showToast(message: "카카오 사용자 정보 조회 실패: \(error.localizedDescription)")
+                }
+                return
+            }
+            
+            guard let id = user?.id else {
+                Task { @MainActor in
+                    self.isLoading = false
+                    self.showToast(message: "카카오 사용자 ID를 찾을 수 없습니다.")
+                }
+                return
+            }
+            
+            let providerUserId = String(id)
+            
+            // 1) Kakao SDK Unlink
+            UserApi.shared.unlink { error in
+                if let error = error {
+                    Task { @MainActor in
+                        self.isLoading = false
+                        self.showToast(message: "카카오 연결 해제 실패: \(error.localizedDescription)")
+                    }
+                    return
+                }
+                
+                // 2) Kakao Logout (Optional)
+                UserApi.shared.logout { _ in }
+                
+                // 3) Server Unlink
+                Task { @MainActor in
+                    let req = UnlinkSocialRequest(provider: "KAKAO", providerUserId: providerUserId)
+                    if let res = await self.service.unlinkSocial(req) {
+                        self.isLoading = false
+                        if res.result {
+                            self.showToast(message: "카카오 연결 해제 완료 (서버 링크 삭제)")
+                        } else {
+                            self.showToast(message: "카카오 연결 해제는 되었으나 서버 링크 삭제 실패: \(res.message ?? "")")
+                        }
+                    } else {
+                        self.isLoading = false
+                        self.showToast(message: "서버 연결 해제 요청 중 오류가 발생했습니다.")
+                    }
+                }
+            }
+        }
+    }
+    
     private func isKakaoCancelled(_ error: Error) -> Bool {
         let msg = (error as NSError).localizedDescription.lowercased()
         return msg.contains("cancel")

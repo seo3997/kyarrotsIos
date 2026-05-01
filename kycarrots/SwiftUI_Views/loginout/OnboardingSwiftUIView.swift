@@ -4,6 +4,21 @@ struct OnboardingSwiftUIView: View {
     @StateObject var viewModel: OnboardingViewModel
     var onSuccess: () -> Void
     
+    // ✅ 커스텀 바인딩을 사용하여 입력 단계에서 4자리를 넘지 못하도록 즉시 차단
+    private var phoneMidBinding: Binding<String> {
+        Binding(
+            get: { viewModel.phoneMid },
+            set: { viewModel.phoneMid = String($0.prefix(4)) }
+        )
+    }
+
+    private var phoneLastBinding: Binding<String> {
+        Binding(
+            get: { viewModel.phoneLast },
+            set: { viewModel.phoneLast = String($0.prefix(4)) }
+        )
+    }
+    
     var body: some View {
         ZStack {
             ScrollView {
@@ -68,13 +83,13 @@ struct OnboardingSwiftUIView: View {
                                         .cornerRadius(8)
                                     }
                                     
-                                    TextField("", text: $viewModel.phoneMid)
+                                    TextField("", text: phoneMidBinding)
                                         .textFieldStyle(RoundedBorderTextFieldStyle())
                                         .keyboardType(.numberPad)
                                     
                                     Text("-")
                                     
-                                    TextField("", text: $viewModel.phoneLast)
+                                    TextField("", text: phoneLastBinding)
                                         .textFieldStyle(RoundedBorderTextFieldStyle())
                                         .keyboardType(.numberPad)
                                 }
@@ -91,65 +106,17 @@ struct OnboardingSwiftUIView: View {
                             }
                             
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("지역")
-                                    .font(.system(size: 14, weight: .semibold))
-                                HStack {
-                                    Menu {
-                                        ForEach(viewModel.cityList, id: \.strIdx) { city in
-                                            Button(city.strMsg) {
-                                                viewModel.selectedCity = city
-                                                Task { await viewModel.loadTownList(cityCode: city.strIdx) }
-                                            }
-                                        }
-                                    } label: {
-                                        HStack {
-                                            Text(viewModel.selectedCity?.strMsg ?? "시/도 선택")
-                                            Spacer()
-                                            Image(systemName: "chevron.down").font(.system(size: 12))
-                                        }
-                                        .padding(.horizontal, 12)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 38)
-                                        .background(Color(UIColor.secondarySystemBackground))
-                                        .cornerRadius(8)
-                                    }
-                                    
-                                    Menu {
-                                        ForEach(viewModel.townList, id: \.strIdx) { town in
-                                            Button(town.strMsg) {
-                                                viewModel.selectedTown = town
-                                            }
-                                        }
-                                    } label: {
-                                        HStack {
-                                            Text(viewModel.selectedTown?.strMsg ?? "구/군 선택")
-                                            Spacer()
-                                            Image(systemName: "chevron.down").font(.system(size: 12))
-                                        }
-                                        .padding(.horizontal, 12)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 38)
-                                        .background(Color(UIColor.secondarySystemBackground))
-                                        .cornerRadius(8)
-                                        .opacity(viewModel.selectedCity == nil ? 0.5 : 1.0)
-                                    }
-                                    .disabled(viewModel.selectedCity == nil)
-                                }
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("사용자구분")
+                                Text("지점선택")
                                     .font(.system(size: 14, weight: .semibold))
                                 Menu {
-                                    let roles = Array(viewModel.roleOptions.keys).sorted()
-                                    ForEach(roles, id: \.self) { role in
-                                        Button(role) {
-                                            viewModel.selectedRole = role
+                                    ForEach(viewModel.branchList, id: \.branchId) { branch in
+                                        Button(branch.branchName ?? "") {
+                                            viewModel.selectedBranch = branch
                                         }
                                     }
                                 } label: {
                                     HStack {
-                                        Text(viewModel.selectedRole ?? "사용자구분 선택")
+                                        Text(viewModel.selectedBranch?.branchName ?? "지점을 선택하세요")
                                         Spacer()
                                         Image(systemName: "chevron.down").font(.system(size: 12))
                                     }
@@ -207,6 +174,7 @@ struct OnboardingCustomTextField: View {
     @Binding var text: String
     let placeholder: String
     var keyboardType: UIKeyboardType = .default
+    var limit: Int? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -215,6 +183,11 @@ struct OnboardingCustomTextField: View {
             TextField(placeholder, text: $text)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(keyboardType)
+                .onChange(of: text) { newValue in
+                    if let limit = limit, newValue.count > limit {
+                        text = String(newValue.prefix(limit))
+                    }
+                }
         }
     }
 }

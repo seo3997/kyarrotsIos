@@ -19,15 +19,24 @@ class OnboardingViewModel: ObservableObject {
     @Published var passwordConfirm = ""
     @Published var birth = ""
     @Published var phoneFirst = "010"
-    @Published var phoneMid = ""
-    @Published var phoneLast = ""
+    @Published var phoneMid = "" {
+        didSet {
+            if phoneMid.count > 4 {
+                phoneMid = String(phoneMid.prefix(4))
+            }
+        }
+    }
+    @Published var phoneLast = "" {
+        didSet {
+            if phoneLast.count > 4 {
+                phoneLast = String(phoneLast.prefix(4))
+            }
+        }
+    }
     @Published var gender = 0 // 0: None, 1: Male, 2: Female
     
-    @Published var cityList: [TxtListDataInfo] = []
-    @Published var townList: [TxtListDataInfo] = []
-    @Published var selectedCity: TxtListDataInfo?
-    @Published var selectedTown: TxtListDataInfo?
-    @Published var selectedRole: String?
+    @Published var branchList: [BranchInfoVo] = []
+    @Published var selectedBranch: BranchInfoVo?
     
     @Published var isEmailChecked = false
     @Published var isFormVisible = false
@@ -35,9 +44,9 @@ class OnboardingViewModel: ObservableObject {
     @Published var toastMessage: String?
     @Published var showToast = false
     @Published var emailStatusMessage = ""
+    @Published var lastCheckedEmail: String? = nil
     
     let phoneFirstOptions = ["010", "011", "016", "017", "018", "019"]
-    let roleOptions: [String: String] = ["판매자": "ROLE_SELL", "센터관리": "ROLE_PROJ", "구매자": "ROLE_PUB"]
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -53,11 +62,16 @@ class OnboardingViewModel: ObservableObject {
         
         // Reset check if email changes
         $email
+            .removeDuplicates()
             .dropFirst()
-            .sink { [weak self] _ in
-                self?.isEmailChecked = false
-                self?.isFormVisible = false
-                self?.emailStatusMessage = ""
+            .sink { [weak self] newValue in
+                guard let self = self else { return }
+                // Only reset if it was already checked and the new email is different from the checked one
+                if self.isEmailChecked && newValue != self.lastCheckedEmail {
+                    self.isEmailChecked = false
+                    self.isFormVisible = false
+                    self.emailStatusMessage = ""
+                }
             }
             .store(in: &cancellables)
             
@@ -81,14 +95,7 @@ class OnboardingViewModel: ObservableObject {
     }
     
     func loadInitialData() async {
-        let cities = await service.getCodeList(groupId: "R010070")
-        self.cityList = cities
-    }
-    
-    func loadTownList(cityCode: String) async {
-        let towns = await service.getSCodeList(groupId: "R010070", mcode: cityCode)
-        self.townList = towns
-        self.selectedTown = nil
+        self.branchList = await service.getBranchList()
     }
     
     func checkEmail(onLinkSuccess: @escaping () -> Void) async {
@@ -103,6 +110,7 @@ class OnboardingViewModel: ObservableObject {
             isLoading = false
             if res.result == true {
                 // New user
+                self.lastCheckedEmail = trimmedEmail
                 isEmailChecked = true
                 emailStatusMessage = "사용 가능한 이메일입니다."
                 isFormVisible = true
@@ -161,11 +169,12 @@ class OnboardingViewModel: ObservableObject {
         user.cttpc = phone
         user.gender = gender
         user.birthDate = birth
-        user.areaCode = selectedCity?.strIdx
-        user.areaSeCodeS = selectedTown?.strIdx
+        user.areaCode = ""
+        user.areaSeCodeS = ""
         user.areaSeCodeD = ""
+        user.branchId = selectedBranch?.branchId.map { String($0) } ?? ""
         user.userSttusCode = "10"
-        user.memberCode = roleOptions[selectedRole ?? ""]
+        user.memberCode = "ROLE_PUB"
         user.provider = provider
         user.providerUserId = providerUserId
         
@@ -197,8 +206,7 @@ class OnboardingViewModel: ObservableObject {
             showToast(message: "유효한 전화번호를 입력하세요."); return false
         }
         if gender == 0 { showToast(message: "성별을 선택하세요."); return false }
-        if selectedCity == nil || selectedTown == nil { showToast(message: "지역을 모두 선택하세요."); return false }
-        if selectedRole == nil { showToast(message: "사용자구분을 선택하세요."); return false }
+        if selectedBranch == nil { showToast(message: "지점을 선택하세요."); return false }
         return true
     }
     
