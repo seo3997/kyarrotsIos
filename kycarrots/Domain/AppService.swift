@@ -337,4 +337,8 @@ final class AppService {
     func saveJwt(_ jwt: String) {
         // TODO: Keychain / UserDefaults 등에 저장
     }
+
+    func checkVersion(osType: String, appVersion: String) async -> AppVersionResponse? {
+        try? await repo.checkVersion(osType: osType, appVersion: appVersion)
+    }
 }

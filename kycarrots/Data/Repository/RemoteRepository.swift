@@ -448,6 +448,10 @@ final class RemoteRepository {
     func updateShipping(token: String, orderId: String, carrier: String, tracking: String) async throws -> SimpleResultResponse {
         try await api.request(AdApiEndpoint.updateShipping(token: token, orderId: orderId, carrier: carrier, tracking: tracking), as: SimpleResultResponse.self)
     }
+
+    func checkVersion(osType: String, appVersion: String) async throws -> AppVersionResponse {
+        try await api.request(AdApiEndpoint.checkVersion(osType: osType, appVersion: appVersion), as: AppVersionResponse.self)
+    }
 }
 
 // Simple AnyCodable helper to handle Map<String, Any> from Android

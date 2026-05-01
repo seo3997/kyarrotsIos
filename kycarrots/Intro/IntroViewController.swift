@@ -99,7 +99,7 @@ final class IntroViewController: UIViewController {
                     print("⚠️ notification permission denied")
                 }
                 Task { [weak self] in
-                    await self?.autoLoginOrGoLogin()
+                    await self?.checkAppVersionFlow()
                 }
             }
         }
@@ -186,6 +186,45 @@ final class IntroViewController: UIViewController {
         subscribeTopicIfNeeded(memberCode: finalMemberCode)
         // ✅ 딥링크 없거나 실패 → 기본 홈
         coordinator?.showHome(memberCode: finalMemberCode, deepLink: launchDeepLink)
+    }
+
+    @MainActor
+    private func checkAppVersionFlow() async {
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.1"
+        if let response = await service.checkVersion(osType: "IOS", appVersion: appVersion), response.success {
+            switch response.updateType {
+            case "FORCE":
+                showUpdatePopup(response: response, isForce: true)
+            case "OPTIONAL":
+                showUpdatePopup(response: response, isForce: false)
+            default:
+                await autoLoginOrGoLogin()
+            }
+        } else {
+            await autoLoginOrGoLogin()
+        }
+    }
+
+    @MainActor
+    private func showUpdatePopup(response: AppVersionResponse, isForce: Bool) {
+        let message = response.updateMsg ?? "새로운 버전이 출시되었습니다. 최신 버전으로 업데이트 해주세요."
+        let storeUrl = response.storeUrl ?? ""
+
+        let alert = UIAlertController(title: "업데이트 알림", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "업데이트", style: .default) { _ in
+            if let url = URL(string: storeUrl), UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
+            // 강제 업데이트일 경우 앱을 사용할 수 없도록 종료 또는 반복 노출이 필요할 수 있음
+        })
+
+        if !isForce {
+            alert.addAction(UIAlertAction(title: "나중에", style: .cancel) { [weak self] _ in
+                Task { await self?.autoLoginOrGoLogin() }
+            })
+        }
+
+        present(alert, animated: true)
     }
 
     func subscribeTopicIfNeeded(memberCode: String) {

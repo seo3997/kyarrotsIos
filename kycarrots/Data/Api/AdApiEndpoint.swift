@@ -109,6 +109,7 @@ enum AdApiEndpoint: Endpoint {
 
     case getBranchList
     case getBranchInfo(branchId: Int64)
+    case checkVersion(osType: String, appVersion: String)
 
     // 주소록 (Address)
     case getAddressList(token: String)
@@ -272,6 +273,8 @@ enum AdApiEndpoint: Endpoint {
             return "api/branch/list"
         case .getBranchInfo:
             return "api/branch/info"
+        case .checkVersion:
+            return "api/appversion/check"
         }
     }
 
@@ -298,7 +301,8 @@ enum AdApiEndpoint: Endpoint {
              .getOrderMgtList,
              .getOrderMgtDetail,
              .getBranchList,
-             .getBranchInfo:
+             .getBranchInfo,
+             .checkVersion:
             return .get
 
         case .updateOrderStatus, .confirmDeposit, .requestBranchDeposit, .updateShipping:
@@ -456,6 +460,9 @@ enum AdApiEndpoint: Endpoint {
 
         case let .getBranchInfo(branchId):
             return ["branchId": String(branchId)]
+
+        case let .checkVersion(osType, appVersion):
+            return ["osType": osType, "appVersion": appVersion]
 
         default:
             return nil
