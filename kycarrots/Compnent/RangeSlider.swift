@@ -11,9 +11,10 @@ class RangeSlider: UIControl {
     private var thumbPadding: CGFloat { return thumbSize / 2 } // 양옆 여백 확보
     
     var minimumValue: CGFloat = 0 { didSet { updateLayerFrames() } }
-    var maximumValue: CGFloat = 9990000 { didSet { updateLayerFrames() } }
+    var maximumValue: CGFloat = 999000 { didSet { updateLayerFrames() } }
     var lowerValue: CGFloat = 0 { didSet { updateLayerFrames() } }
-    var upperValue: CGFloat = 9990000 { didSet { updateLayerFrames() } }
+    var upperValue: CGFloat = 999000 { didSet { updateLayerFrames() } }
+    var step: CGFloat = 1000 { didSet { updateLayerFrames() } }
     
     private var previousLocation = CGPoint()
     
@@ -28,6 +29,7 @@ class RangeSlider: UIControl {
     }
     
     private func setupSlider() {
+        self.isUserInteractionEnabled = true
         // 잘림 방지 설정
         self.clipsToBounds = false
         self.layer.masksToBounds = false
@@ -43,6 +45,7 @@ class RangeSlider: UIControl {
         [lowerThumbImageView, upperThumbImageView].forEach {
             $0.image = thumbImage
             $0.contentMode = .scaleAspectFit
+            $0.isUserInteractionEnabled = false // 제스처가 부모(self)에서 처리되도록 함
             // 그림자가 아래로 살짝 내려오도록 설정하여 입체감 부여
             $0.layer.shadowRadius = 3
             $0.layer.shadowOpacity = 0.25
@@ -50,7 +53,55 @@ class RangeSlider: UIControl {
             addSubview($0)
         }
         
+        // 터치 처리를 위해 PanGestureRecognizer 추가 (UIControl Tracking보다 SwiftUI에서 안정적)
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        self.addGestureRecognizer(panGesture)
+        
         updateLayerFrames()
+    }
+    
+    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
+        let location = gesture.location(in: self)
+        
+        switch gesture.state {
+        case .began:
+            let touchAreaInset: CGFloat = -20
+            if lowerThumbImageView.frame.insetBy(dx: touchAreaInset, dy: touchAreaInset).contains(location) {
+                lowerThumbImageView.isHighlighted = true
+            } else if upperThumbImageView.frame.insetBy(dx: touchAreaInset, dy: touchAreaInset).contains(location) {
+                upperThumbImageView.isHighlighted = true
+            }
+            previousLocation = location
+            
+        case .changed:
+            let deltaLocation = location.x - previousLocation.x
+            let usableWidth = bounds.width - (thumbPadding * 2)
+            guard usableWidth > 0 else { return }
+            
+            let deltaValue = (maximumValue - minimumValue) * deltaLocation / usableWidth
+            
+            if lowerThumbImageView.isHighlighted {
+                let newValue = lowerValue + deltaValue
+                lowerValue = min(max(round(newValue / step) * step, minimumValue), upperValue)
+            } else if upperThumbImageView.isHighlighted {
+                let newValue = upperValue + deltaValue
+                upperValue = min(max(round(newValue / step) * step, lowerValue), maximumValue)
+            }
+            
+            previousLocation = location
+            sendActions(for: .valueChanged)
+            
+        case .ended, .cancelled:
+            lowerThumbImageView.isHighlighted = false
+            upperThumbImageView.isHighlighted = false
+            
+        default:
+            break
+        }
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: UIView.noIntrinsicMetric, height: 40)
     }
     
     override func layoutSubviews() {
@@ -65,21 +116,21 @@ class RangeSlider: UIControl {
         let trackHeight: CGFloat = 4.0
         let trackY = (bounds.height - trackHeight) / 2
         
-        // 1. 트랙 프레임 (양옆 thumbPadding만큼 여백을 주어 핸들이 밖으로 나가지 않게 함)
-        trackLayer.frame = CGRect(x: thumbPadding, y: trackY, width: bounds.width - (thumbPadding * 2), height: trackHeight)
+        // 트랙 프레임
+        trackLayer.frame = CGRect(x: thumbPadding, y: trackY, width: max(0, bounds.width - (thumbPadding * 2)), height: trackHeight)
         trackLayer.cornerRadius = trackHeight / 2
         
         let lowerThumbCenter = positionForValue(lowerValue)
         let upperThumbCenter = positionForValue(upperValue)
         
-        // 2. 파란색 선택 범위 트랙
+        // 파란색 선택 범위 트랙
         rangeTrackLayer.frame = CGRect(x: lowerThumbCenter,
                                        y: trackY,
-                                       width: upperThumbCenter - lowerThumbCenter,
+                                       width: max(0, upperThumbCenter - lowerThumbCenter),
                                        height: trackHeight)
         rangeTrackLayer.cornerRadius = trackHeight / 2
         
-        // 3. 핸들 위치 (y값을 뷰의 중앙에 정확히 배치)
+        // 핸들 위치
         let thumbY = (bounds.height - thumbSize) / 2
         
         lowerThumbImageView.frame = CGRect(x: lowerThumbCenter - thumbPadding,
@@ -95,47 +146,61 @@ class RangeSlider: UIControl {
         CATransaction.commit()
     }
     
-    // 핸들이 움직이는 가용 범위를 (0 ~ 너비)가 아니라 (여백 ~ 너비-여백)으로 수정
     private func positionForValue(_ value: CGFloat) -> CGFloat {
         let usableWidth = bounds.width - (thumbPadding * 2)
+        guard usableWidth > 0 else { return thumbPadding }
         return usableWidth * (value - minimumValue) / (maximumValue - minimumValue) + thumbPadding
     }
+}
+
+// MARK: - SwiftUI Wrapper
+import SwiftUI
+
+struct RangeSliderView: UIViewRepresentable {
+    @Binding var lowerValue: Double
+    @Binding var upperValue: Double
+    var minimumValue: Double
+    var maximumValue: Double
+    var step: Double = 1000
     
-    override func beginTracking(_ touch: UITouch?, with event: UIEvent?) -> Bool {
-        guard let touch = touch else { return false }
-        previousLocation = touch.location(in: self)
-        
-        if lowerThumbImageView.frame.contains(previousLocation) {
-            lowerThumbImageView.isHighlighted = true
-        } else if upperThumbImageView.frame.contains(previousLocation) {
-            upperThumbImageView.isHighlighted = true
-        }
-        return lowerThumbImageView.isHighlighted || upperThumbImageView.isHighlighted
+    func makeUIView(context: Context) -> RangeSlider {
+        let slider = RangeSlider()
+        slider.minimumValue = CGFloat(minimumValue)
+        slider.maximumValue = CGFloat(maximumValue)
+        slider.lowerValue = CGFloat(lowerValue)
+        slider.upperValue = CGFloat(upperValue)
+        slider.step = CGFloat(step)
+        slider.addTarget(context.coordinator, action: #selector(Coordinator.valueChanged(_:)), for: .valueChanged)
+        return slider
     }
     
-    override func continueTracking(_ touch: UITouch?, with event: UIEvent?) -> Bool {
-        guard let touch = touch else { return false }
-        let location = touch.location(in: self)
+    func updateUIView(_ uiView: RangeSlider, context: Context) {
+        // 사용자가 슬라이더를 조작 중(드래그 중)일 때는 외부에서의 값 업데이트를 중단하여 충돌 방지
+        guard !uiView.isTracking else { return }
         
-        let deltaLocation = location.x - previousLocation.x
-        let usableWidth = bounds.width - (thumbPadding * 2)
-        let deltaValue = (maximumValue - minimumValue) * deltaLocation / usableWidth
-        
-        previousLocation = location
-        
-        if lowerThumbImageView.isHighlighted {
-            lowerValue = min(max(lowerValue + deltaValue, minimumValue), upperValue)
-        } else if upperThumbImageView.isHighlighted {
-            upperValue = min(max(upperValue + deltaValue, lowerValue), maximumValue)
+        // 소수점 차이로 인한 무한 루프 방지를 위해 값이 다를 때만 업데이트
+        if abs(uiView.lowerValue - CGFloat(lowerValue)) > 1.0 {
+            uiView.lowerValue = CGFloat(lowerValue)
         }
-        
-        sendActions(for: .valueChanged)
-        updateLayerFrames()
-        return true
+        if abs(uiView.upperValue - CGFloat(upperValue)) > 1.0 {
+            uiView.upperValue = CGFloat(upperValue)
+        }
     }
     
-    override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
-        lowerThumbImageView.isHighlighted = false
-        upperThumbImageView.isHighlighted = false
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject {
+        var parent: RangeSliderView
+        
+        init(_ parent: RangeSliderView) {
+            self.parent = parent
+        }
+        
+        @objc func valueChanged(_ sender: RangeSlider) {
+            parent.lowerValue = Double(sender.lowerValue)
+            parent.upperValue = Double(sender.upperValue)
+        }
     }
 }

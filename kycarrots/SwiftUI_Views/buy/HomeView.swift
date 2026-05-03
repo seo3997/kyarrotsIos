@@ -34,17 +34,19 @@ struct HomeView: View {
                             Text("희망단가")
                                 .font(.system(size: 14, weight: .bold))
                             Spacer()
-                            Text("\(Int(viewModel.minPrice / 10000))만원 ~ \(Int(viewModel.maxPrice / 10000))만원")
+                            Text("\(CurrencyUtil.formatCurrency(Int(viewModel.minPrice))) ~ \(CurrencyUtil.formatCurrency(Int(viewModel.maxPrice)))")
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(.blue)
                         }
                         
-                        VStack(spacing: -12) {
-                            Slider(value: $viewModel.minPrice, in: 0...viewModel.maxPrice, step: 10000)
-                                .accentColor(.blue)
-                            Slider(value: $viewModel.maxPrice, in: viewModel.minPrice...9990000, step: 10000)
-                                .accentColor(.blue)
-                        }
+                        RangeSliderView(
+                            lowerValue: $viewModel.minPrice,
+                            upperValue: $viewModel.maxPrice,
+                            minimumValue: 0,
+                            maximumValue: 999000,
+                            step: 1000
+                        )
+                        .frame(height: 40)
                         
                         Button(action: {
                             viewModel.loadInitialData()

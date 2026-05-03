@@ -10,7 +10,7 @@ class HomeViewModel: ObservableObject {
     @Published var isSaleOnly = true
     @Published var isPriceFilterOn = false
     @Published var minPrice: Double = 0
-    @Published var maxPrice: Double = 9990000
+    @Published var maxPrice: Double = 999000
     
     private var currentPage = 1
     private let appService = AppServiceProvider.shared
@@ -33,7 +33,7 @@ class HomeViewModel: ObservableObject {
             adCode: 1,
             pageno: currentPage,
             minPrice: isPriceFilterOn ? Int(minPrice) : 0,
-            maxPrice: isPriceFilterOn ? Int(maxPrice) : 9990000,
+            maxPrice: isPriceFilterOn ? Int(maxPrice) : 999000,
             saleStatus: isSaleOnly ? "1" : "0"
         )
         
