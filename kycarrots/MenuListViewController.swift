@@ -361,9 +361,11 @@ final class MenuListViewController: UITableViewController {
         rootView.onShowNotifications = {
             AppCoordinator.shared?.showNotificationList()
         }
+        rootView.onToggleMenu = {
+            guard let menu = SideMenuManager.default.leftMenuNavigationController else { return }
+            nav.present(menu, animated: true)
+        }
         let vc = UIHostingController(rootView: rootView)
-        vc.navigationItem.hidesBackButton = true // ✅ 뒤로가기 숨김
-        vc.addLeftMenuButton()
         nav.pushViewController(vc, animated: true)
     }
 }

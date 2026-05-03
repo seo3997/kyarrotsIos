@@ -6,12 +6,16 @@ struct WebSwiftUIView: View {
     let urlString: String
     let title: String
     
+    @Environment(\.dismiss) var dismiss
+    
     @State private var isLoading = false
     @State private var progress: Double = 0
+    @State private var canGoBack = false
     @State private var webView = WKWebView()
     
     // Notification logic
     var onShowNotifications: (() -> Void)?
+    var onToggleMenu: (() -> Void)?
     
     // Toast simulation
     @State private var toastMessage: String?
@@ -19,23 +23,36 @@ struct WebSwiftUIView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            WebView(urlString: urlString, progress: $progress, isLoading: $isLoading, webView: webView, toastMessage: $toastMessage, showToast: $showToast)
+            WebView(urlString: urlString, progress: $progress, isLoading: $isLoading, webView: webView, canGoBack: $canGoBack, toastMessage: $toastMessage, showToast: $showToast)
             
-            if isLoading && progress < 1.0 {
-                ProgressView(value: progress)
-                    .progressViewStyle(LinearProgressViewStyle(tint: Color.blue))
-                    .frame(height: 3)
-                    .transition(.opacity)
+            if isLoading {
+                ZStack {
+                    Color.white.opacity(0.3).ignoresSafeArea()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.blue))
+                        .scaleEffect(1.5)
+                }
+                .transition(.opacity)
             }
         }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    onToggleMenu?()
+                }) {
+                    Image(systemName: "line.3.horizontal")
+                        .imageScale(.large)
+                        .foregroundColor(.black)
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NotificationBellButton(onTap: onShowNotifications)
             }
         }
-        .navigationBarBackButtonHidden(true) // ✅ 뒤로가기 버튼 숨김
+        .navigationBarBackButtonHidden(true) // ✅ 커스텀 버튼 사용을 위해 기본 뒤로가기 숨김
+        .navigationBarHidden(false) // ✅ 네비게이션 바가 숨겨진 상태에서 올 수 있으므로 명시적으로 표시
         .alert(isPresented: $showToast) {
             Alert(title: Text(toastMessage ?? ""), message: nil, dismissButton: .default(Text("확인")))
         }
@@ -47,6 +64,7 @@ struct WebView: UIViewRepresentable {
     @Binding var progress: Double
     @Binding var isLoading: Bool
     let webView: WKWebView
+    @Binding var canGoBack: Bool
     
     @Binding var toastMessage: String?
     @Binding var showToast: Bool
@@ -54,6 +72,9 @@ struct WebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
+        
+        // Observer for canGoBack
+        context.coordinator.setupObservers()
         
         // UserAgent
         webView.customUserAgent = (webView.customUserAgent ?? "") + " KyCarrotsApp/iOS"
@@ -85,23 +106,34 @@ struct WebView: UIViewRepresentable {
     class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
         var parent: WebView
         var progressObservation: NSKeyValueObservation?
+        var canGoBackObservation: NSKeyValueObservation?
         var openPanelCompletion: (([URL]?) -> Void)?
         
         init(_ parent: WebView) {
             self.parent = parent
             super.init()
-            
-            self.progressObservation = parent.webView.observe(\.estimatedProgress, options: [.new]) { [weak self] _, change in
+        }
+        
+        func setupObservers() {
+            progressObservation = parent.webView.observe(\.estimatedProgress, options: [.new]) { [weak self] _, change in
                 guard let self = self, let newVal = change.newValue else { return }
                 DispatchQueue.main.async {
                     self.parent.progress = newVal
                     self.parent.isLoading = newVal < 1.0
                 }
             }
+            
+            canGoBackObservation = parent.webView.observe(\.canGoBack, options: [.new]) { [weak self] _, change in
+                guard let self = self, let newVal = change.newValue else { return }
+                DispatchQueue.main.async {
+                    self.parent.canGoBack = newVal
+                }
+            }
         }
         
         deinit {
             progressObservation?.invalidate()
+            canGoBackObservation?.invalidate()
             parent.webView.configuration.userContentController.removeScriptMessageHandler(forName: "iOSBridge")
         }
         
