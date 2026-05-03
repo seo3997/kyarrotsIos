@@ -42,11 +42,11 @@ struct HomeView: View {
                         RangeSliderView(
                             lowerValue: $viewModel.minPrice,
                             upperValue: $viewModel.maxPrice,
-                            minimumValue: 0,
-                            maximumValue: 999000,
-                            step: 1000
+                            range: 0...200000,
+                            step: 5000
                         )
-                        .frame(height: 40)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
                         
                         Button(action: {
                             viewModel.loadInitialData()
