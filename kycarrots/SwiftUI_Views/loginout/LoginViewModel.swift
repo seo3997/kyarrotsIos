@@ -24,8 +24,13 @@ class LoginViewModel: ObservableObject {
     
     init(service: AppService) {
         self.service = service
-        self.email = "sel1@gmail.com"  // Pre-fill for testing
-        self.password = "1234"         // Pre-fill for testing
+        if Constants.APP_TEST_YN == "Y" {
+            self.email = "gmail.com"
+            self.password = ""
+        } else {
+            self.email = ""
+            self.password = ""
+        }
     }
     
     // MARK: - Manual Login

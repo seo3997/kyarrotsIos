@@ -61,6 +61,8 @@ struct Constants {
     static let ROLE_SELL = "ROLE_SELL"
     static let ROLE_PROJ = "ROLE_PROJ"
     static let ROLE_ADMIN = "ROLE_ADMIN"
+    static let APP_TEST_YN = "N"   //N 일때 패스워드 안나옴
+
 }
 
 extension Optional where Wrapped == Any {

@@ -72,13 +72,15 @@ struct LoginSwiftUIView: View {
                         .cornerRadius(10)
                     }
                     
-                    Button(action: {
-                        viewModel.unlinkKakao()
-                    }) {
-                        Text("카카오 연결 해제")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                            .padding(.top, 4)
+                    if Constants.APP_TEST_YN == "Y" {
+                        Button(action: {
+                            viewModel.unlinkKakao()
+                        }) {
+                            Text("카카오 연결 해제")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.white.opacity(0.8))
+                                .padding(.top, 4)
+                        }
                     }
                 }
                 .padding(.horizontal, 40)
