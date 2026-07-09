@@ -33,7 +33,7 @@ struct Constants {
         case .DEV:
             return "http://www.kycarrots.com:9000/"
         case .PROD:
-            return "http://www.asagong.com/"
+            return "https://www.asagong.com/"
         }
     }
 
@@ -45,7 +45,7 @@ struct Constants {
         case .DEV:
             return "ws://www.kycarrots.com:9000/chat-ws?userId="
         case .PROD:
-            return "ws://www.asagong.com/chat-ws?userId="
+            return "wss://www.asagong.com/chat-ws?userId="
         }
     }
     
