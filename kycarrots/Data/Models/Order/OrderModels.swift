@@ -235,7 +235,7 @@ struct OrderInfo: Decodable {
     let userNo: Int64
     let orderStatus: String
     let orderStatusNm: String?
-    let paymentStatus: String
+    let paymentStatus: String?
     let totalItemAmount: Int
     let deliveryFee: Int
     let discountAmount: Int
